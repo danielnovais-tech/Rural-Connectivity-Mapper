@@ -25,11 +25,11 @@ def test_validate_coordinates_invalid():
     # Invalid latitude
     assert validate_coordinates(91, 0) is False
     assert validate_coordinates(-91, 0) is False
-    
+
     # Invalid longitude
     assert validate_coordinates(0, 181) is False
     assert validate_coordinates(0, -181) is False
-    
+
     # Both invalid
     assert validate_coordinates(100, 200) is False
 
@@ -43,16 +43,16 @@ def test_validate_speed_test_valid():
         jitter=5.0,
         packet_loss=0.5
     )
-    
+
     assert validate_speed_test(speed_test) is True
-    
+
     # Test with dict
     speed_dict = {
         'download': 100.0,
         'upload': 15.0,
         'latency': 30.0
     }
-    
+
     assert validate_speed_test(speed_dict) is True
 
 
@@ -64,14 +64,14 @@ def test_validate_speed_test_invalid():
         'upload': 15.0,
         'latency': 30.0
     }
-    
+
     assert validate_speed_test(invalid_dict) is False
-    
+
     # Missing required fields
     incomplete_dict = {
         'download': 100.0
     }
-    
+
     assert validate_speed_test(incomplete_dict) is False
 
 
@@ -84,7 +84,7 @@ def test_validate_speed_test_bounds():
         'latency': 30.0
     }
     assert validate_speed_test(invalid_dict, check_bounds=True) is False
-    
+
     # Out of bounds latency
     invalid_dict = {
         'download': 100.0,
@@ -92,7 +92,7 @@ def test_validate_speed_test_bounds():
         'latency': 5000.0  # Too high
     }
     assert validate_speed_test(invalid_dict, check_bounds=True) is False
-    
+
     # Valid within bounds
     valid_dict = {
         'download': 100.0,
@@ -129,7 +129,7 @@ def test_validate_csv_row_valid():
         'jitter': '5.0',
         'packet_loss': '0.5'
     }
-    
+
     is_valid, error_msg = validate_csv_row(row, 1)
     assert is_valid is True
     assert error_msg == ""
@@ -142,7 +142,7 @@ def test_validate_csv_row_missing_fields():
         'provider': 'Starlink',
         'download': '100.0'
     }
-    
+
     is_valid, error_msg = validate_csv_row(row, 1)
     assert is_valid is False
     assert "Missing required fields" in error_msg
@@ -158,7 +158,7 @@ def test_validate_csv_row_invalid_numeric():
         'upload': '15.0',
         'latency': '30.0'
     }
-    
+
     is_valid, error_msg = validate_csv_row(row, 1)
     assert is_valid is False
     assert "Invalid numeric value" in error_msg
@@ -174,7 +174,7 @@ def test_validate_csv_row_out_of_range_coordinates():
         'upload': '15.0',
         'latency': '30.0'
     }
-    
+
     is_valid, error_msg = validate_csv_row(row, 1)
     assert is_valid is False
     assert "Invalid latitude" in error_msg
@@ -190,7 +190,7 @@ def test_validate_csv_row_out_of_range_speed():
         'upload': '15.0',
         'latency': '30.0'
     }
-    
+
     is_valid, error_msg = validate_csv_row(row, 1)
     assert is_valid is False
     assert "Invalid download" in error_msg

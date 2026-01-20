@@ -1,3 +1,8 @@
 {
-    "python.analysis.typeCheckingMode": "strict"
+    "python.analysis.typeCheckingMode": "basic",
+    "python-envs.defaultEnvManager": "ms-python.python:system",
+    "python-envs.pythonProjects": [],
+    "python.languageServer": "Pylance",
+    "git.ignoreLimitWarning": true,
+    "python.REPL.enableREPLSmartSend": false
 }
