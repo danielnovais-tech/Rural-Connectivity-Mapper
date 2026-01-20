@@ -1,11 +1,7 @@
-"""Utils package for Rural Connectivity Mapper."""
-
-from .validation_utils import validate_coordinates, validate_speed_test, validate_provider, validate_csv_row
-from .data_utils import load_data, save_data, backup_data
 """Utils package for Rural Connectivity Mapper.
 
 This package intentionally avoids importing heavy optional dependencies at
-import-time (e.g. numpy/pandas/sklearn). Many tools import `src.utils` for a
+import-time (e.g. numpy/pandas/sklearn). Many modules import `src.utils` for a
 small subset of helpers; eager imports would crash module import when those
 optional dependencies aren't available (or when wheels are incompatible).
 
@@ -15,10 +11,10 @@ Exports are provided lazily via `__getattr__`.
 from __future__ import annotations
 
 import importlib
-from typing import Any, Dict, Tuple
+from typing import Any
 
 
-_EXPORTS: Dict[str, Tuple[str, str]] = {
+_EXPORTS: dict[str, tuple[str, str]] = {
     # validation_utils
     'validate_coordinates': ('validation_utils', 'validate_coordinates'),
     'validate_speed_test': ('validation_utils', 'validate_speed_test'),
@@ -123,4 +119,3 @@ def __dir__() -> list[str]:
 
 
 __all__ = list(_EXPORTS.keys())
-    'get_translation',
