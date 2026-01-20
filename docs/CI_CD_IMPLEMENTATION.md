@@ -65,11 +65,11 @@ This document summarizes the comprehensive CI/CD implementation for the Rural Co
 #### Flake8 Configuration (`.flake8`)
 
 - Line length: 120 characters
-- Excluded directories: .git, `__pycache__`, .venv, build, dist
+- Excluded directories: .git,`__pycache__`, .venv, build, dist
 - Ignored rules: E501 (line too long), W503 (line break before binary operator)
-- Per-file ignores for imports in `__init__.py`
+- Per-file ignores for imports in ``__init__.py``
 
-### Development Dependencies (`requirements-dev.txt`)
+#### Development Dependencies (`requirements-dev.txt`)
 
 ```bash
 ruff>=0.1.0
@@ -89,9 +89,6 @@ mypy>=1.0.0
 
 #### Created CONTRIBUTING.md
 
-- Detailed contribution guidelines
-- Explained development workflow
-- Contribution guidelines
 - Development workflow guidelines
 - Testing best practices
 - Code style conventions
@@ -111,7 +108,8 @@ mypy>=1.0.0
 
 ### Coverage Breakdown
 
-- API: 85% coverage
+- Controllers: 100% coverage
+- Services: 85% coverage
 - Models: 96% coverage
 - Utils: 50-89% coverage (varies by module)
 - Overall: 83% coverage

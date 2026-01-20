@@ -10,7 +10,7 @@ The Rural Connectivity Mapper now supports **crowdsourced data collection**, all
 
 **Perfect for:** Mobile users, quick submissions, non-technical users
 
-## Steps
+#### Steps
 
 1. **Start the crowdsourcing server:**
 
@@ -30,7 +30,7 @@ The Rural Connectivity Mapper now supports **crowdsourced data collection**, all
    - Enter the results (download, upload, latency)
    - Click "📤 Enviar Dados"
 
-### Features
+#### Features
 
 - ✅ Mobile-responsive design
 - ✅ Automatic geolocation (with permission)
@@ -44,7 +44,7 @@ The Rural Connectivity Mapper now supports **crowdsourced data collection**, all
 
 **Perfect for:** Terminal users, automation, batch submissions
 
-## Interactive Mode
+#### Interactive Mode
 
 ```bash
 python submit_speedtest.py
@@ -58,7 +58,7 @@ The script will guide you through each step:
 - Manual entry of speedtest results
 - Review and confirm before submission
 
-### Direct Submission
+#### Direct Submission
 
 ```bash
 python submit_speedtest.py \
@@ -72,7 +72,7 @@ python submit_speedtest.py \
   --packet-loss 0.5
 ```
 
-### Auto Speedtest
+#### Auto Speedtest
 
 ```bash
 python submit_speedtest.py --auto-speedtest --provider Starlink
@@ -111,7 +111,7 @@ This will:
      -F "file=@my_speedtests.csv"
    ```
 
-## Using the CLI (existing functionality)
+#### Using the CLI (existing functionality)
 
 ```bash
 python main.py --importar my_speedtests.csv
@@ -362,13 +362,13 @@ Starting with 5 cities, crowdsourcing can:
 
 ### Test the Web Form
 
+```bash
 1. Start server: `python crowdsource_server.py`
 2. Navigate to http://localhost:5000
 3. Fill in test data
 4. Verify submission in `src/data/pontos.json`
 
 ### Test the CLI Script
-
 ```bash
 # Interactive mode
 python submit_speedtest.py

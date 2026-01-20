@@ -387,8 +387,10 @@ provide your location coordinates from Google Maps.
 
 **Issue:** CSV import fails
 
-- **Solution:** Verify column headers match exactly:
+- **Solution:** Verify column headers match exactly
+
 `id,city,provider,latitude,longitude,download,upload,latency,jitter,packet_loss,timestamp`
+
 - Check for special characters or extra spaces in headers
 
 **Issue:** Missing required fields
@@ -456,7 +458,7 @@ This file contains 6 sample connectivity points from different Brazilian cities 
 
 **Test the import:**
 
-```   bash
+```bash
 python main.py --importar docs/sample_google_forms_export.csv
 python main.py --map --relatorio html
 ```

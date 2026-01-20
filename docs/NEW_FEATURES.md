@@ -220,7 +220,7 @@ Available plans (2026):
 10 Latin American countries with full configuration:
 
 | Code | Country | Regulator | Stats Agency |
-| ---- | -------- | --------- | ------------ |
+| ---- | ------- | --------- | ------------ |
 | BR | Brazil | ANATEL | IBGE |
 | AR | Argentina | ENACOM | INDEC |
 | CL | Chile | SUBTEL | INE |
@@ -311,7 +311,9 @@ The dashboard will open in your browser at `http://localhost:8501`
 
 #### 3. IBGE Demographics Tab
 
+- Population distribution maps  
 - Rural vs urban population charts
+- Internet access percentages
 - Priority rural areas table
 - Coverage vs priority score scatter plot
 - Download data as CSV
@@ -349,6 +351,8 @@ The dashboard will open in your browser at `http://localhost:8501`
 
 **Main Area:**
 
+- Summary statistics
+- Visualizations (charts with Plotly)
 - Interactive charts (Plotly)
 - Data tables (Streamlit)
 - Maps (Folium)

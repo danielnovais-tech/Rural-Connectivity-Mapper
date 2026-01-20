@@ -47,26 +47,26 @@ python upload_csv.py data.csv --dry-run --verbose
 
 All CSV files **must** include these columns:
 
-| Column      | Type                 | Description                 | Example               |
-| ----------- | -------------------- | --------------------------- | --------------------- |
-| `timestamp` | ISO 8601 DateTime    | When the test was performed | `2026-01-15T10:30:00` |
-| `latitude`  | Float (-90 to 90)    | Latitude coordinate         | `-23.5505`            |
-| `longitude` | Float (-180 to 180)  | Longitude coordinate        | `-46.6333`            |
-| `download`  | Float (≥ 0)          | Download speed in Mbps      | `85.2`                |
-| `upload`    | Float (≥ 0)          | Upload speed in Mbps        | `12.5`                |
+| Column | Type | Description | Example |
+| -------- | ------- | ------------- | --------- |
+| `timestamp` | ISO 8601 DateTime | When the test was performed | `2026-01-15T10:30:00` |
+| `latitude` | Float (-90 to 90) | Latitude coordinate | `-23.5505` |
+| `longitude` | Float (-180 to 180) | Longitude coordinate | `-46.6333` |
+| `download` | Float (≥ 0) | Download speed in Mbps | `85.2` |
+| `upload` | Float (≥ 0) | Upload speed in Mbps | `12.5` |
 
 ### Optional Columns
 
 These columns are optional but recommended:
 
-| Column        | Type        | Description                  | Example             |
-| ------------- | ----------- | ---------------------------- | ------------------- |
-| `id`          | String      | Unique identifier            | `1` or `test-001`   |
-| `city`        | String      | City name                    | `São Paulo`         |
-| `provider`    | String      | Internet service provider    | `Starlink`, `Claro` |
-| `latency`     | Float (≥ 0) | Latency in milliseconds      | `45.3`              |
-| `jitter`      | Float (≥ 0) | Jitter in milliseconds       | `8.2`               |
-| `packet_loss` | Float (≥ 0) | Packet loss percentage       | `1.2`               |
+| Column | Type | Description | Example |
+| -------- | ------- | ------------- | --------- |
+| `id` | String | Unique identifier | `1` or `test-001` |
+| `city` | String | City name | `São Paulo` |
+| `provider` | String | Internet service provider | `Starlink`, `Claro` |
+| `latency` | Float (≥ 0) | Latency in milliseconds | `45.3` |
+| `jitter` | Float (≥ 0) | Jitter in milliseconds | `8.2` |
+| `packet_loss` | Float (≥ 0) | Packet loss percentage | `1.2` |
 
 ## Example CSV Files
 
@@ -102,9 +102,10 @@ See `example_speedtests.csv` for a complete example with all optional fields inc
 - **Download** and **Upload**: Must be positive numbers (≥ 0)
 - Measured in Mbps (megabits per second)
 
- Optional Numeric Fields
-**Latency**, **Jitter**, **Packet Loss**: Must be positive numbers if provided
-Can be left empty or omitted entirely
+### Optional Numeric Fields
+
+- **Latency**, **Jitter**, **Packet Loss**: Must be positive numbers if provided
+- Can be left empty or omitted entirely
 
 ## Command-Line Options
 
@@ -255,7 +256,7 @@ File not found: /path/to/file.csv
 
 ```bash
 CSV file is empty or has no header
-
+```
 
 → Ensure your CSV has a header row with column names
 

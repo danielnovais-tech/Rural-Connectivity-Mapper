@@ -4,6 +4,12 @@
 
 ### Prerequisites
 
+- Clone the repository:
+
+  ```bash
+  git clone https://github.com/yourusername/Rural-Connectivity-Mapper-2026.git
+  ```
+
 - Python 3.8+
 - pip package manager
 - All dependencies installed (`pip install -r requirements.txt`)
@@ -31,7 +37,7 @@ The dashboard will automatically load and display connectivity data from `src/da
 
 ## 📊 Dashboard Features
 
-### Summary Statistics
+### Main Statistics Cards
 
 - **Total Points** - Number of connectivity measurement points
 - **Avg Quality Score** - Overall quality rating (0-100)
@@ -62,13 +68,10 @@ Shows count of measurement points per ISP provider
 
 #### Rating Distribution
 
-Histogram
 Breakdown of quality ratings across all points
 
 #### Key Insights
 
-- Top-performing providers
-- Locations with highest/lowest quality
 AI-powered analysis and recommendations based on the data
 
 ---
@@ -175,7 +178,6 @@ print(response.json())
 
 ### Port Already in Use
 
-By default, the dashboard runs on port 5000.
 If port 5000 is already in use, set a different port:
 
 ```bash

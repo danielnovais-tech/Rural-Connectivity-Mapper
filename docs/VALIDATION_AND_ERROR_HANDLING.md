@@ -33,12 +33,12 @@ id,city,provider,latitude,longitude,download,upload,latency
 1,Test,Starlink,95.0,-46.6333,100.0,15.0,30.0  # Invalid latitude
 ```
 
+**
 Error: `ValueError: Invalid latitude` → Tool crashes
 
 **After (handles gracefully):**
 
-```csv
-id,city,provider,latitude,longitude,download,upload,latency
+```bash
 2026-01-04 00:08:31 - WARNING - Row 2: Invalid latitude 95.0 (must be between -90 and 90)
 2026-01-04 00:08:31 - INFO - Successfully imported 0 points to src/data/pontos.json
 2026-01-04 00:08:31 - WARNING - Skipped 1 invalid rows
@@ -81,7 +81,6 @@ Validates an entire CSV row before processing:
 **`validate_speed_test(speed_test, check_bounds=True)`**
 Enhanced with bounds checking:
 
-- Validates numeric types
 - Download: 0-1000 Mbps
 - Upload: 0-500 Mbps
 - Latency: 0-2000 ms
@@ -104,13 +103,13 @@ SPEED_TEST_BOUNDS = {
 
 #### Before
 
-```csv
+```bash
 Error importing CSV: could not convert string to float: 'invalid'
 ```
 
 #### After
 
-```csv
+```bash
 Row 6: Invalid numeric value for download: invalid
 Row 7: Missing required fields: upload, latency
 Row 8: Invalid latitude 95.0 (must be between -90 and 90)
@@ -202,7 +201,7 @@ pytest tests/test_geocoding_utils.py -v
 
 ### For Existing Code
 
-- No breaking changes! All existing code continues to work. New features are opt-in:
+No breaking changes! All existing code continues to work. New features are opt-in:
 
 ```python
 # Old code still works
@@ -275,11 +274,6 @@ Ensure your CSV files include all required columns:
 
 ### Future Enhancements
 
-- Per-user or per-session rate limiting
-- Configurable bounds via config file
-- Configurable validation rules via config file
-- Configurable rate limiting settings
-- Dynamic rate limiting based on API response headers
 - Configurable bounds via configuration file
 - Per-user rate limiting for multi-user scenarios
 - Custom validation rules via plugins

@@ -550,6 +550,10 @@ python main.py --importar google_forms_responses.csv --map --relatorio html
 
 A REST API is planned for later in 2026 (v1.2.0 release) that will allow:
 
+- Real-time data submission
+- Real-time data retrieval
+- Programmatic data retrieval
+- Programmatic data submission
 - Real-time data submission via HTTP POST
 - JSON-based data format
 - Authentication and rate limiting

@@ -22,6 +22,7 @@ The Rural Connectivity Mapper 2026 is designed to seamlessly integrate with othe
 
 ### 2. Hybrid Architecture Simulator
 
+**Repository:** [Hybrid-Architecture-Simulator](https://github.com/danielnovais-tech/Hybrid-Architecture-Simulator)
 **Purpose:** Test realistic failover scenarios using real-world connectivity data.
 
 **Integration Benefits:**
@@ -33,6 +34,7 @@ The Rural Connectivity Mapper 2026 is designed to seamlessly integrate with othe
 
 ### 3. AgriX-Boost
 
+**Repository:** [AgriX-Boost](https://github.com/danielnovais-tech/AgriX-Boost)
 **Purpose:** Connectivity layer for agricultural monitoring and farm dashboards.
 
 **Integration Benefits:**
@@ -297,8 +299,9 @@ Use ecosystem data to:
 
 ### Validation
 
+- Data undergoes validation checks during import and export
 - Cross-checked with multiple measurements
-- Anomaly detection for outliers
+- Anomalies flagged for review
 All exported data includes:
 - Timestamp of measurement
 - Data source attribution
@@ -326,8 +329,6 @@ curl -X GET https://api.rural-connectivity.io/v1/points \
 ## Support & Contribution
 
 ### Documentation
-
-For more information, refer to:
 
 - **Main README:** [README.md](../README.md)
 - **API Reference:** [API.md](API.md)

@@ -1,62 +1,194 @@
 [
   {
-    "latitude": -15.7801,
-    "longitude": -47.9292,
+    "id": "1",
+    "latitude": -23.5505,
+    "longitude": -46.6333,
     "provider": "Vivo",
-    "download_speed": 85.5,
-    "upload_speed": 42.3,
-    "latency": 18,
-    "jitter": 2,
-    "packet_loss": 0.0,
-    "signal_strength": -65,
-    "quality_metrics": {
-      "overall_score": 88.5,
-      "speed_score": 85.5,
-      "latency_score": 90.0,
-      "stability_score": 90.0,
-      "rating": "Excellent"
+    "speed_test": {
+      "download": 85.2,
+      "upload": 12.5,
+      "latency": 45.3,
+      "jitter": 8.2,
+      "packet_loss": 1.2,
+      "obstruction": 0.0,
+      "stability": 71.6
+    },
+    "quality_score": {
+      "overall_score": 63.01,
+      "speed_score": 52.55,
+      "latency_score": 68.38,
+      "stability_score": 71.6,
+      "rating": "Good"
     },
     "timestamp": "2026-01-15T10:30:00",
     "country": "BR"
   },
   {
-    "latitude": -15.7935,
-    "longitude": -47.8823,
+    "id": "2",
+    "latitude": -22.9068,
+    "longitude": -43.1729,
     "provider": "Claro",
-    "download_speed": 65.2,
-    "upload_speed": 35.8,
-    "latency": 22,
-    "jitter": 3,
-    "packet_loss": 0.1,
-    "signal_strength": -70,
-    "quality_metrics": {
-      "overall_score": 78.3,
-      "speed_score": 75.0,
-      "latency_score": 80.0,
-      "stability_score": 80.0,
+    "speed_test": {
+      "download": 92.1,
+      "upload": 15.3,
+      "latency": 38.7,
+      "jitter": 6.5,
+      "packet_loss": 0.8,
+      "obstruction": 0.0,
+      "stability": 79.0
+    },
+    "quality_score": {
+      "overall_score": 70.0,
+      "speed_score": 60.0,
+      "latency_score": 75.0,
+      "stability_score": 79.0,
       "rating": "Good"
     },
     "timestamp": "2026-01-15T11:00:00",
     "country": "BR"
   },
   {
-    "latitude": -15.7650,
-    "longitude": -47.9500,
-    "provider": "TIM",
-    "download_speed": 45.8,
-    "upload_speed": 22.3,
-    "latency": 28,
-    "jitter": 4,
-    "packet_loss": 0.2,
-    "signal_strength": -72,
-    "quality_metrics": {
-      "overall_score": 65.4,
-      "speed_score": 60.0,
-      "latency_score": 70.0,
-      "stability_score": 68.0,
-      "rating": "Good"
+    "id": "3",
+    "latitude": -15.7801,
+    "longitude": -47.9292,
+    "provider": "Starlink",
+    "speed_test": {
+      "download": 150.0,
+      "upload": 20.0,
+      "latency": 25.0,
+      "jitter": 3.0,
+      "packet_loss": 0.5,
+      "obstruction": 0.0,
+      "stability": 92.6
+    },
+    "quality_score": {
+      "overall_score": 91.13,
+      "speed_score": 91.35,
+      "latency_score": 89.38,
+      "stability_score": 92.6,
+      "rating": "Excellent"
     },
     "timestamp": "2026-01-15T11:30:00",
+    "country": "BR"
+  },
+    {
+  "id": "6",
+  "latitude": -19.9245,
+  "longitude": -43.9352,
+  "provider": "TIM",
+  "speed_test": {
+    "download": 78.5,
+    "upload": 11.2,
+    "latency": 52.4,
+    "jitter": 9.8,
+    "packet_loss": 1.5,
+    "obstruction": 0.0,
+    "stability": 65.4
+  },
+  "quality_score": {
+    "overall_score": 56.52,
+    "speed_score": 47.62,
+    "latency_score": 59.5,
+    "stability_score": 65.4,
+    "rating": "Fair"
+  },
+  "timestamp": "2026-01-16T09:00:00",
+  "country": "BR"
+},
+  {
+    "id": "7",
+    "latitude": -3.7172,
+    "longitude": -38.5434,
+    "provider": "Vivo",
+    "speed_test": {
+      "download": 68.4,
+      "upload": 10.2,
+      "latency": 52.3,
+      "jitter": 12.4,
+      "packet_loss": 1.8,
+      "obstruction": 0.0,
+      "stability": 57.2
+    },
+    "quality_score": {
+      "overall_score": 50.98,
+      "speed_score": 45.33,
+      "latency_score": 58.5,
+      "stability_score": 57.2,
+      "rating": "Fair"
+    },
+    "timestamp": "2026-01-15T13:00:00",
+    "country": "BR"
+  },
+  {
+    "id": "8",
+    "latitude": -8.0476,
+    "longitude": -34.8770,
+    "provider": "Claro",
+    "speed_test": {
+      "download": 78.9,
+      "upload": 11.6,
+      "latency": 41.5,
+      "jitter": 9.3,
+      "packet_loss": 1.4,
+      "obstruction": 0.0,
+      "stability": 68.9
+    },
+    "quality_score": {
+      "overall_score": 60.27,
+      "speed_score": 53.21,
+        "latency_score": 66.83,
+      "stability_score": 68.9,
+      "rating": "Good"
+    },
+    "timestamp": "2026-01-15T13:30:00",
+    "country": "BR"
+  },
+  {
+    "id": "9",
+    "latitude": -30.0346,
+    "longitude": -51.2177,
+    "provider": "Oi",
+    "speed_test": {
+      "download": 81.2,
+      "upload": 13.8,
+      "latency": 39.2,
+      "jitter": 7.8,
+      "packet_loss": 1.1,
+      "obstruction": 0.0,
+      "stability": 73.4
+    },
+    "quality_score": {
+      "overall_score": 82.79,
+      "speed_score": 67.98,
+      "latency_score": 94.28,
+      "stability_score": 91.05,
+      "rating": "Excellent"
+    },
+    "timestamp": "2026-01-15T14:30:00",
+    "country": "BR"
+  },
+  {
+    "id": "10",
+    "latitude": -19.9167,
+    "longitude": -43.9345,
+    "provider": "Starlink Gen2",
+    "speed_test": {
+      "download": 172.8,
+      "upload": 24.2,
+      "latency": 26.9,
+      "jitter": 2.8,
+      "packet_loss": 0.08,
+      "obstruction": 3.8,
+      "stability": 92.84
+    },
+    "quality_score": {
+      "overall_score": 90.51,
+      "speed_score": 93.08,
+      "latency_score": 91.5,
+      "stability_score": 92.84,
+      "rating": "Excellent"
+    },
+    "timestamp": "2026-01-15T15:00:00",
     "country": "BR"
   }
 ]

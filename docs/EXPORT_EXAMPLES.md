@@ -104,7 +104,13 @@ Provides connectivity data formatted for realistic network failover testing and 
 
 **Scenario:** Testing failover between Starlink and 4G LTE
 
-```bash
+```bash# Hybrid Simulator Input Example
+{
+  "location_id": "3",
+  "coordinates": {
+    "lat": -15.7801,
+    "lon": -47.9292
+  },      
 Primary Connection: Starlink
 - Signal Quality: 100.0
 - Latency: 28.5ms
@@ -187,7 +193,7 @@ Provides connectivity layer data for agricultural monitoring and farm dashboard 
 ### Farm Suitability Indicators Explained
 
 | Use Case | Requirements | Description |
-| --------- | --------- | ----------- |
+| -------- | ----------- | ----------- |
 | **IoT Sensors** | Latency < 200ms, Quality ≥ 40 | Basic sensor data collection and transmission |
 | **Video Monitoring** | Download ≥ 25 Mbps, Quality ≥ 60 | HD video streaming for surveillance |
 | **Real-time Control** | Latency < 50ms, Quality ≥ 80 | Autonomous equipment and precision agriculture |
@@ -286,7 +292,7 @@ Provides metadata and integration information for the entire ecosystem.
 ### Manifest Fields Explained
 
 | Field | Description |
-| ------ | ----------- |
+| ------- | ----------- |
 | `ecosystem` | Name of the ecosystem |
 | `version` | Ecosystem format version |
 | `created` | Export timestamp |
@@ -333,7 +339,7 @@ python main.py --export agrix
 ## Quality Ratings Reference
 
 | Rating | Score Range | Hybrid Simulator | AgriX-Boost |
-| --------- | --------- | ------------------ | ------------- |
+| ------- | ----------- | ---------------- | ----------- |
 | **Excellent** | 80-100 | Recommended primary | All applications supported |
 | **Good** | 60-79 | Connection reliable | Most applications supported |
 | **Fair** | 40-59 | Backup only | Basic applications only |
