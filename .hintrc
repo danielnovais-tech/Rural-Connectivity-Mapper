@@ -1,5 +1,11 @@
 {
   "extends": ["development"],
+  "ignoredUrls": [
+    {
+      "domain": ".*node_modules.*",
+      "hints": ["meta-viewport"]
+    }
+  ],
   "connector": {
     "name": "local",
     "options": {
