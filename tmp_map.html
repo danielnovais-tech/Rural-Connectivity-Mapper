@@ -1,0 +1,545 @@
+<!DOCTYPE html>
+<html>
+<head>
+    
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+    <script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.3/dist/leaflet.js"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.2/leaflet.awesome-markers.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9.3/dist/leaflet.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap-glyphicons.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.2.0/css/all.min.css"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.2/leaflet.awesome-markers.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/python-visualization/folium/folium/templates/leaflet.awesome.rotate.min.css"/>
+    
+            <meta name="viewport" content="width=device-width,
+                initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+            <style>
+                #map_96453e7633924f39b97524092f4c5492 {
+                    position: relative;
+                    width: 100.0%;
+                    height: 100.0%;
+                    left: 0.0%;
+                    top: 0.0%;
+                }
+                .leaflet-container { font-size: 1rem; }
+            </style>
+
+            <style>html, body {
+                width: 100%;
+                height: 100%;
+                margin: 0;
+                padding: 0;
+            }
+            </style>
+
+            <style>#map {
+                position:absolute;
+                top:0;
+                bottom:0;
+                right:0;
+                left:0;
+                }
+            </style>
+
+            <script>
+                L_NO_TOUCH = false;
+                L_DISABLE_3D = false;
+            </script>
+
+        
+</head>
+<body>
+    
+    
+    <div style="position: fixed; 
+                bottom: 50px; right: 50px; width: 220px; height: auto; 
+                background-color: white; border:2px solid grey; z-index:9999; 
+                font-size:12px; padding: 10px">
+    <p style="margin: 0 0 8px 0; font-weight: bold; font-size: 14px;">Map Legend</p>
+    
+    <p style="margin: 8px 0 4px 0; font-weight: bold;">Connectivity Quality</p>
+    <p style="margin: 3px 0;"><i class="fa fa-circle" style="color:green"></i> Excellent (80+)</p>
+    <p style="margin: 3px 0;"><i class="fa fa-circle" style="color:blue"></i> Good (60-79)</p>
+    <p style="margin: 3px 0;"><i class="fa fa-circle" style="color:orange"></i> Fair (40-59)</p>
+    <p style="margin: 3px 0;"><i class="fa fa-circle" style="color:red"></i> Poor (&lt;40)</p>
+    
+    <p style="margin: 8px 0 4px 0; font-weight: bold;">Starlink Coverage</p>
+    <p style="margin: 3px 0;"><span style="color:#00ff00">█</span> Excellent Signal</p>
+    <p style="margin: 3px 0;"><span style="color:#ffff00">█</span> Good Signal</p>
+    <p style="margin: 3px 0;"><span style="color:#ffa500">█</span> Fair Signal</p>
+        
+    <p style="margin: 8px 0 0 0; font-size: 10px; font-style: italic;">
+    Use layer control (top right) to toggle layers
+    </p>
+    <span style="display:none">LayerControl leaflet-control-layers layer-control</span>
+    </div>
+    
+    
+            <div class="folium-map" id="map_96453e7633924f39b97524092f4c5492" ></div>
+        
+</body>
+<script>
+    
+    
+            var map_96453e7633924f39b97524092f4c5492 = L.map(
+                "map_96453e7633924f39b97524092f4c5492",
+                {
+                    center: [-19.6653, -47.28125],
+                    crs: L.CRS.EPSG3857,
+                    ...{
+  "zoom": 5,
+  "zoomControl": true,
+  "preferCanvas": false,
+}
+
+                }
+            );
+
+            
+
+        
+    
+            var tile_layer_e9a27328d78417976f12ab1773aec53f = L.tileLayer(
+                "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
+                {
+  "minZoom": 0,
+  "maxZoom": 19,
+  "maxNativeZoom": 19,
+  "noWrap": false,
+  "attribution": "\u0026copy; \u003ca href=\"https://www.openstreetmap.org/copyright\"\u003eOpenStreetMap\u003c/a\u003e contributors",
+  "subdomains": "abc",
+  "detectRetina": false,
+  "tms": false,
+  "opacity": 1,
+}
+
+            );
+        
+    
+            tile_layer_e9a27328d78417976f12ab1773aec53f.addTo(map_96453e7633924f39b97524092f4c5492);
+        
+    
+            var feature_group_ca94d49df3384a1776af6cf9cc07eee3 = L.featureGroup(
+                {
+}
+            );
+        
+    
+            var circle_7bb1989b3a450b47f5eec55d5bd50d55 = L.circle(
+                [-23.0, -46.0],
+                {"bubblingMouseEvents": true, "color": "#00FF00", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#00FF00", "fillOpacity": 0.15, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 0.3, "radius": 300000, "stroke": true, "weight": 3}
+            ).addTo(feature_group_ca94d49df3384a1776af6cf9cc07eee3);
+        
+    
+        var popup_adf2c5920abfdf884fd4ddb650014b86 = L.popup({
+  "maxWidth": 200,
+});
+
+        
+            
+                var html_82b5e240b9355fa74b28a72596c5fe23 = $(`<div id="html_82b5e240b9355fa74b28a72596c5fe23" style="width: 100.0%; height: 100.0%;"><b>Southeast Region (SP/RJ)</b><br>Coverage: Excellent<br>Radius: ~300 km</div>`)[0];
+                popup_adf2c5920abfdf884fd4ddb650014b86.setContent(html_82b5e240b9355fa74b28a72596c5fe23);
+            
+        
+
+        circle_7bb1989b3a450b47f5eec55d5bd50d55.bindPopup(popup_adf2c5920abfdf884fd4ddb650014b86)
+        ;
+
+        
+    
+    
+            circle_7bb1989b3a450b47f5eec55d5bd50d55.bindTooltip(
+                `<div>
+                     Southeast Region (SP/RJ) - Excellent coverage
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_be34f84773a98a8af308ff5cf05928c0 = L.circle(
+                [-15.7801, -47.9292],
+                {"bubblingMouseEvents": true, "color": "#00FF00", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#00FF00", "fillOpacity": 0.15, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 0.3, "radius": 250000, "stroke": true, "weight": 3}
+            ).addTo(feature_group_ca94d49df3384a1776af6cf9cc07eee3);
+        
+    
+        var popup_ed5330ed12e90f7fdafed188ea19b152 = L.popup({
+  "maxWidth": 200,
+});
+
+        
+            
+                var html_2ce999e74a6e9b5d0f55217066268073 = $(`<div id="html_2ce999e74a6e9b5d0f55217066268073" style="width: 100.0%; height: 100.0%;"><b>Brasília & Central-West</b><br>Coverage: Excellent<br>Radius: ~250 km</div>`)[0];
+                popup_ed5330ed12e90f7fdafed188ea19b152.setContent(html_2ce999e74a6e9b5d0f55217066268073);
+            
+        
+
+        circle_be34f84773a98a8af308ff5cf05928c0.bindPopup(popup_ed5330ed12e90f7fdafed188ea19b152)
+        ;
+
+        
+    
+    
+            circle_be34f84773a98a8af308ff5cf05928c0.bindTooltip(
+                `<div>
+                     Brasília & Central-West - Excellent coverage
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_21baf0a87c6b3d9623a3007dafb809ae = L.circle(
+                [-12.9714, -38.5014],
+                {"bubblingMouseEvents": true, "color": "#90EE90", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#90EE90", "fillOpacity": 0.12, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 0.3, "radius": 200000, "stroke": true, "weight": 3}
+            ).addTo(feature_group_ca94d49df3384a1776af6cf9cc07eee3);
+        
+    
+        var popup_19b51ed2daed8b1355629825acdff027 = L.popup({
+  "maxWidth": 200,
+});
+
+        
+            
+                var html_d183ebd3f6562cb3bd63f1745daa836a = $(`<div id="html_d183ebd3f6562cb3bd63f1745daa836a" style="width: 100.0%; height: 100.0%;"><b>Salvador & Bahia Coast</b><br>Coverage: Good<br>Radius: ~200 km</div>`)[0];
+                popup_19b51ed2daed8b1355629825acdff027.setContent(html_d183ebd3f6562cb3bd63f1745daa836a);
+            
+        
+
+        circle_21baf0a87c6b3d9623a3007dafb809ae.bindPopup(popup_19b51ed2daed8b1355629825acdff027)
+        ;
+
+        
+    
+    
+            circle_21baf0a87c6b3d9623a3007dafb809ae.bindTooltip(
+                `<div>
+                     Salvador & Bahia Coast - Good coverage
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_ac76abda2021ed3d97d3ef58fda9a833 = L.circle(
+                [-3.7172, -38.5433],
+                {"bubblingMouseEvents": true, "color": "#90EE90", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#90EE90", "fillOpacity": 0.12, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 0.3, "radius": 200000, "stroke": true, "weight": 3}
+            ).addTo(feature_group_ca94d49df3384a1776af6cf9cc07eee3);
+        
+    
+        var popup_995383fd69e0eba810f80731970ee75d = L.popup({
+  "maxWidth": 200,
+});
+
+        
+            
+                var html_be1211582b148cd4bf165f3f38279513 = $(`<div id="html_be1211582b148cd4bf165f3f38279513" style="width: 100.0%; height: 100.0%;"><b>Fortaleza & Ceará</b><br>Coverage: Good<br>Radius: ~200 km</div>`)[0];
+                popup_995383fd69e0eba810f80731970ee75d.setContent(html_be1211582b148cd4bf165f3f38279513);
+            
+        
+
+        circle_ac76abda2021ed3d97d3ef58fda9a833.bindPopup(popup_995383fd69e0eba810f80731970ee75d)
+        ;
+
+        
+    
+    
+            circle_ac76abda2021ed3d97d3ef58fda9a833.bindTooltip(
+                `<div>
+                     Fortaleza & Ceará - Good coverage
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_86c0fa7e0669de6e06321e2e7a0b5790 = L.circle(
+                [-8.0476, -34.877],
+                {"bubblingMouseEvents": true, "color": "#90EE90", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#90EE90", "fillOpacity": 0.12, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 0.3, "radius": 180000, "stroke": true, "weight": 3}
+            ).addTo(feature_group_ca94d49df3384a1776af6cf9cc07eee3);
+        
+    
+        var popup_d6c8367200d0d6842adf42ff829e8f5a = L.popup({
+  "maxWidth": 200,
+});
+
+        
+            
+                var html_08af2cd6793b1aed8f0d5360c7c19654 = $(`<div id="html_08af2cd6793b1aed8f0d5360c7c19654" style="width: 100.0%; height: 100.0%;"><b>Recife & Pernambuco</b><br>Coverage: Good<br>Radius: ~180 km</div>`)[0];
+                popup_d6c8367200d0d6842adf42ff829e8f5a.setContent(html_08af2cd6793b1aed8f0d5360c7c19654);
+            
+        
+
+        circle_86c0fa7e0669de6e06321e2e7a0b5790.bindPopup(popup_d6c8367200d0d6842adf42ff829e8f5a)
+        ;
+
+        
+    
+    
+            circle_86c0fa7e0669de6e06321e2e7a0b5790.bindTooltip(
+                `<div>
+                     Recife & Pernambuco - Good coverage
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_5ac394a98acc8d7b21baa43d64da0391 = L.circle(
+                [-3.119, -60.0217],
+                {"bubblingMouseEvents": true, "color": "#FFFF00", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#FFFF00", "fillOpacity": 0.1, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 0.3, "radius": 400000, "stroke": true, "weight": 3}
+            ).addTo(feature_group_ca94d49df3384a1776af6cf9cc07eee3);
+        
+    
+        var popup_e0555479098d1b3806c6939fd7778219 = L.popup({
+  "maxWidth": 200,
+});
+
+        
+            
+                var html_fff65ddd33272b1d49bcf7337cfa4e45 = $(`<div id="html_fff65ddd33272b1d49bcf7337cfa4e45" style="width: 100.0%; height: 100.0%;"><b>Amazon Region</b><br>Coverage: Moderate<br>Radius: ~400 km</div>`)[0];
+                popup_e0555479098d1b3806c6939fd7778219.setContent(html_fff65ddd33272b1d49bcf7337cfa4e45);
+            
+        
+
+        circle_5ac394a98acc8d7b21baa43d64da0391.bindPopup(popup_e0555479098d1b3806c6939fd7778219)
+        ;
+
+        
+    
+    
+            circle_5ac394a98acc8d7b21baa43d64da0391.bindTooltip(
+                `<div>
+                     Amazon Region - Moderate coverage
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_5cb09c4684011dc340b9547d938a7ebb = L.circle(
+                [-25.5, -50.0],
+                {"bubblingMouseEvents": true, "color": "#90EE90", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#90EE90", "fillOpacity": 0.12, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 0.3, "radius": 280000, "stroke": true, "weight": 3}
+            ).addTo(feature_group_ca94d49df3384a1776af6cf9cc07eee3);
+        
+    
+        var popup_73208578f1b4eff25bac8c2405f49f0a = L.popup({
+  "maxWidth": 200,
+});
+
+        
+            
+                var html_9fa21bac85f8a0d671177a9b82bfc4cc = $(`<div id="html_9fa21bac85f8a0d671177a9b82bfc4cc" style="width: 100.0%; height: 100.0%;"><b>South Region (PR/SC/RS)</b><br>Coverage: Good<br>Radius: ~280 km</div>`)[0];
+                popup_73208578f1b4eff25bac8c2405f49f0a.setContent(html_9fa21bac85f8a0d671177a9b82bfc4cc);
+            
+        
+
+        circle_5cb09c4684011dc340b9547d938a7ebb.bindPopup(popup_73208578f1b4eff25bac8c2405f49f0a)
+        ;
+
+        
+    
+    
+            circle_5cb09c4684011dc340b9547d938a7ebb.bindTooltip(
+                `<div>
+                     South Region (PR/SC/RS) - Good coverage
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_1253666a9885b9cb795bd962f389f4c7 = L.circle(
+                [-12.5, -55.5],
+                {"bubblingMouseEvents": true, "color": "#FFFF00", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#FFFF00", "fillOpacity": 0.1, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 0.3, "radius": 300000, "stroke": true, "weight": 3}
+            ).addTo(feature_group_ca94d49df3384a1776af6cf9cc07eee3);
+        
+    
+        var popup_8e1aa6fa761a7c6603b62a92bdf1378d = L.popup({
+  "maxWidth": 200,
+});
+
+        
+            
+                var html_15864873216c52c48dca6539bee61faa = $(`<div id="html_15864873216c52c48dca6539bee61faa" style="width: 100.0%; height: 100.0%;"><b>Mato Grosso Agricultural</b><br>Coverage: Moderate<br>Radius: ~300 km</div>`)[0];
+                popup_8e1aa6fa761a7c6603b62a92bdf1378d.setContent(html_15864873216c52c48dca6539bee61faa);
+            
+        
+
+        circle_1253666a9885b9cb795bd962f389f4c7.bindPopup(popup_8e1aa6fa761a7c6603b62a92bdf1378d)
+        ;
+
+        
+    
+    
+            circle_1253666a9885b9cb795bd962f389f4c7.bindTooltip(
+                `<div>
+                     Mato Grosso Agricultural - Moderate coverage
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            feature_group_ca94d49df3384a1776af6cf9cc07eee3.addTo(map_96453e7633924f39b97524092f4c5492);
+        
+    
+            var layer_control_e4dbc75fc038a88dd08ab173183777b8_layers = {
+                base_layers : {
+                    "openstreetmap" : tile_layer_e9a27328d78417976f12ab1773aec53f,
+                },
+                overlays :  {
+                    "Starlink Coverage Zones" : feature_group_ca94d49df3384a1776af6cf9cc07eee3,
+                    "Connectivity Points" : feature_group_6928eaa104e59d9afbf89ec8bae43cb5,
+                },
+            };
+            let layer_control_e4dbc75fc038a88dd08ab173183777b8 = L.control.layers(
+                layer_control_e4dbc75fc038a88dd08ab173183777b8_layers.base_layers,
+                layer_control_e4dbc75fc038a88dd08ab173183777b8_layers.overlays,
+                {
+  "position": "topright",
+  "collapsed": false,
+  "autoZIndex": true,
+}
+            ).addTo(map_96453e7633924f39b97524092f4c5492);
+
+        
+    
+            var feature_group_6928eaa104e59d9afbf89ec8bae43cb5 = L.featureGroup(
+                {
+}
+            );
+        
+    
+            var marker_a9fbe5d932661820111fa851941484d8 = L.marker(
+                [-23.5505, -46.6333],
+                {
+}
+            ).addTo(feature_group_6928eaa104e59d9afbf89ec8bae43cb5);
+        
+    
+            var icon_3f3ab6808c6f401ed70e689394c8c62b = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "green",
+  "iconColor": "white",
+  "icon": "info-sign",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_604502e2eb186f91ce9652dbea3e7af9 = L.popup({
+  "maxWidth": 300,
+});
+
+        
+            
+                var html_3f2731ad11a0bf7d665f2a0c7ba2c866 = $(`<div id="html_3f2731ad11a0bf7d665f2a0c7ba2c866" style="width: 100.0%; height: 100.0%;">     <div style="font-family: Arial; min-width: 200px;">         <h4 style="margin: 0 0 10px 0; color: green;">Starlink</h4>         <table style="width: 100%; border-collapse: collapse;">             <tr>                 <td><b>Location:</b></td>                 <td>-23.5505, -46.6333</td>             </tr>             <tr>                 <td><b>Download:</b></td>                 <td>150.0 Mbps</td>             </tr>             <tr>                 <td><b>Upload:</b></td>                 <td>20.0 Mbps</td>             </tr>             <tr>                 <td><b>Latency:</b></td>                 <td>30.0 ms</td>             </tr>             <tr>                 <td><b>Quality:</b></td>                 <td>85.0/100 (Excellent)</td>             </tr>         </table>     </div>     </div>`)[0];
+                popup_604502e2eb186f91ce9652dbea3e7af9.setContent(html_3f2731ad11a0bf7d665f2a0c7ba2c866);
+            
+        
+
+        marker_a9fbe5d932661820111fa851941484d8.bindPopup(popup_604502e2eb186f91ce9652dbea3e7af9)
+        ;
+
+        
+    
+    
+            marker_a9fbe5d932661820111fa851941484d8.bindTooltip(
+                `<div>
+                     Starlink - Excellent
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_a9fbe5d932661820111fa851941484d8.setIcon(icon_3f3ab6808c6f401ed70e689394c8c62b);
+            
+    
+            var marker_d89d099672a96d9994eb9fecce394c75 = L.marker(
+                [-15.7801, -47.9292],
+                {
+}
+            ).addTo(feature_group_6928eaa104e59d9afbf89ec8bae43cb5);
+        
+    
+            var icon_22f31e4b1b98d8141b7c56125bc3bb34 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "orange",
+  "iconColor": "white",
+  "icon": "info-sign",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_30c57f3b24fec00563b5a07a47d8eabe = L.popup({
+  "maxWidth": 300,
+});
+
+        
+            
+                var html_fa5c102919bbe02e2f6c961a372b2f5f = $(`<div id="html_fa5c102919bbe02e2f6c961a372b2f5f" style="width: 100.0%; height: 100.0%;">     <div style="font-family: Arial; min-width: 200px;">         <h4 style="margin: 0 0 10px 0; color: orange;">Claro</h4>         <table style="width: 100%; border-collapse: collapse;">             <tr>                 <td><b>Location:</b></td>                 <td>-15.7801, -47.9292</td>             </tr>             <tr>                 <td><b>Download:</b></td>                 <td>50.0 Mbps</td>             </tr>             <tr>                 <td><b>Upload:</b></td>                 <td>5.0 Mbps</td>             </tr>             <tr>                 <td><b>Latency:</b></td>                 <td>60.0 ms</td>             </tr>             <tr>                 <td><b>Quality:</b></td>                 <td>55.0/100 (Fair)</td>             </tr>         </table>     </div>     </div>`)[0];
+                popup_30c57f3b24fec00563b5a07a47d8eabe.setContent(html_fa5c102919bbe02e2f6c961a372b2f5f);
+            
+        
+
+        marker_d89d099672a96d9994eb9fecce394c75.bindPopup(popup_30c57f3b24fec00563b5a07a47d8eabe)
+        ;
+
+        
+    
+    
+            marker_d89d099672a96d9994eb9fecce394c75.bindTooltip(
+                `<div>
+                     Claro - Fair
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_d89d099672a96d9994eb9fecce394c75.setIcon(icon_22f31e4b1b98d8141b7c56125bc3bb34);
+            
+    
+            feature_group_6928eaa104e59d9afbf89ec8bae43cb5.addTo(map_96453e7633924f39b97524092f4c5492);
+        
+    
+            var layer_control_1cf8a2e2a88de3dae45ca677aad7b889_layers = {
+                base_layers : {
+                    "openstreetmap" : tile_layer_e9a27328d78417976f12ab1773aec53f,
+                },
+                overlays :  {
+                    "Starlink Coverage Zones" : feature_group_ca94d49df3384a1776af6cf9cc07eee3,
+                    "Connectivity Points" : feature_group_6928eaa104e59d9afbf89ec8bae43cb5,
+                },
+            };
+            let layer_control_1cf8a2e2a88de3dae45ca677aad7b889 = L.control.layers(
+                layer_control_1cf8a2e2a88de3dae45ca677aad7b889_layers.base_layers,
+                layer_control_1cf8a2e2a88de3dae45ca677aad7b889_layers.overlays,
+                {
+  "position": "topright",
+  "collapsed": false,
+  "autoZIndex": true,
+}
+            ).addTo(map_96453e7633924f39b97524092f4c5492);
+
+        
+</script>
+</html>

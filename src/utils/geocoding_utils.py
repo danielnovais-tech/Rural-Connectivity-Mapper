@@ -177,6 +177,12 @@ def geocode_address(
             return None
             
         except (GeocoderServiceError, GeocoderUnavailable) as e:
+            if attempt < max_retries - 1:
+                logger.warning(
+                    f"Geocoding service unavailable for '{address}', retrying... (attempt {attempt + 1}/{max_retries})"
+                )
+                time.sleep(2 ** attempt)
+                continue
             logger.error(f"Geocoding service error for '{address}': {e}")
             return None
             

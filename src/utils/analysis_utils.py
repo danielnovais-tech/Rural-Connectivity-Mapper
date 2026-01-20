@@ -6,17 +6,14 @@ from datetime import datetime
 from collections import defaultdict
 import numpy as np
 
-# Temporarily disable sklearn due to Python 3.13/3.14 scipy compatibility issues
-SKLEARN_AVAILABLE = False
 # Optional sklearn imports - gracefully degrade if not available
-# try:
-#     from sklearn.cluster import KMeans
-#     from sklearn.preprocessing import StandardScaler
-#     SKLEARN_AVAILABLE = True
-# except ImportError:
-#     SKLEARN_AVAILABLE = False
-#     logger = logging.getLogger(__name__)
-#     logger.warning("scikit-learn not available - clustering features will be disabled")
+try:
+    from sklearn.cluster import KMeans
+    from sklearn.preprocessing import StandardScaler
+
+    SKLEARN_AVAILABLE = True
+except Exception:  # pragma: no cover
+    SKLEARN_AVAILABLE = False
 
 from .i18n_utils import get_translation
 

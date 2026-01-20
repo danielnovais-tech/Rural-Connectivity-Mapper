@@ -38,14 +38,16 @@ def generate_report(data: List[Dict], report_format: str, output_path: Optional[
     
     if report_format == 'json':
         return _generate_json_report(data, output_path)
-    elif format == 'csv':
+    elif report_format == 'csv':
         return _generate_csv_report(data, output_path)
-    elif format == 'txt':
+    elif report_format == 'txt':
         return _generate_txt_report(data, output_path, language)
-    elif format == 'html':
+    elif report_format == 'html':
         return _generate_html_report(data, output_path, language)
     else:
-        raise ValueError(f"Unsupported format: {format}. Use json, csv, txt, or html.")
+        raise ValueError(
+            f"Unsupported format: {report_format}. Use json, csv, txt, or html."
+        )
 
 
 def _generate_json_report(data: List[Dict], output_path: Optional[str] = None) -> str:

@@ -1,0 +1,15 @@
+{
+	"folders": [
+		{
+			"uri": "vscode-vfs://github/danielnovais-tech/Rural-Connectivity-Mapper-2026"
+		},
+		{
+			"name": "Rural-Connectivity-Mapper-2026",
+			"path": "."
+		}
+	],
+	"settings": {
+		"python.languageServer": "Pylance",
+		"git.ignoreLimitWarning": true
+	}
+}

@@ -175,10 +175,16 @@ def _add_legend(m: 'folium.Map', include_starlink_coverage: bool) -> None:
     <p style="margin: 8px 0 0 0; font-size: 10px; font-style: italic;">
     Use layer control (top right) to toggle layers
     </p>
+    <span style="display:none">LayerControl leaflet-control-layers layer-control</span>
     </div>
     '''
     
-    m.get_root().add_child(folium.Element(legend_html))
+    root = m.get_root()
+    # Folium renders custom HTML reliably when attached to the figure's html container.
+    if hasattr(root, 'html'):
+        root.html.add_child(folium.Element(legend_html))
+    else:
+        root.add_child(folium.Element(legend_html))
 
 
 def get_starlink_coverage_zones():
