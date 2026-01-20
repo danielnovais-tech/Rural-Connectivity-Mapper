@@ -244,6 +244,12 @@
             width: 1em;
             margin-left: -1em;
         }
+
+        .map-placeholder {
+            color: #666;
+            text-align: center;
+            padding: 20px;
+        }
     </style>
 </head>
 <body>
@@ -306,13 +312,15 @@
             <div class="actions">
                 <button onclick="loadMap()">Load Map</button>
                 <button onclick="refreshData()">Refresh Data</button>
-                <button onclick="simulateImprovement()">Simulate Router Impact</button>
-                <button onclick="downloadReport('json')">Download JSON</button>
+                <p class="map-placeholderutton>
                 <button onclick="downloadReport('csv')">Download CSV</button>
                 <button onclick="downloadReport('html')">Download HTML</button>
             </div>
-            <div id="mapContainer" style="margin-top: 20px;">
-                <p style="color: #666; text-align: center; padding: 20px;">Click "Load Map" to view the interactive connectivity map</p>
+            <div id="mapContainer" class="map-container">
+
+               <p class="map-instruction">
+  Click "Load Map" to view the interactive connectivity map
+</p>
             </div>
         </div>
     </div>

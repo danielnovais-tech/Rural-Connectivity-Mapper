@@ -1,16 +1,15 @@
 """Tests for analysis utilities."""
 
-import pytest
 from datetime import datetime
 
+import pytest
 
 from src.utils.analysis_utils import (
     analyze_temporal_evolution,
     cluster_connectivity_points,
-    forecast_quality_scores
+    forecast_quality_scores,
+    compare_providers
 )
-
-from src.utils.analysis_utils import analyze_temporal_evolution, compare_providers
 
 
 
@@ -301,7 +300,7 @@ def test_forecast_with_minimal_data():
     
     # Should return forecasts based on single data point
     assert len(result['forecasts']) == 3
-    assert result['baseline_score'] == 75.0
+    assert abs(result['baseline_score'] - 75.0) < 0.01
     assert result['confidence'] == 'low'
 
 
@@ -330,7 +329,8 @@ def test_forecast_trend_detection(sample_data):
     
     # Forecasts should generally maintain or improve quality
     assert all(f > 50 for f in result['forecasts'])
-=======
+
+
 def test_compare_providers(sample_data):
     """Test provider comparison functionality."""
     comparison = compare_providers(sample_data)

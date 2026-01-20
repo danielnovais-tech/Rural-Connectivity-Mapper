@@ -23,7 +23,8 @@ python main.py --list-countries
 ```
 
 Output:
-```
+
+```bash
 Available country codes:
 ==================================================
   AU: Australia
@@ -47,6 +48,7 @@ python main.py --country US --importar src/data/sample_data_us.csv --map
 ```
 
 This will:
+
 - Import US connectivity data
 - Validate providers against US provider list (AT&T, Verizon, Starlink, etc.)
 - Generate a map centered on the United States
@@ -59,6 +61,7 @@ python main.py --country CA --analyze --relatorio json
 ```
 
 This will:
+
 - Use Canadian country settings
 - Validate providers against Canadian provider list (Bell, Rogers, Telus, etc.)
 - Generate analysis and JSON report
@@ -76,6 +79,7 @@ python main.py --country DE \
 ```
 
 This will:
+
 - Use German language for geocoding
 - Validate German providers (Deutsche Telekom, Vodafone, etc.)
 - Center map on Germany

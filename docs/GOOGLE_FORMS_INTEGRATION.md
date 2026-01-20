@@ -47,6 +47,7 @@ Create the following fields in your form to match the CSV import format:
 ### Required Fields
 
 #### Field 1: City/Location Name
+
 - **Question Type:** Short answer
 - **Question:** "City or Location Name"
 - **Description:** "Enter the name of the city or rural area"
@@ -54,6 +55,7 @@ Create the following fields in your form to match the CSV import format:
 - **Example:** São Paulo, Brasília, Rural Area - Goiás
 
 #### Field 2: Internet Service Provider
+
 - **Question Type:** Dropdown or Short answer
 - **Question:** "Internet Service Provider"
 - **Description:** "Name of your ISP (e.g., Starlink, Claro, Vivo, TIM)"
@@ -70,6 +72,7 @@ Create the following fields in your form to match the CSV import format:
   - Other (please specify)
 
 #### Field 3: Latitude
+
 - **Question Type:** Short answer
 - **Question:** "Latitude"
 - **Description:** "GPS latitude coordinate (e.g., -23.5505). Use Google Maps to find coordinates."
@@ -77,6 +80,7 @@ Create the following fields in your form to match the CSV import format:
 - **Required:** ✅ Yes
 
 #### Field 4: Longitude
+
 - **Question Type:** Short answer
 - **Question:** "Longitude"
 - **Description:** "GPS longitude coordinate (e.g., -46.6333). Use Google Maps to find coordinates."
@@ -84,6 +88,7 @@ Create the following fields in your form to match the CSV import format:
 - **Required:** ✅ Yes
 
 #### Field 5: Download Speed
+
 - **Question Type:** Short answer
 - **Question:** "Download Speed (Mbps)"
 - **Description:** "Internet download speed in Mbps. Use speedtest.net to measure."
@@ -91,6 +96,7 @@ Create the following fields in your form to match the CSV import format:
 - **Required:** ✅ Yes
 
 #### Field 6: Upload Speed
+
 - **Question Type:** Short answer
 - **Question:** "Upload Speed (Mbps)"
 - **Description:** "Internet upload speed in Mbps. Use speedtest.net to measure."
@@ -98,6 +104,7 @@ Create the following fields in your form to match the CSV import format:
 - **Required:** ✅ Yes
 
 #### Field 7: Latency/Ping
+
 - **Question Type:** Short answer
 - **Question:** "Latency/Ping (ms)"
 - **Description:** "Internet latency in milliseconds. Use speedtest.net to measure."
@@ -107,6 +114,7 @@ Create the following fields in your form to match the CSV import format:
 ### Optional Fields
 
 #### Field 8: Jitter (Optional)
+
 - **Question Type:** Short answer
 - **Question:** "Jitter (ms)"
 - **Description:** "Jitter in milliseconds (optional, default: 0)"
@@ -115,6 +123,7 @@ Create the following fields in your form to match the CSV import format:
 - **Default:** 0
 
 #### Field 9: Packet Loss (Optional)
+
 - **Question Type:** Short answer
 - **Question:** "Packet Loss (%)"
 - **Description:** "Packet loss percentage (optional, default: 0)"
@@ -131,7 +140,8 @@ Create the following fields in your form to match the CSV import format:
 1. Click on the form title (default: "Untitled form")
 2. Enter: **"Rural Connectivity Data Collection"**
 3. Add description:
-   ```
+
+   ```bash
    Help us map rural internet connectivity in Brazil! Please measure your internet 
    speed using speedtest.net and fill in the information below. Your data will 
    contribute to improving rural connectivity infrastructure.
@@ -145,7 +155,8 @@ At the top of the form, add a section with instructions:
 2. Select **Short answer** type
 3. Change to **Title and description** (from the menu)
 4. Add:
-   ```
+
+   ```bash
    📍 How to Find Your Coordinates:
    1. Open Google Maps
    2. Right-click on your location
@@ -214,6 +225,7 @@ This automatically creates a Google Sheets spreadsheet linked to your form.
 ### 7.2 Prepare Data for Export
 
 The Google Sheets will have columns like:
+
 - Timestamp
 - City/Location Name
 - Internet Service Provider
@@ -230,7 +242,8 @@ The Google Sheets will have columns like:
 To match the expected CSV format, you need to:
 
 1. **Add/Rename Headers** - Ensure the first row has these exact headers:
-   ```
+
+   ```bash
    id,city,provider,latitude,longitude,download,upload,latency,jitter,packet_loss,timestamp
    ```
 
@@ -294,7 +307,7 @@ python main.py --importar connectivity_data.csv --map --analyze --relatorio html
 
 ## Complete Workflow Example
 
-```
+```   bash
 1. Create Google Form → 2. Share with users → 3. Collect responses → 
 4. Export to Google Sheets → 5. Format columns → 6. Download CSV → 
 7. Import to mapper → 8. Generate reports/maps
@@ -308,7 +321,7 @@ python main.py --importar connectivity_data.csv --map --analyze --relatorio html
 
 ### Form Structure
 
-```
+```   bash
 ═══════════════════════════════════════════════════
    RURAL CONNECTIVITY DATA COLLECTION FORM
 ═══════════════════════════════════════════════════
@@ -368,22 +381,30 @@ provide your location coordinates from Google Maps.
 ### Common Issues
 
 **Issue:** Coordinates not validating
+
 - **Solution:** Ensure latitude is between -90 and 90, longitude between -180 and 180
 - Use decimal format (e.g., -23.5505, not degrees/minutes/seconds)
 
 **Issue:** CSV import fails
-- **Solution:** Verify column headers match exactly: `id,city,provider,latitude,longitude,download,upload,latency,jitter,packet_loss,timestamp`
+
+- **Solution:** Verify column headers match exactly
+
+`id,city,provider,latitude,longitude,download,upload,latency,jitter,packet_loss,timestamp`
+
 - Check for special characters or extra spaces in headers
 
 **Issue:** Missing required fields
+
 - **Solution:** Ensure all required fields are filled in Google Form
 - Set fields as "Required" in Google Forms settings
 
 **Issue:** Invalid timestamp format
+
 - **Solution:** Convert timestamp to ISO 8601 format: `YYYY-MM-DDTHH:MM:SS`
 - Example: `2026-01-15T10:30:00`
 
 **Issue:** Duplicate entries
+
 - **Solution:** Enable "Limit to 1 response" in form settings
 - Manually remove duplicates in Google Sheets before export
 
@@ -420,6 +441,7 @@ Get notified when someone submits the form:
 ### Automated Import (Advanced)
 
 For advanced users, consider:
+
 - Google Sheets API to fetch data programmatically
 - Apps Script to auto-format responses
 - Scheduled exports using Google Apps Script triggers
@@ -435,6 +457,7 @@ For testing purposes, we've included a sample Google Forms export CSV file:
 This file contains 6 sample connectivity points from different Brazilian cities demonstrating the proper format for Google Forms exports. You can use this as a reference for formatting your own exports.
 
 **Test the import:**
+
 ```bash
 python main.py --importar docs/sample_google_forms_export.csv
 python main.py --map --relatorio html
@@ -454,7 +477,7 @@ python main.py --map --relatorio html
 ## Comparison: Google Forms vs. Direct CSV vs. API
 
 | Feature | Google Forms | Direct CSV | API (Future) |
-|---------|-------------|------------|--------------|
+| ------- | ----------- | ---------- | ------------ |
 | **Technical Skills** | None required | Basic file editing | Programming knowledge |
 | **User Interface** | Web form | Text editor/Excel | API client |
 | **Mobile Friendly** | ✅ Excellent | ❌ Difficult | ⚠️ Depends on client |

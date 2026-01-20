@@ -10,8 +10,10 @@ The Rural Connectivity Mapper now supports **crowdsourced data collection**, all
 
 **Perfect for:** Mobile users, quick submissions, non-technical users
 
-#### Steps:
+#### Steps
+
 1. **Start the crowdsourcing server:**
+
    ```bash
    python crowdsource_server.py
    ```
@@ -28,7 +30,8 @@ The Rural Connectivity Mapper now supports **crowdsourced data collection**, all
    - Enter the results (download, upload, latency)
    - Click "📤 Enviar Dados"
 
-#### Features:
+#### Features
+
 - ✅ Mobile-responsive design
 - ✅ Automatic geolocation (with permission)
 - ✅ Real-time validation
@@ -41,19 +44,22 @@ The Rural Connectivity Mapper now supports **crowdsourced data collection**, all
 
 **Perfect for:** Terminal users, automation, batch submissions
 
-#### Interactive Mode:
+#### Interactive Mode
+
 ```bash
 python submit_speedtest.py
 ```
 
 The script will guide you through each step:
+
 - Auto-detect location (optional)
 - Select provider from list
 - Option to run automatic speedtest
 - Manual entry of speedtest results
 - Review and confirm before submission
 
-#### Direct Submission:
+#### Direct Submission
+
 ```bash
 python submit_speedtest.py \
   --latitude -23.5505 \
@@ -66,12 +72,14 @@ python submit_speedtest.py \
   --packet-loss 0.5
 ```
 
-#### Auto Speedtest:
+#### Auto Speedtest
+
 ```bash
 python submit_speedtest.py --auto-speedtest --provider Starlink
 ```
 
 This will:
+
 1. Auto-detect your location via IP
 2. Run a real speedtest
 3. Submit the results automatically
@@ -82,13 +90,14 @@ This will:
 
 **Perfect for:** Organizations, bulk data collection, offline data entry
 
-#### Using the Web Interface:
+#### Using the Web Interface
 
 1. **Download the CSV template:**
    - Visit http://localhost:5000/api/template
    - Or use curl: `curl -O http://localhost:5000/api/template`
 
 2. **Fill in your data:**
+
    ```csv
    latitude,longitude,provider,download,upload,latency,jitter,packet_loss,timestamp
    -23.5505,-46.6333,Starlink,150.0,20.0,30.0,5.0,0.5,2026-01-15T10:30:00
@@ -96,12 +105,14 @@ This will:
    ```
 
 3. **Upload via web form or API:**
+
    ```bash
    curl -X POST http://localhost:5000/api/upload-csv \
      -F "file=@my_speedtests.csv"
    ```
 
-#### Using the CLI (existing functionality):
+#### Using the CLI (existing functionality)
+
 ```bash
 python main.py --importar my_speedtests.csv
 ```
@@ -111,6 +122,7 @@ python main.py --importar my_speedtests.csv
 ## 🔌 API Reference
 
 ### Submit Single Data Point
+
 ```bash
 POST /api/submit
 Content-Type: application/json
@@ -128,6 +140,7 @@ Content-Type: application/json
 ```
 
 **Response:**
+
 ```json
 {
   "success": true,
@@ -139,6 +152,7 @@ Content-Type: application/json
 ```
 
 ### Upload CSV File
+
 ```bash
 POST /api/upload-csv
 Content-Type: multipart/form-data
@@ -147,6 +161,7 @@ file: <CSV file>
 ```
 
 **Response:**
+
 ```json
 {
   "success": true,
@@ -157,6 +172,7 @@ file: <CSV file>
 ```
 
 ### Download CSV Template
+
 ```bash
 GET /api/template
 ```
@@ -164,11 +180,13 @@ GET /api/template
 Returns a pre-formatted CSV file with example data.
 
 ### Health Check
+
 ```bash
 GET /health
 ```
 
 **Response:**
+
 ```json
 {
   "status": "healthy",
@@ -181,6 +199,7 @@ GET /health
 ## 📊 Data Format
 
 ### Required Fields
+
 - `latitude` (float): -90 to 90
 - `longitude` (float): -180 to 180  
 - `provider` (string): Internet service provider name
@@ -189,12 +208,15 @@ GET /health
 - `latency` (float): Latency/ping in milliseconds
 
 ### Optional Fields
+
 - `jitter` (float): Jitter in milliseconds (default: 0)
 - `packet_loss` (float): Packet loss percentage (default: 0)
 - `timestamp` (string): ISO 8601 format (auto-generated if omitted)
 
 ### Provider Options
+
 Recommended providers:
+
 - Starlink
 - Viasat
 - HughesNet
@@ -209,15 +231,18 @@ Recommended providers:
 ## 🚀 Deployment for Public Access
 
 ### Local Network (Home/Office)
+
 ```bash
 # Start server on all network interfaces
 python crowdsource_server.py
 ```
 
 Access from any device on your network at:
+
 - http://YOUR_LOCAL_IP:5000
 
 Find your IP:
+
 - Windows: `ipconfig`
 - Linux/Mac: `ifconfig` or `ip addr`
 
@@ -226,6 +251,7 @@ Find your IP:
 #### Using a Cloud Provider (Recommended for public access)
 
 **Option 1: Deploy to Heroku**
+
 ```bash
 # Install Heroku CLI, then:
 heroku create rural-connectivity-mapper
@@ -233,6 +259,7 @@ git push heroku main
 ```
 
 **Option 2: Deploy to Google Cloud Run**
+
 ```bash
 gcloud run deploy rural-connectivity-mapper \
   --source . \
@@ -242,6 +269,7 @@ gcloud run deploy rural-connectivity-mapper \
 ```
 
 **Option 3: Deploy to AWS Elastic Beanstalk**
+
 ```bash
 eb init -p python-3.8 rural-connectivity-mapper
 eb create rural-connectivity-env
@@ -269,15 +297,17 @@ server {
 
 ## 🔒 Security Considerations
 
-### For Public Deployment:
+### For Public Deployment
 
 1. **Enable rate limiting:**
+
    ```python
    from flask_limiter import Limiter
    limiter = Limiter(app, default_limits=["100 per hour"])
    ```
 
 2. **Add CORS headers** (if needed):
+
    ```python
    from flask_cors import CORS
    CORS(app)
@@ -320,6 +350,7 @@ server {
 ### Expected Growth
 
 Starting with 5 cities, crowdsourcing can:
+
 - **Week 1:** 50-100 new data points
 - **Month 1:** 500-1000 data points
 - **Month 3:** 5000+ data points across all Brazilian states
@@ -330,6 +361,8 @@ Starting with 5 cities, crowdsourcing can:
 ## 🧪 Testing
 
 ### Test the Web Form
+
+```bash
 1. Start server: `python crowdsource_server.py`
 2. Navigate to http://localhost:5000
 3. Fill in test data
@@ -346,6 +379,7 @@ python submit_speedtest.py -lat -23.5505 -lon -46.6333 \
 ```
 
 ### Test CSV Upload
+
 ```bash
 # Download template
 curl http://localhost:5000/api/template -o test.csv
@@ -355,6 +389,7 @@ curl -X POST http://localhost:5000/api/upload-csv -F "file=@test.csv"
 ```
 
 ### Test API Endpoints
+
 ```bash
 # Health check
 curl http://localhost:5000/health
@@ -403,19 +438,23 @@ const submitSpeedtest = async (data) => {
 ## 🆘 Troubleshooting
 
 ### Server won't start
+
 - Check if port 5000 is available: `lsof -i :5000`
 - Install Flask: `pip install flask>=3.0.0`
 
 ### Form doesn't show location button
+
 - Enable location services in browser settings
 - Must use HTTPS for production (HTTP only works on localhost)
 
 ### CSV upload fails
+
 - Verify CSV has required columns
 - Check for encoding issues (must be UTF-8)
 - Validate numeric values (no text in number fields)
 
 ### Auto-speedtest not working
+
 - Install speedtest-cli: `pip install speedtest-cli`
 - Check internet connection
 - Some networks block speedtest servers

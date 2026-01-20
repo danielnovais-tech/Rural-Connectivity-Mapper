@@ -1,8 +1,13 @@
 """Tests for the Flask web application."""
 
+import sys
+from pathlib import Path
+
+# Add parent directory to path for imports
+sys.path.insert(0, str(Path(__file__).parent.parent))
+
 import json
 import pytest
-from pathlib import Path
 
 from app import app
 from src.utils import save_data
