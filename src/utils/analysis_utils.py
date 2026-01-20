@@ -5,8 +5,15 @@ from typing import List, Dict, Tuple
 from datetime import datetime
 from collections import defaultdict
 import numpy as np
-from sklearn.cluster import KMeans
-from sklearn.preprocessing import StandardScaler
+
+# Optional sklearn imports - gracefully degrade if not available
+try:
+    from sklearn.cluster import KMeans
+    from sklearn.preprocessing import StandardScaler
+
+    SKLEARN_AVAILABLE = True
+except Exception:  # pragma: no cover
+    SKLEARN_AVAILABLE = False
 
 from .i18n_utils import get_translation
 
@@ -179,6 +186,17 @@ def cluster_connectivity_points(data: List[Dict], n_clusters: int = 3) -> Dict:
     Returns:
         Dict: Clustering results with cluster assignments and centroids
     """
+    if not SKLEARN_AVAILABLE:
+        logger.warning("Clustering not available - sklearn not installed")
+        return {
+            'clusters': {},
+            'cluster_labels': [],
+            'cluster_stats': {},
+            'n_clusters': 0,
+            'features_used': [],
+            'error': 'sklearn not available'
+        }
+    
     try:
         logger.info(f"Clustering {len(data)} connectivity points into {n_clusters} clusters...")
         
@@ -411,7 +429,17 @@ def forecast_quality_scores(data: List[Dict], forecast_horizon: int = 5) -> Dict
     
     except Exception as e:
         logger.error(f"Error forecasting quality scores: {e}")
-=======
+        return {
+            'forecasts': [],
+            'baseline_score': 0.0,
+            'trend': 'unknown',
+            'confidence': 'low',
+            'historical_mean': 0.0,
+            'historical_std': 0.0,
+            'forecast_horizon': 0
+        }
+
+
 def compare_providers(data: List[Dict]) -> Dict:
     """Compare ISP performance with detailed metrics analysis.
     

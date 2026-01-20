@@ -56,6 +56,45 @@ def validate_coordinates(latitude: float, longitude: float) -> bool:
         return False
 
 
+def _validate_speed_field(field: str, value: Any, check_bounds: bool) -> bool:
+    """Validate a single speed test field.
+    
+    Args:
+        field: Name of the field being validated
+        value: Value to validate
+        check_bounds: If True, validate values are within realistic bounds
+        
+    Returns:
+        bool: True if field is valid, False otherwise
+    """
+    if not isinstance(value, (int, float)):
+        logger.warning(f"Field {field} must be numeric, got {type(value)}")
+        return False
+    
+    if value < 0:
+        logger.warning(f"Field {field} must be positive, got {value}")
+        return False
+    
+    # Check realistic bounds if enabled
+    if check_bounds and field in SPEED_TEST_BOUNDS:
+        min_val, max_val = SPEED_TEST_BOUNDS[field]
+        if value < min_val or value > max_val:
+            logger.warning(
+                f"Field {field} value {value} is outside realistic bounds "
+                f"[{min_val}, {max_val}]"
+            )
+            return False
+    
+    return True
+
+
+def _get_speed_test_data(speed_test: Any) -> Dict[str, Any]:
+    """Extract data from SpeedTest object or dict."""
+    if hasattr(speed_test, 'to_dict'):
+        return speed_test.to_dict()
+    return speed_test
+
+
 def validate_speed_test(speed_test: Any, check_bounds: bool = True) -> bool:
     """Validate speed test measurements.
     
@@ -67,33 +106,7 @@ def validate_speed_test(speed_test: Any, check_bounds: bool = True) -> bool:
         bool: True if speed test data is valid, False otherwise
     """
     try:
-        # Handle both SpeedTest objects and dicts
-        if hasattr(speed_test, 'to_dict'):
-            data = speed_test.to_dict()
-        else:
-            data = speed_test
-        
-        # Helper function to validate a single field
-        def validate_field(field: str, value: Any, required: bool = True) -> bool:
-            if not isinstance(value, (int, float)):
-                logger.warning(f"Field {field} must be numeric, got {type(value)}")
-                return False
-            
-            if value < 0:
-                logger.warning(f"Field {field} must be positive, got {value}")
-                return False
-            
-            # Check realistic bounds if enabled
-            if check_bounds and field in SPEED_TEST_BOUNDS:
-                min_val, max_val = SPEED_TEST_BOUNDS[field]
-                if value < min_val or value > max_val:
-                    logger.warning(
-                        f"Field {field} value {value} is outside realistic bounds "
-                        f"[{min_val}, {max_val}]"
-                    )
-                    return False
-            
-            return True
+        data = _get_speed_test_data(speed_test)
         
         # Check required fields exist and are valid
         required_fields = ['download', 'upload', 'latency']
@@ -102,15 +115,14 @@ def validate_speed_test(speed_test: Any, check_bounds: bool = True) -> bool:
                 logger.warning(f"Missing required field: {field}")
                 return False
             
-            if not validate_field(field, data[field], required=True):
+            if not _validate_speed_field(field, data[field], check_bounds):
                 return False
         
         # Validate optional fields if present
         optional_fields = ['jitter', 'packet_loss', 'stability']
         for field in optional_fields:
-            if field in data:
-                if not validate_field(field, data[field], required=False):
-                    return False
+            if field in data and not _validate_speed_field(field, data[field], check_bounds):
+                return False
         
         return True
     except Exception as e:
@@ -147,6 +159,59 @@ def validate_provider(provider: str, country_code: Optional[str] = None) -> bool
     return True
 
 
+def _validate_numeric_field_value(field: str, value: float, row_num: int) -> Tuple[bool, str]:
+    """Validate a numeric field value against its constraints.
+    
+    Args:
+        field: Name of the field
+        value: Numeric value to validate
+        row_num: Row number for error reporting
+        
+    Returns:
+        Tuple[bool, str]: (is_valid, error_message)
+    """
+    if field == 'latitude':
+        if value < -90 or value > 90:
+            return False, f"Row {row_num}: Invalid latitude {value} (must be between -90 and 90)"
+    elif field == 'longitude':
+        if value < -180 or value > 180:
+            return False, f"Row {row_num}: Invalid longitude {value} (must be between -180 and 180)"
+    elif field in SPEED_TEST_BOUNDS:
+        min_val, max_val = SPEED_TEST_BOUNDS[field]
+        if value < min_val or value > max_val:
+            return False, f"Row {row_num}: Invalid {field} {value} (must be between {min_val} and {max_val})"
+    
+    return True, ""
+
+
+def _validate_numeric_fields(row: Dict[str, str], row_num: int) -> Tuple[bool, str]:
+    """Validate all numeric fields in a CSV row.
+    
+    Args:
+        row: Dictionary representing a CSV row
+        row_num: Row number for error reporting
+        
+    Returns:
+        Tuple[bool, str]: (is_valid, error_message)
+    """
+    numeric_fields = ['latitude', 'longitude', 'download', 'upload', 'latency', 'jitter', 'packet_loss']
+    
+    for field in numeric_fields:
+        if field in row and row[field]:
+            try:
+                value = float(row[field])
+                is_valid, error_msg = _validate_numeric_field_value(field, value, row_num)
+                if not is_valid:
+                    return False, error_msg
+            except (ValueError, TypeError) as e:
+                return False, (
+                    f"Row {row_num}: Invalid numeric value for {field}: {row[field]} "
+                    f"(error: {e})"
+                )
+    
+    return True, ""
+
+
 def validate_csv_row(row: Dict[str, str], row_num: int) -> Tuple[bool, str]:
     """Validate a CSV row for required fields and data types.
     
@@ -164,30 +229,10 @@ def validate_csv_row(row: Dict[str, str], row_num: int) -> Tuple[bool, str]:
     if missing_fields:
         return False, f"Row {row_num}: Missing required fields: {', '.join(missing_fields)}"
     
-    # Validate numeric fields can be converted to float
-    numeric_fields = ['latitude', 'longitude', 'download', 'upload', 'latency', 'jitter', 'packet_loss']
-    for field in numeric_fields:
-        if field in row and row[field]:
-            try:
-                value = float(row[field])
-                
-                # Validate specific field ranges
-                if field == 'latitude':
-                    if value < -90 or value > 90:
-                        return False, f"Row {row_num}: Invalid latitude {value} (must be between -90 and 90)"
-                elif field == 'longitude':
-                    if value < -180 or value > 180:
-                        return False, f"Row {row_num}: Invalid longitude {value} (must be between -180 and 180)"
-                elif field in SPEED_TEST_BOUNDS:
-                    min_val, max_val = SPEED_TEST_BOUNDS[field]
-                    if value < min_val or value > max_val:
-                        return False, f"Row {row_num}: Invalid {field} {value} (must be between {min_val} and {max_val})"
-                        
-            except (ValueError, TypeError) as e:
-                return False, (
-                    f"Row {row_num}: Invalid numeric value for {field}: {row[field]} "
-                    f"(error: {e})"
-                )
+    # Validate numeric fields
+    is_valid, error_msg = _validate_numeric_fields(row, row_num)
+    if not is_valid:
+        return False, error_msg
     
     # Validate provider
     if row['provider'] not in KNOWN_PROVIDERS:

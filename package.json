@@ -1,0 +1,15 @@
+{
+  "devDependencies": {
+    "@types/react": "^19.2.8",
+    "@types/react-dom": "^19.2.3",
+    "ink": "^6.6.0",
+    "install": "^0.13.0",
+    "npm": "^11.7.0",
+    "vitest": "^4.0.17"
+  },
+  "dependencies": {
+    "ink-text-input": "^6.0.0",
+    "react": "^19.2.3",
+    "react-dom": "^19.2.3"
+  }
+}

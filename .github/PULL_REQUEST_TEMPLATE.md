@@ -1,14 +1,11 @@
 ## Description
 <!-- Provide a concise summary of the changes in this PR -->
 
-
 ## Impact
 <!-- Describe the scope and nature of changes (e.g., new feature, bug fix, refactor, documentation) -->
 
-
 ## User Benefit
 <!-- Explain how this change benefits end users of the Rural Connectivity Mapper -->
-
 
 ## Business Value
 <!-- Describe the business value, such as:
@@ -19,7 +16,6 @@
 - Strategic advantage
 -->
 
-
 ## Roadmap Alignment
 <!-- Indicate how this PR aligns with the project roadmap:
 - [ ] v1.1.0 (Q1 2026) - Real-time speedtest, SQLite, CI/CD, Docker
@@ -27,7 +23,6 @@
 - [ ] v2.0.0 (H2 2026) - Multi-language, mobile app, advanced analytics, Starlink API
 - [ ] Not on roadmap (explain why this is still important)
 -->
-
 
 ## Type of Change
 <!-- Mark the relevant options with an 'x' -->
@@ -40,13 +35,11 @@
 - [ ] Test coverage improvement
 - [ ] Dependency update
 
-
 ## Testing
 <!-- Describe the tests you ran to verify your changes -->
 - [ ] I have run existing tests (`pytest tests/ -v`)
 - [ ] I have added new tests for my changes
 - [ ] All tests pass locally
-
 
 ## Checklist
 <!-- Mark completed items with an 'x' -->
@@ -57,15 +50,12 @@
 - [ ] I have checked my code for potential security vulnerabilities
 - [ ] I have verified that my changes work as expected
 
-
 ## Related Issues
 <!-- Link any related issues using #issue_number -->
 Closes #
 
-
 ## Screenshots (if applicable)
 <!-- Add screenshots for UI changes or visual outputs -->
-
 
 ## Additional Context
 <!-- Add any other context about the PR here -->

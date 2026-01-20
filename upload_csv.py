@@ -136,25 +136,17 @@ def validate_optional_numeric(value: str, field_name: str) -> tuple[bool, str]:
         return False, f"Invalid {field_name}: '{value}'. Must be a number"
 
 
-def validate_row(row: dict[str, str], row_num: int) -> tuple[bool, list[str]]:
-    """Validate a single CSV row.
+def validate_fields(row: dict[str, str], row_num: int) -> list[str]:
+    """Validate all fields in a row.
 
     Args:
         row: Dictionary representing a CSV row
         row_num: Row number for error reporting
 
     Returns:
-        Tuple of (is_valid, list_of_errors)
+        List of validation errors
     """
     errors: list[str] = []
-
-    # Check required fields exist
-    for field in REQUIRED_FIELDS:
-        if field not in row or not row[field]:
-            errors.append(f"Row {row_num}: Missing required field '{field}'")
-
-    if errors:
-        return False, errors
 
     # Validate timestamp
     is_valid, error = validate_timestamp(row['timestamp'])
@@ -188,7 +180,65 @@ def validate_row(row: dict[str, str], row_num: int) -> tuple[bool, list[str]]:
             if not is_valid:
                 errors.append(f"Row {row_num}: {error}")
 
+    return errors
+
+
+def validate_row(row: dict[str, str], row_num: int) -> tuple[bool, list[str]]:
+    """Validate a single CSV row.
+
+    Args:
+        row: Dictionary representing a CSV row
+        row_num: Row number for error reporting
+
+    Returns:
+        Tuple of (is_valid, list_of_errors)
+    """
+    errors: list[str] = []
+
+    # Check required fields exist
+    for field in REQUIRED_FIELDS:
+        if field not in row or not row[field]:
+            errors.append(f"Row {row_num}: Missing required field '{field}'")
+
+    if errors:
+        return False, errors
+
+    # Validate all fields
+    errors = validate_fields(row, row_num)
+
     return len(errors) == 0, errors
+
+
+def process_csv_row(row: dict[str, str], row_num: int, stats: dict[str, int | dict[str, int]], 
+                    valid_rows: list[dict[str, str]], all_errors: list[str]) -> None:
+    """Process a single CSV row and update statistics.
+
+    Args:
+        row: Dictionary representing a CSV row
+        row_num: Row number for error reporting
+        stats: Statistics dictionary to update
+        valid_rows: List to append valid rows to
+        all_errors: List to append errors to
+    """
+    assert isinstance(stats['total_rows'], int)
+    stats['total_rows'] += 1
+    is_valid, errors = validate_row(row, row_num)
+
+    if is_valid:
+        # Track missing optional fields
+        for field in OPTIONAL_FIELDS:
+            if field not in row or not row[field]:
+                assert isinstance(stats['missing_optional_fields'], dict)
+                stats['missing_optional_fields'][field] = \
+                    stats['missing_optional_fields'].get(field, 0) + 1
+
+        valid_rows.append(row)
+        assert isinstance(stats['valid_rows'], int)
+        stats['valid_rows'] += 1
+    else:
+        all_errors.extend(errors)
+        assert isinstance(stats['invalid_rows'], int)
+        stats['invalid_rows'] += 1
 
 
 def load_and_validate_csv(csv_path: str) -> tuple[list[dict[str, str]], list[str], dict[str, int | dict[str, int]]]:
@@ -228,22 +278,7 @@ def load_and_validate_csv(csv_path: str) -> tuple[list[dict[str, str]], list[str
 
             # Process each row
             for row_num, row in enumerate(reader, start=2):
-                stats['total_rows'] += 1
-
-                is_valid, errors = validate_row(row, row_num)
-
-                if is_valid:
-                    # Track missing optional fields
-                    for field in OPTIONAL_FIELDS:
-                        if field not in row or not row[field]:
-                            stats['missing_optional_fields'][field] = \
-                                stats['missing_optional_fields'].get(field, 0) + 1
-
-                    valid_rows.append(row)
-                    stats['valid_rows'] += 1
-                else:
-                    all_errors.extend(errors)
-                    stats['invalid_rows'] += 1
+                process_csv_row(row, row_num, stats, valid_rows, all_errors)
 
         return valid_rows, all_errors, stats
 

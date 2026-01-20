@@ -150,13 +150,13 @@ def test_convert_to_json():
     
     assert len(json_data) == 1
     assert json_data[0]['timestamp'] == '2026-01-15T10:30:00'
-    assert json_data[0]['latitude'] == -23.5505
-    assert json_data[0]['longitude'] == -46.6333
-    assert json_data[0]['download'] == 85.2
-    assert json_data[0]['upload'] == 12.5
+    assert json_data[0]['latitude'] == pytest.approx(-23.5505)
+    assert json_data[0]['longitude'] == pytest.approx(-46.6333)
+    assert json_data[0]['download'] == pytest.approx(85.2)
+    assert json_data[0]['upload'] == pytest.approx(12.5)
     assert json_data[0]['id'] == '1'
     assert json_data[0]['city'] == 'São Paulo'
-    assert json_data[0]['latency'] == 45.3
+    assert json_data[0]['latency'] == pytest.approx(45.3)
 
 
 def test_convert_to_json_minimal():
@@ -244,7 +244,7 @@ def test_load_and_validate_csv_missing_required_columns(tmp_path):
             'longitude': '-46.6333'
         })
     
-    valid_rows, errors, stats = load_and_validate_csv(str(csv_file))
+    valid_rows, errors, _ = load_and_validate_csv(str(csv_file))
     
     assert len(valid_rows) == 0
     assert len(errors) > 0
@@ -253,7 +253,7 @@ def test_load_and_validate_csv_missing_required_columns(tmp_path):
 
 def test_load_and_validate_csv_file_not_found():
     """Test loading a non-existent CSV file."""
-    valid_rows, errors, stats = load_and_validate_csv('/nonexistent/file.csv')
+    valid_rows, errors, _ = load_and_validate_csv('/nonexistent/file.csv')
     
     assert len(valid_rows) == 0
     assert len(errors) > 0

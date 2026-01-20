@@ -58,7 +58,7 @@ def test_geocoding_address_invalid_input():
     assert coords is None
     
     # None address
-    coords = geocode_address(None)
+    coords = geocode_address(None)  # type: ignore
     assert coords is None
 
 

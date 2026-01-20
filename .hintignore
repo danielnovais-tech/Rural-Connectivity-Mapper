@@ -1,0 +1,15 @@
+# Ignore dependencies / vendored content
+
+**/node_modules/**
+
+## Ignore Python virtual envs
+
+**/.venv/**
+**/`.venv-*`/**
+
+## Ignore typical build outputs
+
+**/dist/**
+**/build/**
+**/.pytest_cache/**
+**/`__pycache__`/**

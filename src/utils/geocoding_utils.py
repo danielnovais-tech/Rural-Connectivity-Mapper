@@ -2,12 +2,10 @@
 
 import logging
 import time
-from typing import Optional, Tuple
+from typing import Optional, Tuple, Union, Any, cast
 from geopy.geocoders import Nominatim
-
+from geopy.location import Location
 from geopy.exc import GeocoderTimedOut, GeocoderServiceError, GeocoderUnavailable, GeocoderQuotaExceeded
-
-from geopy.exc import GeocoderTimedOut, GeocoderServiceError
 from .config_utils import get_language, get_default_country
 
 
@@ -19,7 +17,6 @@ geolocator = Nominatim(user_agent="rural-connectivity-mapper-2026")
 # Rate limiting configuration (Nominatim allows 1 request per second)
 RATE_LIMIT_DELAY = 1.0  # seconds between requests
 _last_request_time = 0
-
 
 
 def _wait_for_rate_limit():
@@ -36,159 +33,127 @@ def _wait_for_rate_limit():
     _last_request_time = time.time()
 
 
-def geocode_coordinates(
-    latitude: float,
-    longitude: float,
-    timeout: int = 10,
-    max_retries: int = 3
-
-def geocode_coordinates(
-    latitude: float, 
-    longitude: float, 
-    timeout: int = 10,
-    country_code: Optional[str] = None
-
-) -> Optional[str]:
-    """Convert coordinates to address using reverse geocoding.
+def _validate_coordinates(latitude: float, longitude: float) -> bool:
+    """Validate coordinate values.
     
     Args:
         latitude: Latitude coordinate
         longitude: Longitude coordinate
-        timeout: Request timeout in seconds (default: 10)
+        
+    Returns:
+        bool: True if valid, False otherwise
+    """
+    try:
+        lat = float(latitude)
+        lon = float(longitude)
+        
+        if not (-90 <= lat <= 90):
+            logger.error(f"Invalid latitude: {lat} (must be between -90 and 90)")
+            return False
+        
+        if not (-180 <= lon <= 180):
+            logger.error(f"Invalid longitude: {lon} (must be between -180 and 180)")
+            return False
+        
+        return True
+    except (ValueError, TypeError) as e:
+        logger.error(f"Invalid coordinate values: {e}")
+        return False
 
-        max_retries: Maximum number of retry attempts (default: 3)
 
-        country_code: ISO country code for language preference (default: uses default country)
-
+def geocode_coordinates(
+    latitude: float,
+    longitude: float,
+    timeout: Any = 10,
+    max_retries: int = 3
+) -> Optional[str]:
+    """Convert coordinates to a human-readable address (reverse geocoding).
+    
+    Args:
+        latitude: Latitude coordinate
+        longitude: Longitude coordinate
+        timeout: Request timeout in seconds
+        max_retries: Maximum number of retry attempts
         
     Returns:
         Optional[str]: Address string if successful, None otherwise
     """
-    # Validate coordinates first
-    try:
-
-        lat = float(latitude)
-        lon = float(longitude)
-        if lat < -90 or lat > 90 or lon < -180 or lon > 180:
-            logger.error(f"Invalid coordinates: ({latitude}, {longitude})")
-            return None
-    except (ValueError, TypeError) as e:
-        logger.error(f"Invalid coordinate types: {e}")
+    if not _validate_coordinates(latitude, longitude):
         return None
+    
+    coords = f"{latitude}, {longitude}"
     
     for attempt in range(max_retries):
         try:
-            logger.debug(f"Geocoding coordinates: ({latitude}, {longitude}) - Attempt {attempt + 1}/{max_retries}")
-            
-            # Respect rate limiting
             _wait_for_rate_limit()
             
-            location = geolocator.reverse(
-                f"{latitude}, {longitude}",
+            location = cast(Optional[Location], geolocator.reverse(
+                coords,
                 timeout=timeout,
-                language='pt'
-            )
+                exactly_one=True
+            ))
             
-            if location:
-                address = location.address
-                logger.info(f"Geocoded to: {address}")
-                return address
+            if location and location.address:
+                logger.info(f"Reverse geocoded {coords} to: {location.address}")
+                return location.address
             else:
-                logger.warning(f"No address found for coordinates ({latitude}, {longitude})")
+                logger.warning(f"No address found for coordinates: {coords}")
                 return None
-
-        logger.debug(f"Geocoding coordinates: ({latitude}, {longitude})")
-        
-        # Determine language from country code
-        if country_code is None:
-            country_code = get_default_country()
-        language = get_language(country_code)
-        
-        location = geolocator.reverse(
-            f"{latitude}, {longitude}",
-            timeout=timeout,
-            language=language
-        )
-
-        
+                
         except GeocoderTimedOut:
-            logger.warning(f"Geocoding timeout for coordinates ({latitude}, {longitude}) - Attempt {attempt + 1}/{max_retries}")
             if attempt < max_retries - 1:
-                # Exponential backoff
-                wait_time = 2 ** attempt
-                logger.debug(f"Retrying in {wait_time} seconds...")
-                time.sleep(wait_time)
+                logger.warning(f"Geocoding timeout for {coords}, retrying... (attempt {attempt + 1}/{max_retries})")
+                time.sleep(2 ** attempt)  # Exponential backoff
+                continue
             else:
-                logger.error(f"Geocoding failed after {max_retries} attempts due to timeout")
+                logger.error(f"Geocoding timeout for {coords} after {max_retries} attempts")
                 return None
                 
         except GeocoderQuotaExceeded:
-            logger.error(f"Geocoding quota exceeded. Please try again later.")
+            logger.error(f"Geocoding quota exceeded for {coords}")
             return None
             
-        except GeocoderUnavailable:
-            logger.warning(f"Geocoding service unavailable - Attempt {attempt + 1}/{max_retries}")
-            if attempt < max_retries - 1:
-                wait_time = 2 ** attempt
-                logger.debug(f"Retrying in {wait_time} seconds...")
-                time.sleep(wait_time)
-            else:
-                logger.error(f"Geocoding service unavailable after {max_retries} attempts")
-                return None
-                
-        except GeocoderServiceError as e:
-            logger.error(f"Geocoder service error: {e}")
+        except (GeocoderServiceError, GeocoderUnavailable) as e:
+            logger.error(f"Geocoding service error for {coords}: {e}")
             return None
             
         except Exception as e:
-            logger.error(f"Unexpected error geocoding coordinates: {e}")
+            logger.error(f"Unexpected error during reverse geocoding {coords}: {e}")
             return None
     
     return None
 
 
 def geocode_address(
-
     address: str,
-    timeout: int = 10,
+    timeout: Any = 10,
     max_retries: int = 3
-
-    address: str, 
-    timeout: int = 10,
-    country_code: Optional[str] = None
-
 ) -> Optional[Tuple[float, float]]:
-    """Convert address to coordinates using forward geocoding.
+    """Convert an address to coordinates (forward geocoding).
     
     Args:
         address: Address string to geocode
-        timeout: Request timeout in seconds (default: 10)
-
-        max_retries: Maximum number of retry attempts (default: 3)
-
-        country_code: ISO country code (optional, for future enhancements)
-
+        timeout: Request timeout in seconds
+        max_retries: Maximum number of retry attempts
         
     Returns:
         Optional[Tuple[float, float]]: (latitude, longitude) if successful, None otherwise
-        
-    Note:
-        The country_code parameter is currently used for API consistency but not 
-        applied to Nominatim's geocode method, which primarily uses address content
-        to determine location.
     """
-    if not address or not isinstance(address, str):
-        logger.error(f"Invalid address: {address}")
+    if not address or not address.strip():
+        logger.error("Empty address provided for geocoding")
         return None
+    
+    address = address.strip()
     
     for attempt in range(max_retries):
         try:
-            logger.debug(f"Geocoding address: {address} - Attempt {attempt + 1}/{max_retries}")
-            
-            # Respect rate limiting
             _wait_for_rate_limit()
             
-            location = geolocator.geocode(address, timeout=timeout)
+            location = cast(Optional[Location], geolocator.geocode(
+                address,
+                timeout=timeout,
+                exactly_one=True
+            ))
             
             if location:
                 coords = (location.latitude, location.longitude)
@@ -197,38 +162,32 @@ def geocode_address(
             else:
                 logger.warning(f"No coordinates found for address: {address}")
                 return None
-        
+                
         except GeocoderTimedOut:
-            logger.warning(f"Geocoding timeout for address: {address} - Attempt {attempt + 1}/{max_retries}")
             if attempt < max_retries - 1:
-                # Exponential backoff
-                wait_time = 2 ** attempt
-                logger.debug(f"Retrying in {wait_time} seconds...")
-                time.sleep(wait_time)
+                logger.warning(f"Geocoding timeout for '{address}', retrying... (attempt {attempt + 1}/{max_retries})")
+                time.sleep(2 ** attempt)  # Exponential backoff
+                continue
             else:
-                logger.error(f"Geocoding failed after {max_retries} attempts due to timeout")
+                logger.error(f"Geocoding timeout for '{address}' after {max_retries} attempts")
                 return None
                 
         except GeocoderQuotaExceeded:
-            logger.error(f"Geocoding quota exceeded. Please try again later.")
+            logger.error(f"Geocoding quota exceeded for '{address}'")
             return None
             
-        except GeocoderUnavailable:
-            logger.warning(f"Geocoding service unavailable - Attempt {attempt + 1}/{max_retries}")
+        except (GeocoderServiceError, GeocoderUnavailable) as e:
             if attempt < max_retries - 1:
-                wait_time = 2 ** attempt
-                logger.debug(f"Retrying in {wait_time} seconds...")
-                time.sleep(wait_time)
-            else:
-                logger.error(f"Geocoding service unavailable after {max_retries} attempts")
-                return None
-                
-        except GeocoderServiceError as e:
-            logger.error(f"Geocoder service error: {e}")
+                logger.warning(
+                    f"Geocoding service unavailable for '{address}', retrying... (attempt {attempt + 1}/{max_retries})"
+                )
+                time.sleep(2 ** attempt)
+                continue
+            logger.error(f"Geocoding service error for '{address}': {e}")
             return None
             
         except Exception as e:
-            logger.error(f"Unexpected error geocoding address: {e}")
+            logger.error(f"Unexpected error during geocoding '{address}': {e}")
             return None
     
     return None

@@ -92,13 +92,10 @@ __all__ = [
     'simulate_router_impact',
     'generate_map',
     'analyze_temporal_evolution',
-
     'get_starlink_coverage_zones',
     'get_starlink_signal_points',
     'get_coverage_color',
-    'get_coverage_rating'
-
-
+    'get_coverage_rating',
     'fetch_anatel_broadband_data',
     'fetch_anatel_mobile_data',
     'get_anatel_provider_stats',
@@ -111,19 +108,13 @@ __all__ = [
     'get_starlink_coverage_map',
     'get_supported_countries',
     'get_country_config',
-    'get_latam_summary'
-
-
+    'get_latam_summary',
     'predict_improvement_potential',
     'identify_expansion_zones',
     'analyze_starlink_roi',
-    'generate_ml_report'
-
-
+    'generate_ml_report',
     'cluster_connectivity_points',
-    'forecast_quality_scores'
-
-
+    'forecast_quality_scores',
     'load_country_config',
     'get_country_info',
     'get_default_country',
@@ -131,19 +122,12 @@ __all__ = [
     'get_language',
     'get_map_center',
     'get_zoom_level',
-    'list_available_countries'
-
-
+    'list_available_countries',
     'get_translation',
     'get_rating_translation',
-    'get_supported_languages'
-
-    'compare_providers'
+    'get_supported_languages',
+    'compare_providers',
     'export_for_hybrid_simulator',
     'export_for_agrix_boost',
     'export_ecosystem_bundle'
-
-
-
-
 ]

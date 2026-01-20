@@ -189,15 +189,15 @@ def compare_with_competitors(latitude: float, longitude: float) -> Dict:
             },
             'providers': {
                 'starlink': {
-                    'available': starlink_coverage.get('available', False),
-                    'download_mbps': starlink_perf.get('download_mbps', 0),
-                    'upload_mbps': starlink_perf.get('upload_mbps', 0),
-                    'latency_ms': starlink_perf.get('latency_ms', 0),
-                    'monthly_cost_usd': starlink_coverage.get('monthly_cost_usd', 120),
-                    'quality_score': _calculate_provider_score(starlink_perf)
+                    'available': starlink_coverage.get('available', False) if starlink_coverage else False,
+                    'download_mbps': starlink_perf.get('download_mbps', 0) if starlink_perf else 0,
+                    'upload_mbps': starlink_perf.get('upload_mbps', 0) if starlink_perf else 0,
+                    'latency_ms': starlink_perf.get('latency_ms', 0) if starlink_perf else 0,
+                    'monthly_cost_usd': starlink_coverage.get('monthly_cost_usd', 120) if starlink_coverage else 120,
+                    'quality_score': _calculate_provider_score(starlink_perf or {})
                 },
-                'viasat': _get_viasat_data(latitude, longitude),
-                'hughesnet': _get_hughesnet_data(latitude, longitude)
+                'viasat': _get_viasat_data(),
+                'hughesnet': _get_hughesnet_data()
             }
         }
         
@@ -307,13 +307,9 @@ def _get_simulated_availability(latitude: float, longitude: float) -> Dict:
     }
 
 
-def _get_viasat_data(latitude: float, longitude: float) -> Dict:
+def _get_viasat_data() -> Dict:
     """Generate simulated Viasat competitor data.
     
-    Args:
-        latitude: Latitude coordinate
-        longitude: Longitude coordinate
-        
     Returns:
         Dict: Simulated Viasat performance and pricing
     """
@@ -329,13 +325,9 @@ def _get_viasat_data(latitude: float, longitude: float) -> Dict:
     }
 
 
-def _get_hughesnet_data(latitude: float, longitude: float) -> Dict:
+def _get_hughesnet_data() -> Dict:
     """Generate simulated HughesNet competitor data.
     
-    Args:
-        latitude: Latitude coordinate
-        longitude: Longitude coordinate
-        
     Returns:
         Dict: Simulated HughesNet performance and pricing
     """

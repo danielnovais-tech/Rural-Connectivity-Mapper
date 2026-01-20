@@ -1,8 +1,24 @@
 {
+    "python.defaultInterpreterPath": "${workspaceFolder}\\.venv\\Scripts\\python.exe",
     "python.analysis.typeCheckingMode": "basic",
-    "python-envs.defaultEnvManager": "ms-python.python:system",
+    "python-envs.defaultEnvManager": "ms-python.python:venv",
     "python-envs.pythonProjects": [],
     "python.languageServer": "Pylance",
     "git.ignoreLimitWarning": true,
-    "python.REPL.enableREPLSmartSend": false
+    "python.REPL.enableREPLSmartSend": false,
+    "markdown.validate.enabled": true,
+    "search.exclude": {
+        "**/node_modules/**": true,
+        "**/.venv/**": true,
+        "**/.venv-*/**": true,
+        "**/__pycache__/**": true,
+        "**/.pytest_cache/**": true
+    },
+    "files.watcherExclude": {
+        "**/node_modules/**": true,
+        "**/.venv/**": true,
+        "**/.venv-*/**": true,
+        "**/__pycache__/**": true,
+        "**/.pytest_cache/**": true
+    }
 }

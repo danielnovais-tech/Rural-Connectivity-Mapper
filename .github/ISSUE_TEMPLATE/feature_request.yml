@@ -1,9 +1,5 @@
 name: Feature Request
 
-description: Suggest a new feature or enhancement
-title: "[Feature]: "
-labels: ["enhancement"]
-
 description: Suggest a new feature or enhancement for the Rural Connectivity Mapper
 title: "[Feature]: "
 labels: ["enhancement", "feature-request"]
@@ -12,10 +8,6 @@ body:
   - type: markdown
     attributes:
       value: |
-
-        Thanks for suggesting a feature! Please fill out the form below.
-  
-
         Thanks for suggesting a new feature! Please fill out the form below to help us understand your request.
 
   - type: dropdown
@@ -73,12 +65,6 @@ body:
     attributes:
       label: Problem Statement
       description: Is your feature request related to a problem? Please describe.
-
-      placeholder: "I'm always frustrated when..."
-    validations:
-      required: true
-  
-
       placeholder: I'm always frustrated when...
     validations:
       required: true
@@ -88,13 +74,6 @@ body:
     id: solution
     attributes:
       label: Proposed Solution
-
-      description: Describe the solution you'd like
-      placeholder: Describe your proposed solution...
-    validations:
-      required: true
-  
-
       description: Describe the solution you'd like to see
       placeholder: I would like to see...
     validations:
@@ -105,9 +84,8 @@ body:
     id: alternatives
     attributes:
       label: Alternatives Considered
-
-      description: Describe any alternative solutions or features you've considered
-      placeholder: What other approaches did you consider?
+      description: Have you considered any alternative solutions or features?
+      placeholder: I've also thought about...
     validations:
       required: false
   
@@ -126,20 +104,6 @@ body:
     validations:
       required: true
   
-  - type: dropdown
-    id: priority
-    attributes:
-      label: Priority
-      description: How important is this feature to you?
-      options:
-        - Low
-        - Medium
-        - High
-        - Critical
-      default: 1
-    validations:
-      required: true
-  
   - type: checkboxes
     id: affected-areas
     attributes:
@@ -154,12 +118,6 @@ body:
         - label: Documentation
         - label: Testing
         - label: Other
-  
-
-      description: Have you considered any alternative solutions or features?
-      placeholder: I've also thought about...
-    validations:
-      required: false
 
   - type: dropdown
     id: starlink-alignment
@@ -201,13 +159,6 @@ body:
     id: additional
     attributes:
       label: Additional Context
-
-      description: Add any other context, mockups, or examples about the feature request here
-      placeholder: Screenshots, diagrams, code examples, etc.
-    validations:
-      required: false
-  
-
       description: Add any other context, screenshots, mockups, or examples
       placeholder: Screenshots, links to similar features, etc.
     validations:
@@ -218,11 +169,6 @@ body:
     id: contribution
     attributes:
       label: Contribution
-
-      description: Are you willing to contribute to this feature?
-      options:
-        - label: I am willing to submit a PR for this feature
-
       description: Would you be willing to contribute to this feature?
       options:
         - label: I would be willing to submit a PR for this feature

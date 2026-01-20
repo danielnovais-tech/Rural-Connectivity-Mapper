@@ -129,14 +129,14 @@ def test_export_for_hybrid_simulator(sample_data, temp_output_dir):
     assert point['location']['longitude'] == -46.6333
     
     # Check metrics
-    assert point['metrics']['signal_quality'] == 100.0
-    assert point['metrics']['latency_ms'] == 28.5
-    assert point['metrics']['download_mbps'] == 165.4
-    assert point['metrics']['upload_mbps'] == 22.8
-    assert point['metrics']['stability_score'] == 96.6
+    assert point['metrics']['signal_quality'] == pytest.approx(100.0)
+    assert point['metrics']['latency_ms'] == pytest.approx(28.5)
+    assert point['metrics']['download_mbps'] == pytest.approx(165.4)
+    assert point['metrics']['upload_mbps'] == pytest.approx(22.8)
+    assert point['metrics']['stability_score'] == pytest.approx(96.6)
     
     # Check quality breakdown
-    assert point['quality_breakdown']['overall_score'] == 100.0
+    assert point['quality_breakdown']['overall_score'] == pytest.approx(100.0)
     assert point['quality_breakdown']['rating'] == 'Excellent'
     
     # Check failover indicators
@@ -179,14 +179,14 @@ def test_export_for_agrix_boost(sample_data, temp_output_dir):
     
     # Check connectivity status
     assert point['connectivity_status']['quality_rating'] == 'Excellent'
-    assert point['connectivity_status']['quality_score'] == 100.0
+    assert point['connectivity_status']['quality_score'] == pytest.approx(100.0)
     assert point['connectivity_status']['is_operational'] is True
     assert point['connectivity_status']['is_optimal'] is True
     
     # Check network performance
-    assert point['network_performance']['download_speed_mbps'] == 165.4
-    assert point['network_performance']['upload_speed_mbps'] == 22.8
-    assert point['network_performance']['latency_ms'] == 28.5
+    assert point['network_performance']['download_speed_mbps'] == pytest.approx(165.4)
+    assert point['network_performance']['upload_speed_mbps'] == pytest.approx(22.8)
+    assert point['network_performance']['latency_ms'] == pytest.approx(28.5)
     
     # Check farm suitability
     assert point['farm_suitability']['iot_sensors_supported'] is True

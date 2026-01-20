@@ -41,7 +41,17 @@ def fetch_ibge_municipalities(state_code: Optional[str] = None) -> List[Dict]:
         
         # Filter by state if specified
         if state_code:
-            municipalities = [m for m in municipalities if m.get('microrregiao', {}).get('mesorregiao', {}).get('UF', {}).get('sigla') == state_code.upper()]
+            state_code_upper = state_code.upper()
+            filtered: list = []
+            for m in municipalities:
+                uf_sigla = (
+                    (((m.get('microrregiao') or {}).get('mesorregiao') or {}).get('UF') or {}).get(
+                        'sigla'
+                    )
+                )
+                if uf_sigla == state_code_upper:
+                    filtered.append(m)
+            municipalities = filtered
         
         logger.info(f"Retrieved {len(municipalities)} municipalities from IBGE")
         return municipalities
