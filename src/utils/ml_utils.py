@@ -2,10 +2,24 @@
 
 import logging
 from typing import List, Dict
-import numpy as np
-from sklearn.preprocessing import StandardScaler
-from sklearn.cluster import KMeans
 import math
+
+# Optional numpy + sklearn imports - gracefully degrade if not available or incompatible
+try:
+    import numpy as np
+    NUMPY_AVAILABLE = True
+except Exception:  # pragma: no cover
+    np = None  # type: ignore[assignment]
+    NUMPY_AVAILABLE = False
+
+try:
+    if not NUMPY_AVAILABLE:
+        raise ImportError("numpy not available")
+    from sklearn.preprocessing import StandardScaler
+    from sklearn.cluster import KMeans
+    SKLEARN_AVAILABLE = True
+except Exception:  # pragma: no cover
+    SKLEARN_AVAILABLE = False
 
 logger = logging.getLogger(__name__)
 
@@ -50,7 +64,7 @@ def calculate_distance_from_major_city(latitude: float, longitude: float) -> flo
     return round(min_distance, 2)
 
 
-def extract_geospatial_features(data: List[Dict]) -> np.ndarray:
+def extract_geospatial_features(data: List[Dict]):
     """Extract geospatial features for ML models.
     
     Features include:
@@ -66,9 +80,12 @@ def extract_geospatial_features(data: List[Dict]) -> np.ndarray:
         data: List of connectivity point dictionaries
         
     Returns:
-        np.ndarray: Feature matrix for ML models
+        Feature matrix for ML models (NumPy array when available)
     """
     logger.info(f"Extracting geospatial features from {len(data)} points...")
+
+    if not NUMPY_AVAILABLE or np is None:
+        raise RuntimeError("NumPy is required for extract_geospatial_features")
     
     features = []
     

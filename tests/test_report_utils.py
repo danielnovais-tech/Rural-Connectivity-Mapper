@@ -5,7 +5,7 @@ import json
 import csv
 from pathlib import Path
 
-from src.utils.report_utils import generate_report
+from src.utils.report_utils import generate_report, getCustomExcludes, getCombinedExcludes
 
 
 @pytest.fixture
@@ -170,3 +170,55 @@ def test_generate_report_invalid_format(sample_data):
     """Test error handling for invalid format."""
     with pytest.raises(ValueError):
         generate_report(sample_data, 'invalid_format')
+
+
+def test_get_custom_excludes_missing_file(tmp_path):
+    """Missing settings.json should return empty excludes."""
+    missing = tmp_path / "missing_settings.json"
+    assert getCustomExcludes(config_path=str(missing)) == []
+
+
+def test_get_custom_excludes_invalid_json(tmp_path):
+    """Invalid JSON should be handled gracefully."""
+    bad = tmp_path / "settings.json"
+    bad.write_text("{not-json}", encoding="utf-8")
+    assert getCustomExcludes(config_path=str(bad)) == []
+
+
+def test_get_custom_excludes_valid_json(tmp_path):
+    """Valid settings.json should return globalExcludes list."""
+    settings = tmp_path / "settings.json"
+    settings.write_text(
+        json.dumps({"globalExcludes": ["dist/", "build/", "__pycache__/", "*.pyc"]}),
+        encoding="utf-8",
+    )
+    assert getCustomExcludes(config_path=str(settings)) == ["dist/", "build/", "__pycache__/", "*.pyc"]
+
+
+def test_get_combined_excludes_merges_and_dedupes(tmp_path):
+    """Combined excludes should include built-ins + project + global, without duplicates."""
+    settings = tmp_path / "settings.json"
+    settings.write_text(
+        json.dumps({"globalExcludes": ["dist/", "node_modules/", "*.pyc"]}),
+        encoding="utf-8",
+    )
+
+    combined = getCombinedExcludes(
+        project_excludes=["build/", ".git/"],
+        config_path=str(settings),
+    )
+
+    # Built-ins
+    assert ".git/" in combined
+    assert "node_modules/" in combined
+    assert "__pycache__/" in combined
+    assert "*.pyc" in combined
+
+    # Project + global
+    assert "build/" in combined
+    assert "dist/" in combined
+
+    # De-dupe
+    assert combined.count("node_modules/") == 1
+    assert combined.count(".git/") == 1
+    assert combined.count("*.pyc") == 1

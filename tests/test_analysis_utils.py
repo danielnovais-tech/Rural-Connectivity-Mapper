@@ -188,6 +188,8 @@ def test_provider_stats(sample_data):
 
 def test_cluster_connectivity_points(sample_data):
     """Test K-Means clustering of connectivity points."""
+    pytest.importorskip("numpy", exc_type=ImportError)
+    pytest.importorskip("sklearn", exc_type=ImportError)
     result = cluster_connectivity_points(sample_data, n_clusters=2)
     
     assert 'clusters' in result
@@ -230,6 +232,8 @@ def test_cluster_with_insufficient_data():
 
 def test_cluster_stats(sample_data):
     """Test cluster statistics calculation."""
+    pytest.importorskip("numpy", exc_type=ImportError)
+    pytest.importorskip("sklearn", exc_type=ImportError)
     result = cluster_connectivity_points(sample_data, n_clusters=2)
     
     cluster_stats = result['cluster_stats']

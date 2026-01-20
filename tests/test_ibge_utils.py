@@ -1,6 +1,8 @@
 """Tests for IBGE utilities."""
 
 import pytest
+
+pytest.importorskip("pandas", exc_type=ImportError)
 from src.utils.ibge_utils import (
     fetch_ibge_municipalities,
     fetch_ibge_demographics,

@@ -1,5 +1,10 @@
 """Tests for ML utilities."""
 
+import pytest
+
+pytest.importorskip("numpy", exc_type=ImportError)
+pytest.importorskip("sklearn", exc_type=ImportError)
+
 from src.utils.ml_utils import (
     calculate_distance_from_major_city,
     extract_geospatial_features,

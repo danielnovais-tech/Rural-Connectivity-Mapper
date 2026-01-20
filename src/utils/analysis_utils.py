@@ -4,10 +4,21 @@ import logging
 from typing import List, Dict, Tuple
 from datetime import datetime
 from collections import defaultdict
-import numpy as np
+import math
+
+# Optional numpy import - gracefully degrade if not available or incompatible
+try:
+    import numpy as np
+    NUMPY_AVAILABLE = True
+except Exception:  # pragma: no cover
+    np = None  # type: ignore[assignment]
+    NUMPY_AVAILABLE = False
 
 # Optional sklearn imports - gracefully degrade if not available
 try:
+    if not NUMPY_AVAILABLE:
+        raise ImportError("numpy not available")
+
     from sklearn.cluster import KMeans
     from sklearn.preprocessing import StandardScaler
 
@@ -18,6 +29,19 @@ except Exception:  # pragma: no cover
 from .i18n_utils import get_translation
 
 logger = logging.getLogger(__name__)
+
+
+def _mean(values: List[float]) -> float:
+    if not values:
+        return 0.0
+    return sum(values) / len(values)
+
+
+def _std(values: List[float]) -> float:
+    if not values:
+        return 0.0
+    m = _mean(values)
+    return math.sqrt(sum((x - m) ** 2 for x in values) / len(values))
 
 
 def analyze_temporal_evolution(data: List[Dict], language: str = 'en') -> Dict:
@@ -230,6 +254,8 @@ def cluster_connectivity_points(data: List[Dict], n_clusters: int = 3) -> Dict:
             point_ids.append(point.get('id', f'point_{idx}'))
         
         # Convert to numpy array
+        if not NUMPY_AVAILABLE or np is None:
+            raise RuntimeError("NumPy is required for clustering")
         X = np.array(features)
         
         # Standardize features
@@ -347,14 +373,22 @@ def forecast_quality_scores(data: List[Dict], forecast_horizon: int = 5) -> Dict
             }
         
         # Calculate baseline statistics
-        baseline_score = np.mean(historical_scores)
-        score_std = np.std(historical_scores)
+        if NUMPY_AVAILABLE and np is not None:
+            baseline_score = float(np.mean(historical_scores))
+            score_std = float(np.std(historical_scores))
+        else:
+            baseline_score = _mean(historical_scores)
+            score_std = _std(historical_scores)
         
         # Determine trend
         if len(historical_scores) >= 3:
             # Simple linear trend
-            recent_avg = np.mean(historical_scores[-3:])
-            older_avg = np.mean(historical_scores[:-3]) if len(historical_scores) > 3 else historical_scores[0]
+            if NUMPY_AVAILABLE and np is not None:
+                recent_avg = float(np.mean(historical_scores[-3:]))
+                older_avg = float(np.mean(historical_scores[:-3])) if len(historical_scores) > 3 else float(historical_scores[0])
+            else:
+                recent_avg = _mean(historical_scores[-3:])
+                older_avg = _mean(historical_scores[:-3]) if len(historical_scores) > 3 else historical_scores[0]
             trend_direction = recent_avg - older_avg
             
             if trend_direction > 5:
@@ -405,7 +439,10 @@ def forecast_quality_scores(data: List[Dict], forecast_horizon: int = 5) -> Dict
                         stats['centroid'].get('quality_score', baseline_score)
                         for stats in cluster_stats.values()
                     ]
-                    cluster_avg = np.mean(cluster_quality_scores)
+                    if NUMPY_AVAILABLE and np is not None:
+                        cluster_avg = float(np.mean(cluster_quality_scores))
+                    else:
+                        cluster_avg = _mean(cluster_quality_scores)
                     # Blend cluster-based prediction with trend-based (lighter weight)
                     forecasts = [
                         round(0.7 * f + 0.3 * cluster_avg, 2)
@@ -416,11 +453,11 @@ def forecast_quality_scores(data: List[Dict], forecast_horizon: int = 5) -> Dict
         
         result = {
             'forecasts': forecasts,
-            'baseline_score': round(baseline_score, 2),
+            'baseline_score': round(float(baseline_score), 2),
             'trend': trend,
             'confidence': confidence,
-            'historical_mean': round(np.mean(historical_scores), 2),
-            'historical_std': round(score_std, 2),
+            'historical_mean': round(float(np.mean(historical_scores)) if (NUMPY_AVAILABLE and np is not None) else _mean(historical_scores), 2),
+            'historical_std': round(float(score_std), 2),
             'forecast_horizon': forecast_horizon
         }
         

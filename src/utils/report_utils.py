@@ -2,6 +2,7 @@
 
 import json
 import logging
+import os
 from typing import List, Dict, Optional
 from pathlib import Path
 from datetime import datetime
@@ -17,6 +18,87 @@ except ImportError:
 from .i18n_utils import get_translation, get_rating_translation
 
 logger = logging.getLogger(__name__)
+
+
+def _get_default_blackbox_settings_path() -> Path:
+    """Return the default global settings path for Blackbox-style ignores.
+
+    Default location: ~/.blackbox/settings.json
+    You can override it for testing via BLACKBOX_SETTINGS_PATH.
+    """
+    overridden = os.environ.get("BLACKBOX_SETTINGS_PATH")
+    if overridden:
+        return Path(overridden).expanduser()
+    return Path.home() / ".blackbox" / "settings.json"
+
+
+def getCustomExcludes(config_path: Optional[str] = None) -> List[str]:
+    """Read global exclude patterns from settings.json.
+
+    The intended default location is ~/.blackbox/settings.json.
+    Expected JSON schema:
+
+        {
+          "globalExcludes": ["dist/", "build/", "*.pyc", "__pycache__/"]
+        }
+
+    Args:
+        config_path: Optional explicit settings.json path.
+
+    Returns:
+        List[str]: Exclude patterns, or an empty list if missing/invalid.
+    """
+    settings_path = Path(config_path).expanduser() if config_path else _get_default_blackbox_settings_path()
+
+    if not settings_path.exists():
+        return []
+
+    try:
+        with open(settings_path, "r", encoding="utf-8") as f:
+            data = json.load(f)
+    except (json.JSONDecodeError, OSError):
+        return []
+
+    patterns = data.get("globalExcludes", [])
+    if not isinstance(patterns, list):
+        return []
+
+    # Keep only string patterns.
+    return [p for p in patterns if isinstance(p, str)]
+
+
+def getCombinedExcludes(
+    project_excludes: Optional[List[str]] = None,
+    config_path: Optional[str] = None,
+) -> List[str]:
+    """Combine built-in excludes with optional project + global excludes.
+
+    This is intended for any code that scans the filesystem to build reports.
+    """
+    combined: List[str] = []
+
+    # Built-in defaults that are generally noisy across projects.
+    built_in = [
+        ".git/",
+        "node_modules/",
+        "__pycache__/",
+        "*.pyc",
+    ]
+
+    for pattern in built_in:
+        if pattern not in combined:
+            combined.append(pattern)
+
+    if project_excludes:
+        for pattern in project_excludes:
+            if pattern not in combined:
+                combined.append(pattern)
+
+    for pattern in getCustomExcludes(config_path=config_path):
+        if pattern not in combined:
+            combined.append(pattern)
+
+    return combined
 
 
 def generate_report(data: List[Dict], report_format: str, output_path: Optional[str] = None, language: str = 'en') -> str:

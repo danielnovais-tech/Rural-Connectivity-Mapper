@@ -52,7 +52,8 @@ def consolidate_installation(self) -> str:
 ### Requirements
 
 
-- **Python 3.8+** or **Docker**
+- **Python 3.10–3.13 (recommended)** or **Docker**
+  - Note: Python 3.14 may fail to install/load scientific dependencies (e.g. NumPy/scikit-learn) until wheels are available.
 - Internet connection (for geocoding and speedtest APIs)
 - Git (for cloning repository)
 

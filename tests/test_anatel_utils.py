@@ -1,6 +1,8 @@
 """Tests for ANATEL utilities."""
 
 import pytest
+
+pytest.importorskip("pandas", exc_type=ImportError)
 from src.utils.anatel_utils import (
     fetch_anatel_broadband_data,
     fetch_anatel_mobile_data,
