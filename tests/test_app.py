@@ -105,7 +105,7 @@ def test_get_statistics(client, sample_data, tmp_path):
         stats = result['statistics']
         assert stats['total_points'] == 1
         assert stats['avg_quality_score'] == 100
-        assert stats['avg_download'] == 165.4
+        assert stats['avg_download'] == pytest.approx(165.4)
         assert 'Starlink' in stats['providers']
         assert 'Excellent' in stats['ratings']
     finally:

@@ -20,7 +20,7 @@ class CountryConfig:
     currency: str
     telecom_regulator: str
     stats_agency: str
-    coordinates_center: tuple  # (latitude, longitude)
+    coordinates_center: tuple[float, float]  # (latitude, longitude)
     supported_providers: List[str]
     data_sources: Dict[str, str]
 
@@ -266,9 +266,9 @@ def get_latam_summary() -> Dict:
         summary['currencies'].add(config.currency)
     
     # Convert sets to lists for JSON serialization
-    summary['total_providers'] = sorted(list(summary['total_providers']))
-    summary['languages'] = sorted(list(summary['languages']))
-    summary['currencies'] = sorted(list(summary['currencies']))
+    summary['total_providers'] = sorted(summary['total_providers'])
+    summary['languages'] = sorted(summary['languages'])
+    summary['currencies'] = sorted(summary['currencies'])
     summary['unique_providers_count'] = len(summary['total_providers'])
     
     logger.info(f"Generated summary for {summary['total_countries']} LATAM countries")

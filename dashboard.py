@@ -3,6 +3,7 @@
 """Streamlit Web Dashboard for Rural Connectivity Mapper 2026."""
 
 import streamlit as st
+import streamlit.components.v1 as components
 import pandas as pd
 import json
 import csv
@@ -22,6 +23,9 @@ from src.utils import (
 # Configuration constants
 DATA_PATH = 'src/data/pontos.json'
 MAP_HEIGHT = 600  # Height in pixels for embedded maps
+DOWNLOAD_MBPS_LABEL = 'Download (Mbps)'
+UPLOAD_MBPS_LABEL = 'Upload (Mbps)'
+COVERAGE_PERCENTAGE_LABEL = 'Coverage %'
 
 
 """Streamlit dashboard for Rural Connectivity Mapper 2026.
@@ -71,8 +75,6 @@ from src.utils.country_config import (
 # Page configuration
 st.set_page_config(
     page_title="Rural Connectivity Mapper 2026",
-
-    page_icon="🌍",
 
     page_icon="🛰️",
 
@@ -191,8 +193,8 @@ def display_data_table(data):
             'Provider': point['provider'],
             'Latitude': point['latitude'],
             'Longitude': point['longitude'],
-            'Download (Mbps)': round(point['speed_test']['download'], 2),
-            'Upload (Mbps)': round(point['speed_test']['upload'], 2),
+            DOWNLOAD_MBPS_LABEL: round(point['speed_test']['download'], 2),
+            UPLOAD_MBPS_LABEL: round(point['speed_test']['upload'], 2),
             'Latency (ms)': round(point['speed_test']['latency'], 2),
             'Quality Score': round(point['quality_score']['overall_score'], 2),
             'Rating': point['quality_score']['rating'],
@@ -315,7 +317,7 @@ def visualize_map(data):
             with open(map_path, 'r', encoding='utf-8') as f:
                 map_html = f.read()
             
-            st.components.v1.html(map_html, height=MAP_HEIGHT, scrolling=True)
+            components.html(map_html, height=MAP_HEIGHT, scrolling=True)
     
     except Exception as e:
         st.error(f"Error generating map: {e}")
@@ -476,9 +478,7 @@ def main():
     st.sidebar.markdown("🇧🇷 Made with ❤️ for improving rural connectivity in Brazil")
 
 
-if __name__ == '__main__':
-
-def main():
+def main_alternative():
     """Main dashboard application."""
     
     # Header
@@ -495,7 +495,7 @@ def main():
         # Country selection
         st.subheader("🌍 Country Selection")
         countries = get_supported_countries()
-        country_names = {code: get_country_config(code).name for code in countries}
+        country_names = {code: config.name for code in countries if (config := get_country_config(code)) is not None}
         selected_country = st.selectbox(
             "Select Country",
             options=countries,
@@ -504,13 +504,16 @@ def main():
         )
         
         country_config = get_country_config(selected_country)
-        st.info(f"""
-        **{country_config.name}**
-        - 🏛️ Regulator: {country_config.telecom_regulator}
-        - 📊 Stats Agency: {country_config.stats_agency}
-        - 💱 Currency: {country_config.currency}
-        - 🗣️ Language: {country_config.official_language}
-        """)
+        if country_config:
+            st.info(f"""
+            **{country_config.name}**
+            - 🏛️ Regulator: {country_config.telecom_regulator}
+            - 📊 Stats Agency: {country_config.stats_agency}
+            - 💱 Currency: {country_config.currency}
+            - 🗣️ Language: {country_config.official_language}
+            """)
+        else:
+            st.warning(f"Configuration not found for country: {selected_country}")
         
         st.markdown("---")
         
@@ -579,13 +582,13 @@ def show_overview(country_code: str):
         st.subheader("🚀 Speed Distribution")
         speeds_data = {
             'Provider': ['Starlink', 'Claro', 'Vivo', 'TIM', 'Oi'],
-            'Download (Mbps)': [150, 95, 90, 85, 60],
-            'Upload (Mbps)': [15, 14, 13, 12, 8]
+            DOWNLOAD_MBPS_LABEL: [150, 95, 90, 85, 60],
+            UPLOAD_MBPS_LABEL: [15, 14, 13, 12, 8]
         }
         df_speeds = pd.DataFrame(speeds_data)
         fig = go.Figure(data=[
-            go.Bar(name='Download', x=df_speeds['Provider'], y=df_speeds['Download (Mbps)']),
-            go.Bar(name='Upload', x=df_speeds['Provider'], y=df_speeds['Upload (Mbps)'])
+            go.Bar(name='Download', x=df_speeds['Provider'], y=df_speeds[DOWNLOAD_MBPS_LABEL]),
+            go.Bar(name='Upload', x=df_speeds['Provider'], y=df_speeds[UPLOAD_MBPS_LABEL])
         ])
         fig.update_layout(barmode='group', title='Speed Comparison')
         st.plotly_chart(fig, use_container_width=True)
@@ -660,7 +663,9 @@ def show_ibge_data(country_code: str):
                 unsafe_allow_html=True)
     
     if country_code != 'BR':
-        st.warning(f"IBGE data is only available for Brazil. Data from {get_country_config(country_code).stats_agency} would be displayed here.")
+        country_config = get_country_config(country_code)
+        stats_agency = country_config.stats_agency if country_config else "the national statistics agency"
+        st.warning(f"IBGE data is only available for Brazil. Data from {stats_agency} would be displayed here.")
         return
     
     # Rural areas needing connectivity
@@ -786,16 +791,16 @@ def show_latam_comparison():
         if coverage.get('coverage_percentage'):
             coverage_data.append({
                 'Country': coverage.get('country_name', country_code),
-                'Coverage %': coverage.get('coverage_percentage', 0),
+                COVERAGE_PERCENTAGE_LABEL: coverage.get('coverage_percentage', 0),
                 'Active Users': coverage.get('active_users', 0),
                 'Ground Stations': coverage.get('ground_stations', 0)
             })
     
     if coverage_data:
         df_coverage = pd.DataFrame(coverage_data)
-        fig = px.bar(df_coverage, x='Country', y='Coverage %', 
+        fig = px.bar(df_coverage, x='Country', y=COVERAGE_PERCENTAGE_LABEL, 
                     title='Starlink Coverage by Country',
-                    color='Coverage %', color_continuous_scale='Viridis')
+                    color=COVERAGE_PERCENTAGE_LABEL, color_continuous_scale='Viridis')
         st.plotly_chart(fig, use_container_width=True)
 
 
@@ -806,6 +811,9 @@ def show_interactive_map(country_code: str):
     
     # Get country center
     country_config = get_country_config(country_code)
+    if country_config is None:
+        st.error(f"Configuration not found for country: {country_code}")
+        return
     center_lat, center_lon = country_config.coordinates_center
     
     # Create map

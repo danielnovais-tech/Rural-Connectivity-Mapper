@@ -69,13 +69,8 @@ def run_speedtest() -> dict[str, float] | None:
         return None
 
 
-def interactive_submit():
-    """Interactive mode - prompt user for all information."""
-    print("\n" + "=" * 70)
-    print("🌍 Rural Connectivity Mapper - Submit Your Data")
-    print("=" * 70 + "\n")
-
-    # Try to get location automatically
+def get_interactive_location() -> tuple[float, float]:
+    """Get location interactively from user or auto-detection."""
     auto_lat, auto_lon, city = get_location()
 
     if auto_lat and auto_lon:
@@ -84,21 +79,16 @@ def interactive_submit():
         use_auto = input("\nUse this location? (y/n) [y]: ").strip().lower()
 
         if use_auto in ('', 'y', 'yes'):
-            latitude = auto_lat
-            longitude = auto_lon
-        else:
-            latitude = float(input("Enter latitude: "))
-            longitude = float(input("Enter longitude: "))
-    else:
-        print("Enter your location (use Google Maps to find coordinates):")
-        latitude = float(input("Latitude: "))
-        longitude = float(input("Longitude: "))
+            return auto_lat, auto_lon
 
-    if not validate_coordinates(latitude, longitude):
-        print("❌ Invalid coordinates. Please check and try again.")
-        sys.exit(1)
+    print("Enter your location (use Google Maps to find coordinates):")
+    latitude = float(input("Latitude: "))
+    longitude = float(input("Longitude: "))
+    return latitude, longitude
 
-    # Provider
+
+def get_interactive_provider() -> str:
+    """Get provider selection from user."""
     print("\nInternet Provider Options:")
     providers = ['Starlink', 'Viasat', 'HughesNet', 'Claro', 'Vivo', 'TIM', 'Oi', 'Other']
     for i, p in enumerate(providers, 1):
@@ -107,49 +97,47 @@ def interactive_submit():
     provider_choice = input("\nSelect provider (1-8) or type name: ").strip()
 
     if provider_choice.isdigit() and 1 <= int(provider_choice) <= len(providers):
-        provider = providers[int(provider_choice) - 1]
-    else:
-        provider = provider_choice if provider_choice else 'Unknown'
+        return providers[int(provider_choice) - 1]
+    return provider_choice if provider_choice else 'Unknown'
 
-    # Speed test option
+
+def get_manual_speedtest_data() -> tuple[float, float, float, float, float]:
+    """Get speedtest data manually from user input."""
+    print("\nEnter your speedtest results:")
+    download = float(input("Download speed (Mbps): "))
+    upload = float(input("Upload speed (Mbps): "))
+    latency = float(input("Latency/Ping (ms): "))
+
+    jitter_input = input("Jitter (ms) [0]: ").strip()
+    jitter = float(jitter_input) if jitter_input else 0.0
+
+    packet_input = input("Packet loss (%) [0]: ").strip()
+    packet_loss = float(packet_input) if packet_input else 0.0
+
+    return download, upload, latency, jitter, packet_loss
+
+
+def get_interactive_speedtest_data() -> tuple[float, float, float, float, float]:
+    """Get speedtest data either automatically or manually."""
     print("\nSpeed Test Data:")
     print("  1. Run automatic speedtest (requires speedtest-cli)")
     print("  2. Enter manual values (from fast.com, speedtest.net, etc.)")
 
     choice = input("\nChoice (1/2) [2]: ").strip()
 
-    # Initialize variables
-    download = 0.0
-    upload = 0.0
-    latency = 0.0
-    jitter = 0.0
-    packet_loss = 0.0
-
     if choice == '1' and SPEEDTEST_AVAILABLE:
         results = run_speedtest()
         if results:
-            download = results['download']
-            upload = results['upload']
-            latency = results['latency']
-            jitter = 0.0
-            packet_loss = 0.0
-        else:
-            print("Falling back to manual entry...")
-            choice = '2'
+            return results['download'], results['upload'], results['latency'], 0.0, 0.0
+        print("Falling back to manual entry...")
 
-    if choice != '1' or not SPEEDTEST_AVAILABLE:
-        print("\nEnter your speedtest results:")
-        download = float(input("Download speed (Mbps): "))
-        upload = float(input("Upload speed (Mbps): "))
-        latency = float(input("Latency/Ping (ms): "))
+    return get_manual_speedtest_data()
 
-        jitter_input = input("Jitter (ms) [0]: ").strip()
-        jitter = float(jitter_input) if jitter_input else 0.0
 
-        packet_input = input("Packet loss (%) [0]: ").strip()
-        packet_loss = float(packet_input) if packet_input else 0.0
-
-    # Confirm submission
+def confirm_submission(latitude: float, longitude: float, provider: str,
+                      download: float, upload: float, latency: float,
+                      jitter: float, packet_loss: float) -> bool:
+    """Display submission details and get user confirmation."""
     print("\n" + "=" * 70)
     print("📋 Review Your Submission:")
     print("=" * 70)
@@ -163,12 +151,13 @@ def interactive_submit():
     print("=" * 70 + "\n")
 
     confirm = input("Submit this data? (y/n) [y]: ").strip().lower()
+    return confirm in ('', 'y', 'yes')
 
-    if confirm not in ('', 'y', 'yes'):
-        print("❌ Submission cancelled.")
-        sys.exit(0)
 
-    # Create and save point
+def save_connectivity_point(latitude: float, longitude: float, provider: str,
+                            download: float, upload: float, latency: float,
+                            jitter: float, packet_loss: float) -> ConnectivityPoint:
+    """Create and save a connectivity point to the data file."""
     speed_test = SpeedTest(
         download=download,
         upload=upload,
@@ -185,11 +174,34 @@ def interactive_submit():
         timestamp=datetime.now().isoformat()
     )
 
-    # Save to data file
     existing_data = cast(list[dict[str, object]], load_data(DATA_FILE_PATH))
     point_dict: dict[str, object] = point.to_dict()  # type: ignore[reportUnknownMemberType]
     existing_data.append(point_dict)
     save_data(DATA_FILE_PATH, existing_data)
+
+    return point
+
+
+def interactive_submit():
+    """Interactive mode - prompt user for all information."""
+    print("\n" + "=" * 70)
+    print("🌍 Rural Connectivity Mapper - Submit Your Data")
+    print("=" * 70 + "\n")
+
+    latitude, longitude = get_interactive_location()
+
+    if not validate_coordinates(latitude, longitude):
+        print("❌ Invalid coordinates. Please check and try again.")
+        sys.exit(1)
+
+    provider = get_interactive_provider()
+    download, upload, latency, jitter, packet_loss = get_interactive_speedtest_data()
+
+    if not confirm_submission(latitude, longitude, provider, download, upload, latency, jitter, packet_loss):
+        print("❌ Submission cancelled.")
+        sys.exit(0)
+
+    point = save_connectivity_point(latitude, longitude, provider, download, upload, latency, jitter, packet_loss)
 
     print("\n✅ Success! Your data has been submitted.")
     print(f"   Point ID: {point.id}")

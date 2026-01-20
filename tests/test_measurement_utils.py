@@ -26,9 +26,9 @@ def test_measure_speed():
         assert 'latency' in result
         assert 'stability' in result
         
-        assert result['download'] == 100.0
-        assert result['upload'] == 15.0
-        assert result['latency'] == 30.0
+        assert result['download'] == pytest.approx(100.0)
+        assert result['upload'] == pytest.approx(15.0)
+        assert result['latency'] == pytest.approx(30.0)
         assert 0 <= result['stability'] <= 100
         
         # Verify speedtest was called

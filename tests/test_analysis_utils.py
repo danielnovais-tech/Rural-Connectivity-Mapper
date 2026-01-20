@@ -301,7 +301,7 @@ def test_forecast_with_minimal_data():
     
     # Should return forecasts based on single data point
     assert len(result['forecasts']) == 3
-    assert result['baseline_score'] == 75.0
+    assert result['baseline_score'] == pytest.approx(75.0)
     assert result['confidence'] == 'low'
 
 
@@ -330,7 +330,8 @@ def test_forecast_trend_detection(sample_data):
     
     # Forecasts should generally maintain or improve quality
     assert all(f > 50 for f in result['forecasts'])
-=======
+
+
 def test_compare_providers(sample_data):
     """Test provider comparison functionality."""
     comparison = compare_providers(sample_data)

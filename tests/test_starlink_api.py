@@ -39,7 +39,7 @@ class TestCoverageData:
             assert result is not None
             assert result['available'] is True
             assert result['service_tier'] == 'residential'
-            assert result['expected_download_mbps'] == 150.0
+            assert result['expected_download_mbps'] == pytest.approx(150.0)
             
             # Verify API was called with correct params
             mock_get.assert_called_once()
@@ -92,9 +92,9 @@ class TestPerformanceMetrics:
             result = get_performance_metrics(-15.7801, -47.9292)
             
             assert result is not None
-            assert result['download_mbps'] == 165.0
-            assert result['upload_mbps'] == 22.0
-            assert result['latency_ms'] == 28.0
+            assert result['download_mbps'] == pytest.approx(165.0)
+            assert result['upload_mbps'] == pytest.approx(22.0)
+            assert result['latency_ms'] == pytest.approx(28.0)
     
     def test_get_performance_metrics_api_failure_fallback(self):
         """Test fallback to simulated data when API fails."""

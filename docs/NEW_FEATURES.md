@@ -55,6 +55,7 @@ points = convert_anatel_to_connectivity_points(broadband)
 ### Data Fields
 
 **Broadband Data:**
+
 - `state`: State abbreviation (SP, RJ, MG, etc.)
 - `municipality`: City name
 - `provider`: ISP name
@@ -64,6 +65,7 @@ points = convert_anatel_to_connectivity_points(broadband)
 - `coverage_percentage`: Population coverage
 
 **Mobile Data:**
+
 - `state`, `municipality`, `provider`
 - `technology`: Network type (5G, 4G)
 - `coverage_4g_percentage`: 4G coverage
@@ -118,11 +120,13 @@ combined = combine_ibge_anatel_data(municipalities, anatel_data)
 ### Priority Areas Analysis
 
 The system identifies rural areas with:
+
 - High rural population
 - Low internet coverage
 - High priority score (based on population and coverage gap)
 
 Example output:
+
 ```python
 priority_areas = get_rural_areas_needing_connectivity()
 # [
@@ -201,6 +205,7 @@ print(f"Recommended: {comparison['recommendation']}")
 ### Service Plans
 
 Available plans (2026):
+
 1. **Residential** - R$299/month, 50-200 Mbps
 2. **Business** - R$999/month, 100-350 Mbps
 3. **Roam (Mobile)** - R$499/month, 50-150 Mbps
@@ -215,7 +220,7 @@ Available plans (2026):
 10 Latin American countries with full configuration:
 
 | Code | Country | Regulator | Stats Agency |
-|------|---------|-----------|--------------|
+| ---- | -------- | --------- | ------------ |
 | BR | Brazil | ANATEL | IBGE |
 | AR | Argentina | ENACOM | INDEC |
 | CL | Chile | SUBTEL | INE |
@@ -267,6 +272,7 @@ es_trans = translate_field_names('AR')  # Spanish
 ### Country-Specific Features
 
 Each country has:
+
 - Official language (Portuguese/Spanish)
 - Currency code
 - Telecom regulatory agency
@@ -290,36 +296,43 @@ The dashboard will open in your browser at `http://localhost:8501`
 ### Dashboard Features
 
 #### 1. Overview Tab
+
 - Key connectivity metrics
 - Provider market share pie chart
 - Speed comparison bar charts
 - IBGE statistics summary
 
 #### 2. ANATEL Data Tab
+
 - Broadband data table and visualizations
 - Mobile coverage statistics
 - State filtering
 - Subscriber distribution charts
 
 #### 3. IBGE Demographics Tab
+
+- Rural vs urban population charts
 - Priority rural areas table
 - Coverage vs priority score scatter plot
 - Download data as CSV
 - Population statistics
 
 #### 4. Starlink Availability Tab
+
 - Coverage map by country
 - Active users and ground stations metrics
 - Service plans comparison table
 - Interactive availability checker (enter lat/lon)
 
 #### 5. LATAM Comparison Tab
+
 - Compare all 10 countries
 - Starlink coverage bar chart
 - Provider distribution
 - Country details table
 
 #### 6. Interactive Map Tab
+
 - Full-screen interactive map
 - Markers with provider details
 - Click for connectivity info
@@ -328,12 +341,14 @@ The dashboard will open in your browser at `http://localhost:8501`
 ### Dashboard Controls
 
 **Sidebar:**
+
 - Country selector (10 LATAM countries)
 - View selector (6 different views)
 - Country info panel
 - Last updated timestamp
 
 **Main Area:**
+
 - Interactive charts (Plotly)
 - Data tables (Streamlit)
 - Maps (Folium)
@@ -440,6 +455,7 @@ pytest tests/ --cov=src --cov-report=html
 ```
 
 **Test Coverage:**
+
 - 73 total tests
 - 7 ANATEL tests
 - 8 IBGE tests
@@ -454,14 +470,17 @@ pytest tests/ --cov=src --cov-report=html
 ### Official APIs
 
 **Brazil:**
+
 - ANATEL: https://informacoes.anatel.gov.br/paineis/acessos
 - IBGE: https://servicodados.ibge.gov.br/api/v1
 
 **Argentina:**
+
 - ENACOM: https://www.enacom.gob.ar/datos-abiertos
 - INDEC: https://www.indec.gob.ar
 
 **Chile:**
+
 - SUBTEL: https://www.subtel.gob.cl/estudios-y-estadisticas/
 - INE: https://www.ine.gob.cl/
 
@@ -478,22 +497,26 @@ For development and testing, the system uses mock data that mirrors the structur
 ### Common Issues
 
 **1. Import errors**
+
 ```bash
 # Ensure all dependencies are installed
 pip install -r requirements.txt
 ```
 
 **2. Streamlit not found**
+
 ```bash
 pip install streamlit streamlit-folium plotly
 ```
 
 **3. API timeouts**
+
 - The IBGE API fetch has fallback to mock data if the real API is unavailable
 - Check internet connection
 - Verify API endpoints are accessible
 
 **4. Test failures**
+
 ```bash
 # Clear pytest cache
 pytest --cache-clear
@@ -507,6 +530,7 @@ pytest tests/ -vv
 ## 10. Future Enhancements
 
 Planned features:
+
 - Real-time ANATEL API integration
 - Live Starlink satellite tracking
 - Machine learning predictions
@@ -517,6 +541,7 @@ Planned features:
 ---
 
 For more information, see the main [README.md](../README.md) or run:
+
 ```bash
 python demo_new_features.py
 ```

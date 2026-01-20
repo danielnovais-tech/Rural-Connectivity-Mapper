@@ -295,7 +295,7 @@ def export_ecosystem_bundle(
         ],
         'data_summary': {
             'total_points': len(data),
-            'providers': list(set(p.get('provider', 'Unknown') for p in data)),
+            'providers': list({p.get('provider', 'Unknown') for p in data}),
             'quality_distribution': _get_quality_distribution(data)
         }
     }

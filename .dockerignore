@@ -1,11 +1,15 @@
 # Git and version control
+
 .git
 .gitignore
 .github
 
 # Python cache and virtual environments
-__pycache__/
-*.py[cod]
+
+**pycache**/
+*.pyc
+*.pyo
+*.pyd
 *$py.class
 .venv
 venv/
@@ -14,6 +18,7 @@ ENV/
 .pytest_cache/
 
 # IDE and editor files
+
 .vscode/
 .idea/
 *.swp
@@ -21,6 +26,7 @@ ENV/
 *~
 
 # Test coverage
+
 htmlcov/
 .coverage
 .coverage.*
@@ -28,6 +34,7 @@ coverage.xml
 *.cover
 
 # Generated reports and output files
+
 demo_report.*
 demo_connectivity_map.html
 report_*.json
@@ -37,16 +44,26 @@ report_*.html
 connectivity_map_*.html
 
 # Documentation build files
+
 docs/_build/
 
 # OS files
+
 .DS_Store
 Thumbs.db
 
 # Logs
+
 *.log
 
 # Distribution / packaging
+
 build/
 dist/
 *.egg-info/
+
+{
+  "default": true,
+  "MD025": true,
+  "ignores": ["**/.dockerignore"]
+}

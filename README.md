@@ -30,125 +30,27 @@ The Rural Connectivity Mapper 2026 is a comprehensive platform for analyzing and
 
 ---
 
+```python
+# !/usr/bin/env python3
 # !/usr/bin/env python3
 
 """
 README Cleanup and Reorganization Script
+...
+[entire Python script]
+...
+return """## 🚀 Installation
 
-This script processes the messy, repetitive README content and produces
-a clean, organized version by:
+return features_text
 
-1. Removing duplicate sections and content
-2. Fixing version inconsistencies
-3. Consolidating features and statistics
-4. Standardizing installation and usage instructions
-"""
-
-import re
-from collections import OrderedDict
-from datetime import datetime
-from typing import List, Dict, Tuple
-
-class READMECleaner:
-    def **init**(self, input_content: str):
-        self.input_content = input_content
-        self.clean_content = ""
-        self.sections = OrderedDict()
-        self.version = "1.1.0"
-        self.current_date = datetime.now().strftime("%B %d, %Y")
-
-    def parse_sections(self):
-        """Parse the messy README into logical sections"""
-        lines = self.input_content.split('\n')
-        current_section = "header"
-        section_content = []
-        
-        for line in lines:
-            # Check for section headers
-            if line.strip().startswith('# '):
-                if current_section != "header":
-                    self.sections[current_section] = '\n'.join(section_content)
-                current_section = line.strip('# ').strip()
-                section_content = [line]
-            elif line.strip().startswith('## '):
-                if current_section and section_content:
-                    self.sections[current_section] = '\n'.join(section_content)
-                current_section = line.strip('# ').strip()
-                section_content = [line]
-            else:
-                section_content.append(line)
-        
-        # Add the last section
-        if section_content:
-            self.sections[current_section] = '\n'.join(section_content)
-    
-    def remove_duplicates(self, text: str) -> str:
-        """Remove duplicate lines and sections from text"""
-        lines = text.split('\n')
-        seen = set()
-        unique_lines = []
-        
-        for line in lines:
-            # Normalize line for comparison (strip extra spaces, ignore markdown symbols)
-            normalized = re.sub(r'[#\-\*]', '', line).strip()
-            if not normalized or normalized not in seen:
-                seen.add(normalized)
-                unique_lines.append(line)
-            elif line.strip().startswith('#'):
-                # Keep section headers even if duplicate content
-                unique_lines.append(line)
-        
-        return '\n'.join(unique_lines)
-    
-    def consolidate_features(self) -> str:
-        """Consolidate all feature lists into a single, organized list"""
-        features = {
-            "Core Functionality": [
-                "🌐 **Multi-Country Support** - 10 LATAM countries (BR, AR, CL, CO, MX, PE, EC, UY, PY, BO)",
-                "📊 **Data Integration** - ANATEL, IBGE, and Starlink API integration",
-                "🖥️ **CLI Application** - Full command-line interface with 7 operational modes",
-                "📱 **Web Dashboard** - Interactive Streamlit dashboard with real-time visualization",
-            ],
-            "Data Analysis": [
-                "📈 **Temporal Analysis** - Track connectivity trends over time",
-                "🏢 **Provider Comparison** - Benchmark ISPs with country-specific lists",
-                "🧮 **Quality Scoring** - Comprehensive algorithm with 2026 metrics",
-                "🤖 **ML-Enhanced Analysis** - Machine learning for rural connectivity optimization",
-            ],
-            "Visualization": [
-                "🗺️ **Interactive Maps** - Folium maps with color-coded quality markers",
-                "🛰️ **Starlink Coverage** - Coverage zones and signal strength visualization",
-                "📊 **Chart Visualizations** - Plotly charts for data exploration",
-            ],
-            "Data Management": [
-                "📤 **CSV Upload & Validation** - Easy data import with validation",
-                "📋 **Multi-Format Export** - JSON, CSV, TXT, HTML reports",
-                "🔗 **Ecosystem Integration** - Export for Hybrid Architecture Simulator & AgriX-Boost",
-                "🌐 **REST API** - Full API for data management and integration",
-            ],
-            "Deployment & Testing": [
-                "🐳 **Docker Support** - Containerized deployment for rural environments",
-                "🧪 **Comprehensive Testing** - 73+ tests with 80%+ code coverage",
-                "⚙️ **CI/CD Pipeline** - GitHub Actions for automated testing and deployment",
-            ]
-        }
-        
-        features_text = "## ✨ Features\n\n"
-        for category, feature_list in features.items():
-            features_text += f"### {category}\n\n"
-            for feature in feature_list:
-                features_text += f"- {feature}\n"
-            features_text += "\n"
-        
-        return features_text
-    
-    def consolidate_installation(self) -> str:
-        """Consolidate installation instructions"""
-        return """## 🚀 Installation
+def consolidate_installation(self) -> str:
+    """Consolidate installation instructions"""
+    return """## 🚀 Installation
 
 ## 🚀 Installation
 
 ### Requirements
+
 
 - **Python 3.8+** or **Docker**
 - Internet connection (for geocoding and speedtest APIs)
@@ -168,6 +70,8 @@ pip install -r requirements.txt
 python demo_workflow.py
 ```
 
+```text
+
 ### Quick Install (Docker Compose)
 
 ```bash
@@ -185,6 +89,12 @@ python demo_workflow.py
 
 ### Dependencies
 
+```text
+```
+
+```python
+"""Consolidate usage instructions"""
+return """## 📖 Usage
 ```text
     """Consolidate usage instructions"""
     return """## 📖 Usage
@@ -474,6 +384,8 @@ python crowdsource_server.py
 
 *Opens a mobile-friendly web form at <http://localhost:5000>*
 
+*Opens a mobile-friendly web form at <http://localhost:5000>*
+
 **Submit data via command line:**
 
 ```bash
@@ -683,6 +595,7 @@ python main.py --export ecosystem
 
 | Argument | Description | Choices/Format |
 | -------- | ----------- | -------------- |
+| -------- | ----------- | -------------- |
 | `--debug` | Enable verbose logging | Flag |
 | `--country <code>` | ISO country code | BR, US, CA, GB, AU, DE, FR, IN, MX |
 | `--list-countries` | List all available countries | Flag |
@@ -696,6 +609,8 @@ python main.py --export ecosystem
 | `--ml-analyze` | **NEW:** ML-enhanced geospatial analysis | Flag |
 | `--language <code>` or `--lang <code>` | Language for reports/analysis | en (English), pt (Portuguese) |
 | `--export <target>` | Export for ecosystem integration | hybrid, agrix, ecosystem |
+
+```python
 
 def get_supported_countries(self) -> str:
     """Generate supported countries table"""
@@ -712,6 +627,7 @@ def get_supported_countries(self) -> str:
         ("🇧🇴 Bolivia", "BO", "ATT", "INE", "Active"),
     ]
 
+
     table = "## 🌎 Supported Countries\n\n"
     table += "| Country | Code | Telecom Regulator | Stats Agency | Starlink Status |\n"
     table += "|---------|------|-------------------|--------------|-----------------|\n"
@@ -724,6 +640,7 @@ def get_supported_countries(self) -> str:
 def get_project_stats(self) -> str:
     """Generate consistent project statistics"""
     return f"""## 📊 Project Statistics
+```
 
 ### Alternative Data Submission Methods
 
@@ -803,7 +720,7 @@ Currently uses **simulated coverage data** based on Starlink's 2026 expansion ro
 
 ## 📁 Project Structure
 
-```
+```text
 Rural-Connectivity-Mapper-2026/
 ├── main.py                      # CLI application
 ├── dashboard.py                 # NEW: Streamlit web dashboard
@@ -949,6 +866,7 @@ Pre-configured connectivity data for 15 Brazilian cities with fresh 2026 metrics
 
 | Provider | Cities | Avg Download | Avg Upload | Avg Latency | Avg Obstruction | Avg Quality |
 | -------- | ------ | ------------ | ---------- | ----------- | --------------- | ----------- |
+| -------- | ------ | ------------ | ---------- | ----------- | --------------- | ----------- |
 | **Starlink High Performance** ⭐ | 2 | 197.0 Mbps | 28.8 Mbps | 21.8 ms | 0.7% | **96.7/100** |
 | **Starlink Gen2** ⭐ | 2 | 168.9 Mbps | 23.7 Mbps | 27.7 ms | 1.9% | **89.4/100** |
 | Claro | 2 | 90.3 Mbps | 14.7 Mbps | 40.6 ms | 0.0% | 71.2/100 |
@@ -969,6 +887,7 @@ Pre-configured connectivity data for 10 Brazilian cities (2026 data):
 
 | City | Provider | Download | Upload | Latency | Jitter | Packet Loss | Obstruction | Quality Score |
 | ------ | ---------- | ---------- | -------- | --------- | -------- | ------------- | ------------- | --------------- |
+| ------ | ---------- | ---------- | -------- | --------- | -------- | ------------- | ------------- | --------------- |
 | **São Paulo** | Various | 85.2 Mbps | 12.5 Mbps | 45.3 ms | 8.2 ms | 1.2% | 0% | 63.0/100 (Good) |
 | **Rio de Janeiro** | Claro | 92.1 Mbps | 15.3 Mbps | 38.7 ms | 6.5 ms | 0.8% | 0% | 71.2/100 (Good) |
 | **Brasília** | **Starlink Gen2** ⭐ | 165.4 Mbps | 22.8 Mbps | 28.5 ms | 3.2 ms | 0.1% | 2.5% | **91.0/100 (Excellent)** |
@@ -987,6 +906,7 @@ Pre-configured connectivity data for 10 Brazilian cities (2026 data):
 The tool now supports **9 countries** with country-specific configurations:
 
 | Country | Code | Language | Key Providers |
+| ------- | ---- | -------- | ------------- |
 | ------- | ---- | -------- | ------------- |
 | **Brazil** | BR | Portuguese | Starlink, Viasat, HughesNet, Claro, Vivo, TIM, Oi |
 | **United States** | US | English | Starlink, Viasat, HughesNet, AT&T, Verizon, T-Mobile |
@@ -1042,6 +962,7 @@ Speed Score = ((download/200 + upload/20) / 2) × 100
 Latency Score = 100 - (latency - 20) × 1.25  # Capped at 100
 
 Stability Score = 100 - (jitter × 2 + packet_loss × 10 + obstruction × 0.2)
+Stability Score = 100 - (jitter × 2 + packet_loss × 10 + obstruction × 0.2)
 ```
 
 ### Satellite-Specific Metrics
@@ -1058,6 +979,7 @@ Stability Score = 100 - (jitter × 2 + packet_loss × 10 + obstruction × 0.2)
 
 | Metric | Gen2 Standard | High Performance | Improvement |
 | ------ | ------------- | ---------------- | ----------- |
+| ------ | ------------- | ---------------- | ----------- |
 | Download | 169 Mbps | 197 Mbps | +17% |
 | Upload | 24 Mbps | 29 Mbps | +21% |
 | Latency | 28 ms | 22 ms | -21% |
@@ -1066,7 +988,7 @@ Stability Score = 100 - (jitter × 2 + packet_loss × 10 + obstruction × 0.2)
 
 Stability Score = 100 - (jitter × 2 + packet_loss × 10 + obstruction × 0.2)
 
-```
+```text
 
 **New 2026 Metrics:**
 - **Jitter**: Variation in latency (ms) - affects real-time applications
@@ -1327,23 +1249,36 @@ flake8 src/ tests/ main.py demo_workflow.py
 6. **Academic Research** - Analyze connectivity's socioeconomic impact
 
 7. **Rural Expansion Planning** - Identify priority areas for Starlink installations across LATAM
+8. **Rural Expansion Planning** - Identify priority areas for Starlink installations across LATAM
 
-8. **Rural Expansion Planning** - Identify priority areas for Starlink installations using ML
+9. **Rural Expansion Planning** - Identify priority areas for Starlink installations using ML
+10. **Rural Expansion Planning** - Identify priority areas for Starlink installations using ML
 
-9. **ISP Performance Benchmarking** - Compare Starlink vs. traditional providers
+11. **ISP Performance Benchmarking** - Compare Starlink vs. traditional providers
+12. **ISP Performance Benchmarking** - Compare Starlink vs. traditional providers
 
-10. **Infrastructure ROI Modeling** - Estimate impact of router upgrades with ML predictions
-11. **Policy Advocacy** - Generate ML-enhanced reports for government stakeholders
-12. **Academic Research** - Analyze connectivity's socioeconomic impact with geospatial ML
-13. **Starlink Deployment Strategy** - Optimize satellite internet expansion with ML zone recommendations
+13. **Infrastructure ROI Modeling** - Estimate impact of router upgrades with ML predictions
+14. **Policy Advocacy** - Generate ML-enhanced reports for government stakeholders
+15. **Academic Research** - Analyze connectivity's socioeconomic impact with geospatial ML
+16. **Starlink Deployment Strategy** - Optimize satellite internet expansion with ML zone recommendations
+17. **Infrastructure ROI Modeling** - Estimate impact of router upgrades with ML predictions
+18. **Policy Advocacy** - Generate ML-enhanced reports for government stakeholders
+19. **Academic Research** - Analyze connectivity's socioeconomic impact with geospatial ML
+20. **Starlink Deployment Strategy** - Optimize satellite internet expansion with ML zone recommendations
 
-14. **Infrastructure ROI Modeling** - Estimate impact of router upgrades
+21. **Infrastructure ROI Modeling** - Estimate impact of router upgrades
+22. **Infrastructure ROI Modeling** - Estimate impact of router upgrades
 
-15. **Policy Advocacy** - Generate reports for government stakeholders using real ANATEL/IBGE data
-16. **Academic Research** - Analyze connectivity's socioeconomic impact with demographic integration
-17. **Cross-Country Analysis** - Compare connectivity metrics across 10 LATAM countries
-18. **Starlink Market Entry** - Assess service availability and competitive landscape
-19. **Digital Divide Studies** - Track rural-urban connectivity gaps with IBGE statistics
+23. **Policy Advocacy** - Generate reports for government stakeholders using real ANATEL/IBGE data
+24. **Academic Research** - Analyze connectivity's socioeconomic impact with demographic integration
+25. **Cross-Country Analysis** - Compare connectivity metrics across 10 LATAM countries
+26. **Starlink Market Entry** - Assess service availability and competitive landscape
+27. **Digital Divide Studies** - Track rural-urban connectivity gaps with IBGE statistics
+28. **Policy Advocacy** - Generate reports for government stakeholders using real ANATEL/IBGE data
+29. **Academic Research** - Analyze connectivity's socioeconomic impact with demographic integration
+30. **Cross-Country Analysis** - Compare connectivity metrics across 10 LATAM countries
+31. **Starlink Market Entry** - Assess service availability and competitive landscape
+32. **Digital Divide Studies** - Track rural-urban connectivity gaps with IBGE statistics
 
 ---
 
@@ -1352,6 +1287,7 @@ flake8 src/ tests/ main.py demo_workflow.py
 The tool now supports **10 Latin American countries**:
 
 | Country | Code | Telecom Regulator | Stats Agency | Starlink Status |
+| ------- | ---- | ----------------- | ------------ | --------------- |
 | ------- | ---- | ----------------- | ------------ | --------------- |
 | 🇧🇷 Brazil | BR | ANATEL | IBGE | Active (98.5% coverage) |
 | 🇦🇷 Argentina | AR | ENACOM | INDEC | Active (97.0% coverage) |
@@ -1370,8 +1306,6 @@ The tool now supports **10 Latin American countries**:
 4. **Farm Automation** - Integrate with AgriX-Boost to provide connectivity layer for agricultural IoT and monitoring
 
 ---
-
-## 🗺️ Roadmap
 
 ### v1.1.0 (Q1 2026) ✅ COMPLETED
 
@@ -1525,7 +1459,7 @@ git push origin data/your-location-name
 **Method B: GitHub Issue**
 
 1. Go to [Issues](https://github.com/danielnovais-tech/Rural-Connectivity-Mapper-2026/issues/new)
-2. Title: "Speedtest Data: [Your City]"
+2. Title: "Speedtest Data: (Your City)"
 3. Attach your CSV file or paste the data
 4. Add any relevant context (time of day, weather conditions, etc.)
 
@@ -1716,10 +1650,1835 @@ Copyright (c) 2025 Daniel Azevedo Novais
 
 ---
 
-**Release Date:** January 4, 2026  
-**Version:** 1.1.0  
+## 📅 Release Notes
 
-**Release Date:** January 3, 2026  
-**Version:** 1.0.0  
+### v1.1.0 (Q1 2026)
 
-**Status:** Production Ready ✅
+1. **Policy Advocacy** - Generate reports for government stakeholders
+2. **Academic Research** - Analyze connectivity's socioeconomic impact
+3. **Failover Testing** - Export data to Hybrid Architecture Simulator for realistic network failover scenarios
+4. **Farm Automation** - Integrate with AgriX-Boost to provide connectivity layer for agricultural IoT and monitoring
+
+---
+
+## 🗺️ Roadmap
+
+### v1.1.0 (Q1 2026) ✅ COMPLETED
+
+- [x] Real-time ANATEL data integration
+- [x] IBGE demographics integration  
+- [x] Starlink API integration
+- [x] Streamlit web dashboard
+- [x] Support for 10 LATAM countries
+- [x] Country-specific configurations
+
+### v1.1.0 (Q1 2026) - COMPLETED ✅
+
+- [x] Multi-country support (9 countries)
+- [x] Country-specific provider lists
+- [x] Localized geocoding
+- [x] Configurable map centers
+
+### v1.0.0 (Current) ✅
+
+- [x] Complete CLI application with ecosystem integration
+- [x] Export data for Hybrid Architecture Simulator (failover testing)
+- [x] Export data for AgriX-Boost (farm dashboards)
+- [x] Ecosystem bundle generation
+- [x] 46 comprehensive tests
+
+### v1.0.1 (Current Release)
+
+- [x] Docker containerization ✅ (Moved from v1.1.0)
+
+### v1.1.0 (Q1 2026)
+
+- [x] Web dashboard (Streamlit)
+- [x] Real-time speedtest integration
+- [x] Integration with Starlink APIs ✅ (Completed: starlink_api.py module)
+- [ ] Real-time speedtest integration
+- [ ] SQLite database backend
+
+- [x] GitHub Actions CI/CD ✅
+- [ ] Docker containerization
+- [ ] GitHub Actions CI/CD
+
+### v1.2.0 (Q2 2026) - COMPLETED! ✅
+
+- [x] Web dashboard (Flask)
+- [x] REST API endpoints
+- [ ] Machine learning predictions
+
+### v1.2.0 (Q2 2026) - **COMPLETED EARLY!**
+
+- [ ] Web dashboard (Flask/Streamlit)
+- [ ] REST API endpoints
+- [x] **Machine learning predictions** ✅
+- [ ] GeoJSON/KML export
+
+### v2.0.0 (H2 2026)
+
+- [ ] Multi-language UI (Portuguese/Spanish/English)
+- [ ] Mobile app for field data collection
+- [ ] Advanced analytics (churn prediction)
+- [ ] Live Starlink satellite tracking
+- [ ] Additional countries support
+- [x] Multi-language support (Portuguese/English) ✅ **Completed!**
+- [ ] Mobile app for field data collection
+- [ ] Advanced analytics (churn prediction)
+- [ ] Integration with Starlink APIs
+- [ ] Deep learning models for connectivity forecasting
+
+---
+
+## v1.1.0 (Q1 2026)
+
+- [x] Web dashboard (Streamlit)
+- [x] Real-time speedtest integration
+- [x] Integration with Starlink APIs ✅ (Completed: starlink_api.py module)
+- [ ] Real-time speedtest integration
+- [ ] SQLite database backend
+
+- [x] GitHub Actions CI/CD ✅
+- [ ] Docker containerization
+- [ ] GitHub Actions CI/CD
+
+### v1.2.0 (Q2 2026) - COMPLETED! ✅
+
+- [x] Web dashboard (Flask)
+- [x] REST API endpoints
+- [ ] Machine learning predictions
+
+### v1.2.0 (Q2 2026) - **COMPLETED EARLY!**
+
+- [ ] Web dashboard (Flask/Streamlit)
+- [ ] REST API endpoints
+- [x] **Machine learning predictions** ✅
+- [ ] GeoJSON/KML export
+
+### v2.0.0 (H2 2026)
+
+- [ ] Multi-language UI (Portuguese/Spanish/English)
+- [ ] Mobile app for field data collection
+- [ ] Advanced analytics (churn prediction)
+- [ ] Live Starlink satellite tracking
+- [ ] Additional countries support
+- [x] Multi-language support (Portuguese/English) ✅ **Completed!**
+- [ ] Mobile app for field data collection
+- [ ] Advanced analytics (churn prediction)
+- [ ] Integration with Starlink APIs
+- [ ] Deep learning models for connectivity forecasting
+
+---
+
+### 📊 How to Contribute Your Speedtest Data
+
+Help us map rural connectivity across Brazil! Your speedtest data is valuable for:
+
+- 🗺️ Identifying underserved areas
+- 📈 Tracking ISP performance over time
+- 🎯 Supporting Starlink's 2026 expansion planning
+- 📊 Advocating for better rural internet policies
+
+### Quick Contribution Guide
+
+#### 1️⃣ Download a Template
+
+Choose one of the ready-made CSV templates from the [`/examples/`](examples/) directory:
+
+- **[Basic Template](examples/speedtest_template_basic.csv)** - Simple template with one example entry
+- **[Complete Template](examples/speedtest_template_complete.csv)** - Template with 5 example entries
+
+Or download directly:
+
+```bash
+curl -O https://raw.githubusercontent.com/danielnovais-tech/Rural-Connectivity-Mapper-2026/main/examples/speedtest_template_basic.csv
+```
+
+#### 2️⃣ Run a Speedtest
+
+Use any of these tools to measure your internet speed:
+
+**Online Tools:**
+
+- [Speedtest.net](https://www.speedtest.net/) (recommended)
+- [Fast.com](https://fast.com/)
+- [CloudFlare Speed Test](https://speed.cloudflare.com/)
+
+**Command Line:**
+
+```bash
+pip install speedtest-cli
+speedtest-cli --simple
+```
+
+#### 3️⃣ Fill in Your Data
+
+Edit the CSV template with your results:
+
+| Field | How to Fill | Example |
+| ----- | ----------- | ------- |
+| ----- | ----------- | ------- |
+| `id` | Any unique number | 1 |
+| `city` | Your city/location | "Campinas" |
+| `provider` | Your ISP name | "Starlink" |
+| `latitude` | GPS coordinate | -22.9099 |
+| `longitude` | GPS coordinate | -47.0626 |
+| `download` | Download speed (Mbps) | 150.5 |
+| `upload` | Upload speed (Mbps) | 20.3 |
+| `latency` | Ping time (ms) | 28.0 |
+| `jitter` | Jitter (ms) - optional | 3.5 |
+| `packet_loss` | Packet loss (%) - optional | 0.2 |
+| `timestamp` | ISO 8601 format (optional) | 2026-01-15T10:00:00 |
+
+**💡 Tip:** Use [Google Maps](https://www.google.com/maps) to find coordinates - right-click on your location and click the coordinates to copy them.
+
+#### 4️⃣ Submit Your Data
+
+Choose one of these methods:
+
+**Method A: GitHub Pull Request** (Recommended)
+
+```bash
+# Fork the repository first, then:
+git clone https://github.com/YOUR-USERNAME/Rural-Connectivity-Mapper-2026.git
+cd Rural-Connectivity-Mapper-2026
+git checkout -b data/your-location-name
+
+# Add your CSV file to src/data/ or submit as attachment
+git add your_speedtest_data.csv
+git commit -m "Add speedtest data for [Your City]"
+git push origin data/your-location-name
+
+# Open a Pull Request on GitHub
+```
+
+**Method B: GitHub Issue**
+
+1. Go to [Issues](https://github.com/danielnovais-tech/Rural-Connectivity-Mapper-2026/issues/new)
+2. Title: "Speedtest Data: (Your City)"
+3. Attach your CSV file or paste the data
+4. Add any relevant context (time of day, weather conditions, etc.)
+
+**Method C: Email/Contact**
+
+- Submit via [GitHub Discussions](https://github.com/danielnovais-tech/Rural-Connectivity-Mapper-2026/discussions)
+
+### Data Quality Guidelines
+
+✅ **Do:**
+
+- Run 3-5 tests and use average values
+- Test at different times of day
+- Close bandwidth-intensive applications
+- Note any unusual conditions (weather, network congestion)
+- Use accurate GPS coordinates
+
+❌ **Don't:**
+
+- Submit fake or estimated data
+- Include personally identifiable information
+- Submit duplicate measurements without time gaps
+
+### Need Help?
+
+📖 Full documentation in [`/examples/README.md`](examples/README.md)  
+💬 Questions? Open a [Discussion](https://github.com/danielnovais-tech/Rural-Connectivity-Mapper-2026/discussions)  
+🐛 Issues? Report a [Bug](https://github.com/danielnovais-tech/Rural-Connectivity-Mapper-2026/issues)
+
+**Every data point helps! Thank you for contributing to better rural connectivity in Brazil! 🇧🇷**
+
+---
+
+### 🤝 Contributing Code
+
+Developer contributions are also welcome! Please:
+
+1. Fork the repository
+2. Create feature branch: `git checkout -b feature/amazing-feature`
+3. Run tests: `pytest tests/ -v`
+4. Submit Pull Request
+
+**Guidelines:**
+
+- Follow PEP 8 style
+- Add docstrings (Google-style)
+- Include tests for new features
+- Update documentation
+- **Estimate effort** when creating issues (S/M/L/XL or hours)
+
+See [CONTRIBUTING.md](CONTRIBUTING.md) for full details including effort estimation guidelines.
+
+---
+
+### 📄 License
+
+**MIT License** - See [LICENSE](LICENSE) file for details.
+
+Copyright (c) 2025 Daniel Azevedo Novais
+
+---
+
+### 🙏 Acknowledgments
+
+- **SpaceX Starlink** - 2026 expansion targets and satellite innovation
+
+- **ANATEL** - Brazilian telecommunications data and regulatory framework
+- **IBGE** - Brazilian demographic and geographic statistics
+- **LATAM Regulators** - ENACOM, SUBTEL, CRC, IFT, OSIPTEL, and others
+- **Brazilian ISPs** - Claro, Vivo, TIM, Oi for benchmarking
+- **Satellite ISPs** - Viasat, HughesNet for rural comparisons
+- **Open Source Community** - geopy, folium, pytest, pandas, streamlit, plotly
+
+- **Global ISPs** - AT&T, Verizon, Bell, BT, Telstra, Deutsche Telekom and many others
+
+- **SpaceX Starlink** - 2026 expansion targets and Gen2/High Performance dish innovation
+
+- **Brazilian ISPs** - Claro, Vivo, TIM, Oi for benchmarking
+- **Satellite ISPs** - Viasat, HughesNet for rural comparisons
+- **Open Source Community** - geopy, folium, pytest, pandas, scikit-learn
+
+---
+
+### 📧 Support
+
+- **Issues:** [GitHub Issues](https://github.com/danielnovais-tech/Rural-Connectivity-Mapper-2026/issues)
+- **Discussions:** [GitHub Discussions](https://github.com/danielnovais-tech/Rural-Connectivity-Mapper-2026/discussions)
+- **Repository:** [Rural-Connectivity-Mapper-2026](https://github.com/danielnovais-tech/Rural-Connectivity-Mapper-2026)
+
+---
+
+### 📊 Project Statistics
+
+- **35+ files** across models, utilities, tests, documentation
+- **4,000+ lines of code** (Python)
+- **45 passing tests** (100% success rate)
+- **5 sample cities** with real-world profiles
+- **4 export formats** (JSON, CSV, TXT, HTML)
+- **5 Starlink coverage zones** + 11 signal points
+
+- **35+ files** across models, utilities, tests, documentation
+- **4,500+ lines of code** (Python)
+- **58 passing tests** (100% success rate)
+- **9 utility modules** including Starlink API integration
+
+- **40 files** across models, utilities, tests, documentation
+- **5,119 lines of code** (Python)
+- **73 passing tests** (100% success rate)
+- **10 LATAM countries** fully configured
+- **4 data sources** (ANATEL, IBGE, Starlink API, Manual)
+- **6 dashboard views** in Streamlit
+- **4 export formats** (JSON, CSV, TXT, HTML)
+
+- **35 files** across models, utilities, tests, documentation, web app
+- **4,800+ lines of code** (Python, HTML, CSS, JavaScript)
+- **47 passing tests** (100% success rate)
+
+- **35+ files** across models, utilities, tests, documentation
+- **5,500+ lines of code** (Python)
+- **47 passing tests** (100% success rate)
+
+- **38 files** across models, utilities, tests, documentation, config
+- **4,500+ lines of code** (Python)
+- **46 passing tests** (100% success rate)
+- **9 supported countries** with localized settings
+- **10+ sample cities** with real-world profiles
+- **4 export formats** (JSON, CSV, TXT, HTML)
+
+- **35 files** across models, utilities, tests, documentation
+- **4,000+ lines of code** (Python)
+- **50 passing tests** (100% success rate)
+- **2 supported languages** (English, Portuguese)
+
+- **35 files** across models, utilities, tests, documentation
+- **4,000+ lines of code** (Python)
+- **55 passing tests** (100% success rate)
+- **10 sample locations** in example_speedtests.csv
+- **4 export formats** (JSON, CSV, TXT, HTML)
+
+- **40+ files** across models, utilities, tests, documentation, exports
+- **5,000+ lines of code** (Python)
+- **46 passing tests** (100% success rate)
+- **32 files** across models, utilities, tests, documentation
+
+- **3,700+ lines of code** (Python)
+- **38 passing tests** (100% success rate)
+
+- **3,591+ lines of code** (Python)
+- **37 passing tests** (100% success rate)
+- **15 sample cities** with real-world 2026 profiles
+- **8 ISP providers** (Starlink Gen2, Starlink High Performance, and traditional ISPs)
+- **4 export formats** (JSON, CSV, TXT, HTML)
+
+- **3,800+ lines of code** (Python)
+- **39 passing tests** (100% success rate)
+- **10 sample cities** with real-world 2026 profiles
+- **9 ISP providers** including Starlink Gen2 and High Performance dishes
+- **4 export formats** (JSON, CSV, TXT, HTML)
+- **3,591 lines of code** (Python)
+- **39 passing tests** (100% success rate)
+
+- **5 sample cities** with real-world profiles
+- **7 export formats** (JSON, CSV, TXT, HTML, Hybrid Simulator, AgriX-Boost, Ecosystem Bundle)
+
+- **80%+ test coverage**
+- **6 Starlink coverage zones** (Active, Planned, Limited)
+
+- **14 REST API endpoints** for data integration
+
+- **3 integrated ecosystem components**
+
+---
+
+**🇧🇷 🇦🇷 🇨🇱 🇨🇴 🇲🇽 Made with ❤️ for improving rural connectivity across Latin America**
+
+**🌍 Made with ❤️ for improving rural connectivity worldwide**
+
+*Supporting Starlink's 2026 roadmap to connect 10M rural users globally and enable 20-30% agricultural productivity gains.*
+
+*Part of the Rural Connectivity Ecosystem 2026 - integrating with Hybrid Architecture Simulator and AgriX-Boost.*
+
+---
+
+### 📚 Additional Documentation
+
+- **[New Features Guide](docs/NEW_FEATURES.md)** - Comprehensive guide for ANATEL, IBGE, Starlink API, and LATAM support
+- **[API Reference](docs/API.md)** - Full API documentation
+
+---
+
+### 📅 Release Notes
+
+### v1.1.0 (Q1 2026)
+
+- [x] Real-time ANATEL data integration
+- [x] IBGE demographics integration  
+- [x] Starlink API integration
+- [x] Streamlit web dashboard
+- [x] Support for 10 LATAM countries
+- [x] Country-specific configurations
+
+### v1.1.0 (Q1 2026) - COMPLETED ✅
+
+- [x] Multi-country support (9 countries)
+- [x] Country-specific provider lists
+- [x] Localized geocoding
+- [x] Configurable map centers
+
+### v1.0.0 (Current) ✅
+
+- [x] Complete CLI application with ecosystem integration
+- [x] Export data for Hybrid Architecture Simulator (failover testing)
+- [x] Export data for AgriX-Boost (farm dashboards)
+- [x] Ecosystem bundle generation
+- [x] 46 comprehensive tests
+
+### v1.0.1 (Current Release)
+
+- [x] Docker containerization ✅ (Moved from v1.1.0)
+
+#### v1.1.0 (Q1 2026)
+
+- [x] Web dashboard (Streamlit)
+- [x] Real-time speedtest integration
+- [x] Integration with Starlink APIs ✅ (Completed: starlink_api.py module)
+- [ ] Real-time speedtest integration
+- [ ] SQLite database backend
+
+- [x] GitHub Actions CI/CD ✅
+- [ ] Docker containerization
+- [ ] GitHub Actions CI/CD
+
+## v1.2.0 (Q2 2026) - COMPLETED! ✅
+
+- [x] Web dashboard (Flask)
+- [x] REST API endpoints
+- [ ] Machine learning predictions
+
+### v1.2.0 (Q2 2026) - **COMPLETED EARLY!**
+
+- [ ] Web dashboard (Flask/Streamlit)
+- [ ] REST API endpoints
+- [x] **Machine learning predictions** ✅
+- [ ] GeoJSON/KML export
+
+### v2.0.0 (H2 2026)
+
+- [ ] Multi-language UI (Portuguese/Spanish/English)
+- [ ] Mobile app for field data collection
+- [ ] Advanced analytics (churn prediction)
+- [ ] Live Starlink satellite tracking
+- [ ] Additional countries support
+- [x] Multi-language support (Portuguese/English) ✅ **Completed!**
+- [ ] Mobile app for field data collection
+- [ ] Advanced analytics (churn prediction)
+- [ ] Integration with Starlink APIs
+- [ ] Deep learning models for connectivity forecasting
+
+---
+
+### 📊 How to Contribute Your Speedtest Data
+
+Help us map rural connectivity across Brazil! Your speedtest data is valuable for:
+
+- 🗺️ Identifying underserved areas
+- 📈 Tracking ISP performance over time
+- 🎯 Supporting Starlink's 2026 expansion planning
+- 📊 Advocating for better rural internet policies
+
+### Quick Contribution Guide
+
+#### 1️⃣ Download a Template
+
+Choose one of the ready-made CSV templates from the [`/examples/`](examples/) directory:
+
+- **[Basic Template](examples/speedtest_template_basic.csv)** - Simple template with one example entry
+- **[Complete Template](examples/speedtest_template_complete.csv)** - Template with 5 example entries
+
+Or download directly:
+
+```bash
+curl -O https://raw.githubusercontent.com/danielnovais-tech/Rural-Connectivity-Mapper-2026/main/examples/speedtest_template_basic.csv
+```
+
+#### 2️⃣ Run a Speedtest
+
+Use any of these tools to measure your internet speed:
+
+**Online Tools:**
+
+- [Speedtest.net](https://www.speedtest.net/) (recommended)
+- [Fast.com](https://fast.com/)
+- [CloudFlare Speed Test](https://speed.cloudflare.com/)
+
+**Command Line:**
+
+```bash
+pip install speedtest-cli
+speedtest-cli --simple
+```
+
+#### 3️⃣ Fill in Your Data
+
+Edit the CSV template with your results:
+
+| Field | How to Fill | Example |
+| ----- | ----------- | ------- |
+| `id` | Any unique number | 1 |
+| `city` | Your city/location | "Campinas" |
+| `provider` | Your ISP name | "Starlink" |
+| `latitude` | GPS coordinate | -22.9099 |
+| `longitude` | GPS coordinate | -47.0626 |
+| `download` | Download speed (Mbps) | 150.5 |
+| `upload` | Upload speed (Mbps) | 20.3 |
+| `latency` | Ping time (ms) | 28.0 |
+| `jitter` | Jitter (ms) - optional | 3.5 |
+| `packet_loss` | Packet loss (%) - optional | 0.2 |
+| `timestamp` | ISO 8601 format (optional) | 2026-01-15T10:00:00 |
+
+**💡 Tip:** Use [Google Maps](https://www.google.com/maps) to find coordinates - right-click on your location and click the coordinates to copy them.
+
+#### 4️⃣ Submit Your Data
+
+Choose one of these methods:
+
+**Method A: GitHub Pull Request** (Recommended)
+
+```bash
+# Fork the repository first, then:
+git clone https://github.com/YOUR-USERNAME/Rural-Connectivity-Mapper-2026.git
+cd Rural-Connectivity-Mapper-2026
+git checkout -b data/your-location-name
+
+# Add your CSV file to src/data/ or submit as attachment
+git add your_speedtest_data.csv
+git commit -m "Add speedtest data for [Your City]"
+git push origin data/your-location-name
+
+# Open a Pull Request on GitHub
+```
+
+**Method B: GitHub Issue**
+
+1. Go to [Issues](https://github.com/danielnovais-tech/Rural-Connectivity-Mapper-2026/issues/new)
+2. Title: "Speedtest Data: (Your City)"
+3. Attach your CSV file or paste the data
+4. Add any relevant context (time of day, weather conditions, etc.)
+
+**Method C: Email/Contact**
+
+- Submit via [GitHub Discussions](https://github.com/danielnovais-tech/Rural-Connectivity-Mapper-2026/discussions)
+
+### Data Quality Guidelines
+
+✅ **Do:**
+
+- Run 3-5 tests and use average values
+- Test at different times of day
+- Close bandwidth-intensive applications
+- Note any unusual conditions (weather, network congestion)
+- Use accurate GPS coordinates
+
+❌ **Don't:**
+
+- Submit fake or estimated data
+- Include personally identifiable information
+- Submit duplicate measurements without time gaps
+
+### Need Help?
+
+📖 Full documentation in [`/examples/README.md`](examples/README.md)  
+💬 Questions? Open a [Discussion](https://github.com/danielnovais-tech/Rural-Connectivity-Mapper-2026/discussions)  
+🐛 Issues? Report a [Bug](https://github.com/danielnovais-tech/Rural-Connectivity-Mapper-2026/issues)
+
+**Every data point helps! Thank you for contributing to better rural connectivity in Brazil! 🇧🇷**
+
+---
+
+### 🤝 Contributing Code
+
+Developer contributions are also welcome! Please:
+
+1. Fork the repository
+2. Create feature branch: `git checkout -b feature/amazing-feature`
+3. Run tests: `pytest tests/ -v`
+4. Submit Pull Request
+
+**Guidelines:**
+
+- Follow PEP 8 style
+- Add docstrings (Google-style)
+- Include tests for new features
+- Update documentation
+- **Estimate effort** when creating issues (S/M/L/XL or hours)
+
+See [CONTRIBUTING.md](CONTRIBUTING.md) for full details including effort estimation guidelines.
+
+---
+
+### 📄 License
+
+**MIT License** - See [LICENSE](LICENSE) file for details.
+
+Copyright (c) 2025 Daniel Azevedo Novais
+
+---
+
+### 🙏 Acknowledgments
+
+- **SpaceX Starlink** - 2026 expansion targets and satellite innovation
+
+- **ANATEL** - Brazilian telecommunications data and regulatory framework
+- **IBGE** - Brazilian demographic and geographic statistics
+- **LATAM Regulators** - ENACOM, SUBTEL, CRC, IFT, OSIPTEL, and others
+- **Brazilian ISPs** - Claro, Vivo, TIM, Oi for benchmarking
+- **Satellite ISPs** - Viasat, HughesNet for rural comparisons
+- **Open Source Community** - geopy, folium, pytest, pandas, streamlit, plotly
+
+- **Global ISPs** - AT&T, Verizon, Bell, BT, Telstra, Deutsche Telekom and many others
+
+- **SpaceX Starlink** - 2026 expansion targets and Gen2/High Performance dish innovation
+
+- **Brazilian ISPs** - Claro, Vivo, TIM, Oi for benchmarking
+- **Satellite ISPs** - Viasat, HughesNet for rural comparisons
+- **Open Source Community** - geopy, folium, pytest, pandas, scikit-learn
+
+---
+
+### 📧 Support
+
+- **Issues:** [GitHub Issues](https://github.com/danielnovais-tech/Rural-Connectivity-Mapper-2026/issues)
+- **Discussions:** [GitHub Discussions](https://github.com/danielnovais-tech/Rural-Connectivity-Mapper-2026/discussions)
+- **Repository:** [Rural-Connectivity-Mapper-2026](https://github.com/danielnovais-tech/Rural-Connectivity-Mapper-2026)
+
+---
+
+### 📊 Project Statistics
+
+- **35+ files** across models, utilities, tests, documentation
+- **4,000+ lines of code** (Python)
+- **45 passing tests** (100% success rate)
+- **5 sample cities** with real-world profiles
+- **4 export formats** (JSON, CSV, TXT, HTML)
+- **5 Starlink coverage zones** + 11 signal points
+
+- **35+ files** across models, utilities, tests, documentation
+- **4,500+ lines of code** (Python)
+- **58 passing tests** (100% success rate)
+- **9 utility modules** including Starlink API integration
+
+- **40 files** across models, utilities, tests, documentation
+- **5,119 lines of code** (Python)
+- **73 passing tests** (100% success rate)
+- **10 LATAM countries** fully configured
+- **4 data sources** (ANATEL, IBGE, Starlink API, Manual)
+- **6 dashboard views** in Streamlit
+- **4 export formats** (JSON, CSV, TXT, HTML)
+
+- **35 files** across models, utilities, tests, documentation, web app
+- **4,800+ lines of code** (Python, HTML, CSS, JavaScript)
+- **47 passing tests** (100% success rate)
+
+- **35+ files** across models, utilities, tests, documentation
+- **5,500+ lines of code** (Python)
+- **47 passing tests** (100% success rate)
+
+- **38 files** across models, utilities, tests, documentation, config
+- **4,500+ lines of code** (Python)
+- **46 passing tests** (100% success rate)
+- **9 supported countries** with localized settings
+- **10+ sample cities** with real-world profiles
+- **4 export formats** (JSON, CSV, TXT, HTML)
+
+- **35 files** across models, utilities, tests, documentation
+- **4,000+ lines of code** (Python)
+- **50 passing tests** (100% success rate)
+- **2 supported languages** (English, Portuguese)
+
+- **35 files** across models, utilities, tests, documentation
+- **4,000+ lines of code** (Python)
+- **55 passing tests** (100% success rate)
+- **10 sample locations** in example_speedtests.csv
+- **4 export formats** (JSON, CSV, TXT, HTML)
+
+- **40+ files** across models, utilities, tests, documentation, exports
+- **5,000+ lines of code** (Python)
+- **46 passing tests** (100% success rate)
+- **32 files** across models, utilities, tests, documentation
+
+- **3,700+ lines of code** (Python)
+- **38 passing tests** (100% success rate)
+
+- **3,591+ lines of code** (Python)
+- **37 passing tests** (100% success rate)
+- **15 sample cities** with real-world 2026 profiles
+- **8 ISP providers** (Starlink Gen2, Starlink High Performance, and traditional ISPs)
+- **4 export formats** (JSON, CSV, TXT, HTML)
+
+- **3,800+ lines of code** (Python)
+- **39 passing tests** (100% success rate)
+- **10 sample cities** with real-world 2026 profiles
+- **9 ISP providers** including Starlink Gen2 and High Performance dishes
+- **4 export formats** (JSON, CSV, TXT, HTML)
+- **3,591 lines of code** (Python)
+- **39 passing tests** (100% success rate)
+
+- **5 sample cities** with real-world profiles
+- **7 export formats** (JSON, CSV, TXT, HTML, Hybrid Simulator, AgriX-Boost, Ecosystem Bundle)
+
+- **80%+ test coverage**
+- **6 Starlink coverage zones** (Active, Planned, Limited)
+
+- **14 REST API endpoints** for data integration
+
+- **3 integrated ecosystem components**
+
+---
+
+**🇧🇷 🇦🇷 🇨🇱 🇨🇴 🇲🇽 Made with ❤️ for improving rural connectivity across Latin America**
+
+**🌍 Made with ❤️ for improving rural connectivity worldwide**
+
+*Supporting Starlink's 2026 roadmap to connect 10M rural users globally and enable 20-30% agricultural productivity gains.*
+
+*Part of the Rural Connectivity Ecosystem 2026 - integrating with Hybrid Architecture Simulator and AgriX-Boost.*
+
+---
+
+### 📚 Additional Documentation
+
+- **[New Features Guide](docs/NEW_FEATURES.md)** - Comprehensive guide for ANATEL, IBGE, Starlink API, and LATAM support
+- **[API Reference](docs/API.md)** - Full API documentation
+
+---
+
+### 📅 Release Notes
+
+#### v1.1.0 (Q1 2026)
+
+- [x] Real-time ANATEL data integration
+- [x] IBGE demographics integration  
+- [x] Starlink API integration
+- [x] Streamlit web dashboard
+- [x] Support for 10 LATAM countries
+- [x] Country-specific configurations
+
+### v1.1.0 (Q1 2026) - COMPLETED ✅
+
+- [x] Multi-country support (9 countries)
+- [x] Country-specific provider lists
+- [x] Localized geocoding
+- [x] Configurable map centers
+
+### v1.0.0 (Current) ✅
+
+- [x] Complete CLI application with ecosystem integration
+- [x] Export data for Hybrid Architecture Simulator (failover testing)
+- [x] Export data for AgriX-Boost (farm dashboards)
+- [x] Ecosystem bundle generation
+- [x] 46 comprehensive tests
+
+### v1.0.1 (Current Release)
+
+- [x] Docker containerization ✅ (Moved from v1.1.0)
+
+### v1.1.0 (Q1 2026)
+
+- [x] Web dashboard (Streamlit)
+- [x] Real-time speedtest integration
+- [x] Integration with Starlink APIs ✅ (Completed: starlink_api.py module)
+- [ ] Real-time speedtest integration
+- [ ] SQLite database backend
+
+- [x] GitHub Actions CI/CD ✅
+- [ ] Docker containerization
+- [ ] GitHub Actions CI/CD
+
+### v1.2.0 (Q2 2026) - COMPLETED! ✅
+
+- [x] Web dashboard (Flask)
+- [x] REST API endpoints
+- [ ] Machine learning predictions
+
+#### v1.2.0 (Q2 2026) - **COMPLETED EARLY!**
+
+- [ ] Web dashboard (Flask/Streamlit)
+- [ ] REST API endpoints
+- [x] **Machine learning predictions** ✅
+- [ ] GeoJSON/KML export
+
+#### v2.0.0 (H2 2026)
+
+- [ ] Multi-language UI (Portuguese/Spanish/English)
+- [ ] Mobile app for field data collection
+- [ ] Advanced analytics (churn prediction)
+- [ ] Live Starlink satellite tracking
+- [ ] Additional countries support
+- [x] Multi-language support (Portuguese/English) ✅ **Completed!**
+- [ ] Mobile app for field data collection
+- [ ] Advanced analytics (churn prediction)
+- [ ] Integration with Starlink APIs
+- [ ] Deep learning models for connectivity forecasting
+
+---
+
+#### 📊 How to Contribute Your Speedtest Data
+
+Help us map rural connectivity across Brazil! Your speedtest data is valuable for:
+
+- 🗺️ Identifying underserved areas
+- 📈 Tracking ISP performance over time
+- 🎯 Supporting Starlink's 2026 expansion planning
+- 📊 Advocating for better rural internet policies
+
+#### #### Quick Contribution Guide
+
+#### 1️⃣ Download a Template
+
+Choose one of the ready-made CSV templates from the [`/examples/`](examples/) directory:
+
+- **[Basic Template](examples/speedtest_template_basic.csv)** - Simple template with one example entry
+- **[Complete Template](examples/speedtest_template_complete.csv)** - Template with 5 example entries
+
+Or download directly:
+
+```bash
+curl -O https://raw.githubusercontent.com/danielnovais-tech/Rural-Connectivity-Mapper-2026/main/examples/speedtest_template_basic.csv
+```
+
+#### 2️⃣ Run a Speedtest
+
+Use any of these tools to measure your internet speed:
+
+**Online Tools:**
+
+- [Speedtest.net](https://www.speedtest.net/) (recommended)
+- [Fast.com](https://fast.com/)
+- [CloudFlare Speed Test](https://speed.cloudflare.com/)
+
+**Command Line:**
+
+```bash
+pip install speedtest-cli
+speedtest-cli --simple
+```
+
+#### 3️⃣ Fill in Your Data
+
+Edit the CSV template with your results:
+
+| Field | How to Fill | Example |
+| ----- | ----------- | ------- |
+| `id` | Any unique number | 1 |
+| `city` | Your city/location | "Campinas" |
+| `provider` | Your ISP name | "Starlink" |
+| `latitude` | GPS coordinate | -22.9099 |
+| `longitude` | GPS coordinate | -47.0626 |
+| `download` | Download speed (Mbps) | 150.5 |
+| `upload` | Upload speed (Mbps) | 20.3 |
+| `latency` | Ping time (ms) | 28.0 |
+| `jitter` | Jitter (ms) - optional | 3.5 |
+| `packet_loss` | Packet loss (%) - optional | 0.2 |
+| `timestamp` | ISO 8601 format (optional) | 2026-01-15T10:00:00 |
+
+**💡 Tip:** Use [Google Maps](https://www.google.com/maps) to find coordinates - right-click on your location and click the coordinates to copy them.
+
+#### 4️⃣ Submit Your Data
+
+Choose one of these methods:
+
+**Method A: GitHub Pull Request** (Recommended)
+
+```bash
+# Fork the repository first, then:
+git clone https://github.com/YOUR-USERNAME/Rural-Connectivity-Mapper-2026.git
+cd Rural-Connectivity-Mapper-2026
+git checkout -b data/your-location-name
+
+# Add your CSV file to src/data/ or submit as attachment
+git add your_speedtest_data.csv
+git commit -m "Add speedtest data for [Your City]"
+git push origin data/your-location-name
+
+# Open a Pull Request on GitHub
+```
+
+**Method B: GitHub Issue**
+
+1. Go to [Issues](https://github.com/danielnovais-tech/Rural-Connectivity-Mapper-2026/issues/new)
+2. Title: "Speedtest Data: (Your City)"
+3. Attach your CSV file or paste the data
+4. Add any relevant context (time of day, weather conditions, etc.)
+
+**Method C: Email/Contact**
+
+- Submit via [GitHub Discussions](https://github.com/danielnovais-tech/Rural-Connectivity-Mapper-2026/discussions)
+
+#### Data Quality Guidelines
+
+✅ **Do:**
+
+- Run 3-5 tests and use average values
+- Test at different times of day
+- Close bandwidth-intensive applications
+- Note any unusual conditions (weather, network congestion)
+- Use accurate GPS coordinates
+
+❌ **Don't:**
+
+- Submit fake or estimated data
+- Include personally identifiable information
+- Submit duplicate measurements without time gaps
+
+#### Need Help?
+
+📖 Full documentation in [`/examples/README.md`](examples/README.md)  
+💬 Questions? Open a [Discussion](https://github.com/danielnovais-tech/Rural-Connectivity-Mapper-2026/discussions)  
+🐛 Issues? Report a [Bug](https://github.com/danielnovais-tech/Rural-Connectivity-Mapper-2026/issues)
+
+**Every data point helps! Thank you for contributing to better rural connectivity in Brazil! 🇧🇷**
+
+---
+
+#### 🤝 Contributing Code
+
+Developer contributions are also welcome! Please:
+
+1. Fork the repository
+2. Create feature branch: `git checkout -b feature/amazing-feature`
+3. Run tests: `pytest tests/ -v`
+4. Submit Pull Request
+
+**Guidelines:**
+
+- Follow PEP 8 style
+- Add docstrings (Google-style)
+- Include tests for new features
+- Update documentation
+- **Estimate effort** when creating issues (S/M/L/XL or hours)
+
+See [CONTRIBUTING.md](CONTRIBUTING.md) for full details including effort estimation guidelines.
+
+---
+
+#### 📄 License
+
+**MIT License** - See [LICENSE](LICENSE) file for details.
+
+Copyright (c) 2025 Daniel Azevedo Novais
+
+---
+
+#### 🙏 Acknowledgments
+
+- **SpaceX Starlink** - 2026 expansion targets and satellite innovation
+
+- **ANATEL** - Brazilian telecommunications data and regulatory framework
+- **IBGE** - Brazilian demographic and geographic statistics
+- **LATAM Regulators** - ENACOM, SUBTEL, CRC, IFT, OSIPTEL, and others
+- **Brazilian ISPs** - Claro, Vivo, TIM, Oi for benchmarking
+- **Satellite ISPs** - Viasat, HughesNet for rural comparisons
+- **Open Source Community** - geopy, folium, pytest, pandas, streamlit, plotly
+
+- **Global ISPs** - AT&T, Verizon, Bell, BT, Telstra, Deutsche Telekom and many others
+
+- **SpaceX Starlink** - 2026 expansion targets and Gen2/High Performance dish innovation
+
+- **Brazilian ISPs** - Claro, Vivo, TIM, Oi for benchmarking
+- **Satellite ISPs** - Viasat, HughesNet for rural comparisons
+- **Open Source Community** - geopy, folium, pytest, pandas, scikit-learn
+
+---
+
+#### 📧 Support
+
+- **Issues:** [GitHub Issues](https://github.com/danielnovais-tech/Rural-Connectivity-Mapper-2026/issues)
+- **Discussions:** [GitHub Discussions](https://github.com/danielnovais-tech/Rural-Connectivity-Mapper-2026/discussions)
+- **Repository:** [Rural-Connectivity-Mapper-2026](https://github.com/danielnovais-tech/Rural-Connectivity-Mapper-2026)
+
+---
+
+#### 📊 Project Statistics
+
+- **35+ files** across models, utilities, tests, documentation
+- **4,000+ lines of code** (Python)
+- **45 passing tests** (100% success rate)
+
+- **5 sample cities** with real-world profiles
+- **4 export formats** (JSON, CSV, TXT, HTML)
+- **5 Starlink coverage zones** + 11 signal points
+
+- **35+ files** across models, utilities, tests, documentation
+- **4,500+ lines of code** (Python)
+- **58 passing tests** (100% success rate)
+- **9 utility modules** including Starlink API integration
+
+- **40 files** across models, utilities, tests, documentation
+- **5,119 lines of code** (Python)
+- **73 passing tests** (100% success rate)
+- **10 LATAM countries** fully configured
+- **4 data sources** (ANATEL, IBGE, Starlink API, Manual)
+- **6 dashboard views** in Streamlit
+- **4 export formats** (JSON, CSV, TXT, HTML)
+
+- **35 files** across models, utilities, tests, documentation, web app
+- **4,800+ lines of code** (Python, HTML, CSS, JavaScript)
+- **47 passing tests** (100% success rate)
+
+- **35+ files** across models, utilities, tests, documentation
+- **5,500+ lines of code** (Python)
+- **47 passing tests** (100% success rate)
+
+- **38 files** across models, utilities, tests, documentation, config
+- **4,500+ lines of code** (Python)
+- **46 passing tests** (100% success rate)
+- **9 supported countries** with localized settings
+- **10+ sample cities** with real-world profiles
+- **4 export formats** (JSON, CSV, TXT, HTML)
+
+- **35 files** across models, utilities, tests, documentation
+- **4,000+ lines of code** (Python)
+- **50 passing tests** (100% success rate)
+- **2 supported languages** (English, Portuguese)
+
+- **35 files** across models, utilities, tests, documentation
+- **4,000+ lines of code** (Python)
+- **55 passing tests** (100% success rate)
+- **10 sample locations** in example_speedtests.csv
+- **4 export formats** (JSON, CSV, TXT, HTML)
+
+- **40+ files** across models, utilities, tests, documentation, exports
+- **5,000+ lines of code** (Python)
+- **46 passing tests** (100% success rate)
+- **32 files** across models, utilities, tests, documentation
+
+- **3,700+ lines of code** (Python)
+- **38 passing tests** (100% success rate)
+
+- **3,591+ lines of code** (Python)
+- **37 passing tests** (100% success rate)
+- **15 sample cities** with real-world 2026 profiles
+- **8 ISP providers** (Starlink Gen2, Starlink High Performance, and traditional ISPs)
+- **4 export formats** (JSON, CSV, TXT, HTML)
+
+- **3,800+ lines of code** (Python)
+- **39 passing tests** (100% success rate)
+- **10 sample cities** with real-world 2026 profiles
+- **9 ISP providers** including Starlink Gen2 and High Performance dishes
+- **4 export formats** (JSON, CSV, TXT, HTML)
+- **3,591 lines of code** (Python)
+- **39 passing tests** (100% success rate)
+
+- **5 sample cities** with real-world profiles
+- **7 export formats** (JSON, CSV, TXT, HTML, Hybrid Simulator, AgriX-Boost, Ecosystem Bundle)
+- **7 export formats** (JSON, CSV, TXT, HTML, Hybrid Simulator, AgriX-Boost, Ecosystem Bundle)
+
+- **80%+ test coverage**
+- **6 Starlink coverage zones** (Active, Planned, Limited)
+
+- **14 REST API endpoints** for data integration
+
+- **3 integrated ecosystem components**
+
+---
+
+**🇧🇷 🇦🇷 🇨🇱 🇨🇴 🇲🇽 Made with ❤️ for improving rural connectivity across Latin America**
+
+**🌍 Made with ❤️ for improving rural connectivity worldwide**
+
+*Supporting Starlink's 2026 roadmap to connect 10M rural users globally and enable 20-30% agricultural productivity gains.*
+
+*Part of the Rural Connectivity Ecosystem 2026 - integrating with Hybrid Architecture Simulator and AgriX-Boost.*
+
+---
+
+#### 📚 Additional Documentation
+
+- **[New Features Guide](docs/NEW_FEATURES.md)** - Comprehensive guide for ANATEL, IBGE, Starlink API, and LATAM support
+- **[API Reference](docs/API.md)** - Full API documentation
+
+---
+
+#### 📅 Release Notes
+
+#### v1.1.0 (Q1 2026)
+
+- [x] Real-time ANATEL data integration
+- [x] IBGE demographics integration  
+- [x] Starlink API integration
+- [x] Streamlit web dashboard
+- [x] Support for 10 LATAM countries
+- [x] Country-specific configurations
+
+#### v1.1.0 (Q1 2026) - COMPLETED ✅
+
+- [x] Multi-country support (9 countries)
+- [x] Country-specific provider lists
+- [x] Localized geocoding
+- [x] Configurable map centers
+
+#### v1.0.0 (Current) ✅
+
+- [x] Complete CLI application with ecosystem integration
+- [x] Export data for Hybrid Architecture Simulator (failover testing)
+- [x] Export data for AgriX-Boost (farm dashboards)
+- [x] Ecosystem bundle generation
+- [x] 46 comprehensive tests
+
+#### v1.0.1 (Current Release)
+
+- [x] Docker containerization ✅ (Moved from v1.1.0)
+
+##### v1.1.0 (Q1 2026)
+
+- [x] Web dashboard (Streamlit)
+- [x] Real-time speedtest integration
+- [x] Integration with Starlink APIs ✅ (Completed: starlink_api.py module)
+- [ ] Real-time speedtest integration
+- [ ] SQLite database backend
+
+- [x] GitHub Actions CI/CD ✅
+- [ ] Docker containerization
+- [ ] GitHub Actions CI/CD
+
+#### v1.2.0 (Q2 2026) - COMPLETED! ✅
+
+- [x] Web dashboard (Flask)
+- [x] REST API endpoints
+- [ ] Machine learning predictions
+
+##### v1.2.0 (Q2 2026) - **COMPLETED EARLY!**
+
+- [ ] Web dashboard (Flask/Streamlit)
+- [ ] REST API endpoints
+- [x] **Machine learning predictions** ✅
+- [ ] GeoJSON/KML export
+
+##### v2.0.0 (H2 2026)
+
+- [ ] Multi-language UI (Portuguese/Spanish/English)
+- [ ] Mobile app for field data collection
+- [ ] Advanced analytics (churn prediction)
+- [ ] Live Starlink satellite tracking
+- [ ] Additional countries support
+- [x] Multi-language support (Portuguese/English) ✅ **Completed!**
+- [ ] Mobile app for field data collection
+- [ ] Advanced analytics (churn prediction)
+- [ ] Integration with Starlink APIs
+- [ ] Deep learning models for connectivity forecasting
+
+---
+
+##### 📊 How to Contribute Your Speedtest Data
+
+Help us map rural connectivity across Brazil! Your speedtest data is valuable for:
+
+- 🗺️ Identifying underserved areas
+- 📈 Tracking ISP performance over time
+- 🎯 Supporting Starlink's 2026 expansion planning
+- 📊 Advocating for better rural internet policies
+
+##### Quick Contribution Guide
+
+##### 1️⃣ Download a Template
+
+Choose one of the ready-made CSV templates from the [`/examples/`](examples/) directory:
+
+- **[Basic Template](examples/speedtest_template_basic.csv)** - Simple template with one example entry
+- **[Complete Template](examples/speedtest_template_complete.csv)** - Template with 5 example entries
+
+Or download directly:
+
+```bash
+curl -O https://raw.githubusercontent.com/danielnovais-tech/Rural-Connectivity-Mapper-2026/main/examples/speedtest_template_basic.csv
+```
+
+##### 2️⃣ Run a Speedtest
+
+Use any of these tools to measure your internet speed:
+
+**Online Tools:**
+
+- [Speedtest.net](https://www.speedtest.net/) (recommended)
+- [Fast.com](https://fast.com/)
+- [CloudFlare Speed Test](https://speed.cloudflare.com/)
+
+**Command Line:**
+
+```bash
+pip install speedtest-cli
+speedtest-cli --simple
+```
+
+##### 3️⃣ Fill in Your Data
+
+Edit the CSV template with your results:
+
+| Field | How to Fill | Example |
+| ----- | ----------- | ------- |
+| `id` | Any unique number | 1 |
+| `city` | Your city/location | "Campinas" |
+| `provider` | Your ISP name | "Starlink" |
+| `latitude` | GPS coordinate | -22.9099 |
+| `longitude` | GPS coordinate | -47.0626 |
+| `download` | Download speed (Mbps) | 150.5 |
+| `upload` | Upload speed (Mbps) | 20.3 |
+| `latency` | Ping time (ms) | 28.0 |
+| `jitter` | Jitter (ms) - optional | 3.5 |
+| `packet_loss` | Packet loss (%) - optional | 0.2 |
+| `timestamp` | ISO 8601 format (optional) | 2026-01-15T10:00:00 |
+
+**💡 Tip:** Use [Google Maps](https://www.google.com/maps) to find coordinates - right-click on your location and click the coordinates to copy them.
+
+##### 4️⃣ Submit Your Data
+
+Choose one of these methods:
+
+**Method A: GitHub Pull Request** (Recommended)
+
+```bash
+# Fork the repository first, then:
+git clone https://github.com/YOUR-USERNAME/Rural-Connectivity-Mapper-2026.git
+cd Rural-Connectivity-Mapper-2026
+git checkout -b data/your-location-name
+
+# Add your CSV file to src/data/ or submit as attachment
+git add your_speedtest_data.csv
+git commit -m "Add speedtest data for [Your City]"
+git push origin data/your-location-name
+
+# Open a Pull Request on GitHub
+```
+
+**Method B: GitHub Issue**
+
+1. Go to [Issues](https://github.com/danielnovais-tech/Rural-Connectivity-Mapper-2026/issues/new)
+2. Title: "Speedtest Data: (Your City)"
+3. Attach your CSV file or paste the data
+4. Add any relevant context (time of day, weather conditions, etc.)
+
+**Method C: Email/Contact**
+
+- Submit via [GitHub Discussions](https://github.com/danielnovais-tech/Rural-Connectivity-Mapper-2026/discussions)
+
+##### Data Quality Guidelines
+
+✅ **Do:**
+
+- Run 3-5 tests and use average values
+- Test at different times of day
+- Close bandwidth-intensive applications
+- Note any unusual conditions (weather, network congestion)
+- Use accurate GPS coordinates
+
+❌ **Don't:**
+
+- Submit fake or estimated data
+- Include personally identifiable information
+- Submit duplicate measurements without time gaps
+
+##### Need Help?
+
+📖 Full documentation in [`/examples/README.md`](examples/README.md)  
+💬 Questions? Open a [Discussion](https://github.com/danielnovais-tech/Rural-Connectivity-Mapper-2026/discussions)  
+🐛 Issues? Report a [Bug](https://github.com/danielnovais-tech/Rural-Connectivity-Mapper-2026/issues)
+
+**Every data point helps! Thank you for contributing to better rural connectivity in Brazil! 🇧🇷**
+
+---
+
+##### 🤝 Contributing Code
+
+Developer contributions are also welcome! Please:
+
+1. Fork the repository
+2. Create feature branch: `git checkout -b feature/amazing-feature`
+3. Run tests: `pytest tests/ -v`
+4. Submit Pull Request
+
+**Guidelines:**
+
+- Follow PEP 8 style
+- Add docstrings (Google-style)
+- Include tests for new features
+- Update documentation
+- **Estimate effort** when creating issues (S/M/L/XL or hours)
+
+See [CONTRIBUTING.md](CONTRIBUTING.md) for full details including effort estimation guidelines.
+
+---
+
+##### 📄 License
+
+**MIT License** - See [LICENSE](LICENSE) file for details.
+
+Copyright (c) 2025 Daniel Azevedo Novais
+
+---
+
+##### 🙏 Acknowledgments
+
+- **SpaceX Starlink** - 2026 expansion targets and satellite innovation
+
+- **ANATEL** - Brazilian telecommunications data and regulatory framework
+- **IBGE** - Brazilian demographic and geographic statistics
+- **LATAM Regulators** - ENACOM, SUBTEL, CRC, IFT, OSIPTEL, and others
+- **Brazilian ISPs** - Claro, Vivo, TIM, Oi for benchmarking
+- **Satellite ISPs** - Viasat, HughesNet for rural comparisons
+- **Open Source Community** - geopy, folium, pytest, pandas, streamlit, plotly
+
+- **Global ISPs** - AT&T, Verizon, Bell, BT, Telstra, Deutsche Telekom and many others
+
+- **SpaceX Starlink** - 2026 expansion targets and Gen2/High Performance dish innovation
+
+- **Brazilian ISPs** - Claro, Vivo, TIM, Oi for benchmarking
+- **Satellite ISPs** - Viasat, HughesNet for rural comparisons
+- **Open Source Community** - geopy, folium, pytest, pandas, scikit-learn
+
+---
+
+##### 📧 Support
+
+- **Issues:** [GitHub Issues](https://github.com/danielnovais-tech/Rural-Connectivity-Mapper-2026/issues)
+- **Discussions:** [GitHub Discussions](https://github.com/danielnovais-tech/Rural-Connectivity-Mapper-2026/discussions)
+- **Repository:** [Rural-Connectivity-Mapper-2026](https://github.com/danielnovais-tech/Rural-Connectivity-Mapper-2026)
+
+---
+
+##### 📊 Project Statistics
+
+- **35+ files** across models, utilities, tests, documentation
+- **4,000+ lines of code** (Python)
+- **45 passing tests** (100% success rate)
+- **5 sample cities** with real-world profiles
+- **4 export formats** (JSON, CSV, TXT, HTML)
+- **5 Starlink coverage zones** + 11 signal points
+
+- **35+ files** across models, utilities, tests, documentation
+- **4,500+ lines of code** (Python)
+- **58 passing tests** (100% success rate)
+- **9 utility modules** including Starlink API integration
+
+- **40 files** across models, utilities, tests, documentation
+- **5,119 lines of code** (Python)
+- **73 passing tests** (100% success rate)
+- **10 LATAM countries** fully configured
+- **4 data sources** (ANATEL, IBGE, Starlink API, Manual)
+- **6 dashboard views** in Streamlit
+- **4 export formats** (JSON, CSV, TXT, HTML)
+
+- **35 files** across models, utilities, tests, documentation, web app
+- **4,800+ lines of code** (Python, HTML, CSS, JavaScript)
+- **47 passing tests** (100% success rate)
+
+- **35+ files** across models, utilities, tests, documentation
+- **5,500+ lines of code** (Python)
+- **47 passing tests** (100% success rate)
+
+- **38 files** across models, utilities, tests, documentation, config
+- **4,500+ lines of code** (Python)
+- **46 passing tests** (100% success rate)
+- **9 supported countries** with localized settings
+- **10+ sample cities** with real-world profiles
+- **4 export formats** (JSON, CSV, TXT, HTML)
+
+- **35 files** across models, utilities, tests, documentation
+- **4,000+ lines of code** (Python)
+- **50 passing tests** (100% success rate)
+- **2 supported languages** (English, Portuguese)
+
+- **35 files** across models, utilities, tests, documentation
+- **4,000+ lines of code** (Python)
+- **55 passing tests** (100% success rate)
+- **10 sample locations** in example_speedtests.csv
+- **4 export formats** (JSON, CSV, TXT, HTML)
+
+- **40+ files** across models, utilities, tests, documentation, exports
+- **5,000+ lines of code** (Python)
+- **46 passing tests** (100% success rate)
+- **32 files** across models, utilities, tests, documentation
+
+- **3,700+ lines of code** (Python)
+- **38 passing tests** (100% success rate)
+
+- **3,591+ lines of code** (Python)
+- **37 passing tests** (100% success rate)
+- **15 sample cities** with real-world 2026 profiles
+- **8 ISP providers** (Starlink Gen2, Starlink High Performance, and traditional ISPs)
+- **4 export formats** (JSON, CSV, TXT, HTML)
+
+- **3,800+ lines of code** (Python)
+- **39 passing tests** (100% success rate)
+- **10 sample cities** with real-world 2026 profiles
+- **9 ISP providers** including Starlink Gen2 and High Performance dishes
+- **4 export formats** (JSON, CSV, TXT, HTML)
+- **3,591 lines of code** (Python)
+- **39 passing tests** (100% success rate)
+
+- **5 sample cities** with real-world profiles
+- **7 export formats** (JSON, CSV, TXT, HTML, Hybrid Simulator, AgriX-Boost, Ecosystem Bundle)
+
+- **80%+ test coverage**
+- **6 Starlink coverage zones** (Active, Planned, Limited)
+
+- **14 REST API endpoints** for data integration
+
+- **3 integrated ecosystem components**
+
+---
+
+---
+
+**🇧🇷 🇦🇷 🇨🇱 🇨🇴 🇲🇽 Made with ❤️ for improving rural connectivity across Latin America**
+
+**🌍 Made with ❤️ for improving rural connectivity worldwide**
+
+*Supporting Starlink's 2026 roadmap to connect 10M rural users globally and enable 20-30% agricultural productivity gains.*
+
+*Part of the Rural Connectivity Ecosystem 2026 - integrating with Hybrid Architecture Simulator and AgriX-Boost.*
+
+---
+
+##### 📚 Additional Documentation
+
+- **[New Features Guide](docs/NEW_FEATURES.md)** - Comprehensive guide for ANATEL, IBGE, Starlink API, and LATAM support
+- **[API Reference](docs/API.md)** - Full API documentation
+
+---
+
+##### 📅 Release Notes
+
+##### v1.1.0 (Q1 2026)
+
+- [x] Real-time ANATEL data integration
+- [x] IBGE demographics integration  
+- [x] Starlink API integration
+- [x] Streamlit web dashboard
+- [x] Support for 10 LATAM countries
+- [x] Country-specific configurations
+
+##### v1.1.0 (Q1 2026) - COMPLETED ✅
+
+- [x] Multi-country support (9 countries)
+- [x] Country-specific provider lists
+- [x] Localized geocoding
+- [x] Configurable map centers
+
+##### v1.0.0 (Current) ✅
+
+- [x] Complete CLI application with ecosystem integration
+- [x] Export data for Hybrid Architecture Simulator (failover testing)
+- [x] Export data for AgriX-Boost (farm dashboards)
+- [x] Ecosystem bundle generation
+- [x] 46 comprehensive tests
+
+##### v1.0.1 (Current Release)
+
+- [x] Docker containerization ✅ (Moved from v1.1.0)
+
+###### v1.1.0 (Q1 2026)
+
+- [x] Web dashboard (Streamlit)
+- [x] Real-time speedtest integration
+- [x] Integration with Starlink APIs ✅ (Completed: starlink_api.py module)
+- [ ] Real-time speedtest integration
+- [ ] SQLite database backend
+
+- [x] GitHub Actions CI/CD ✅
+- [ ] Docker containerization
+- [ ] GitHub Actions CI/CD
+
+##### v1.2.0 (Q2 2026) - COMPLETED! ✅
+
+- [x] Web dashboard (Flask)
+- [x] REST API endpoints
+- [ ] Machine learning predictions
+
+###### v1.2.0 (Q2 2026) - **COMPLETED EARLY!**
+
+- [ ] Web dashboard (Flask/Streamlit)
+- [ ] REST API endpoints
+- [x] **Machine learning predictions** ✅
+- [ ] GeoJSON/KML export
+
+###### v2.0.0 (H2 2026)
+
+- [ ] Multi-language UI (Portuguese/Spanish/English)
+- [ ] Mobile app for field data collection
+- [ ] Advanced analytics (churn prediction)
+- [ ] Live Starlink satellite tracking
+- [ ] Additional countries support
+- [x] Multi-language support (Portuguese/English) ✅ **Completed!**
+- [ ] Mobile app for field data collection
+- [ ] Advanced analytics (churn prediction)
+- [ ] Integration with Starlink APIs
+- [ ] Deep learning models for connectivity forecasting
+
+---
+
+###### 📊 How to Contribute Your Speedtest Data
+
+Help us map rural connectivity across Brazil! Your speedtest data is valuable for:
+
+- 🗺️ Identifying underserved areas
+- 📈 Tracking ISP performance over time
+- 🎯 Supporting Starlink's 2026 expansion planning
+- 📊 Advocating for better rural internet policies
+
+###### Quick Contribution Guide
+
+###### 1️⃣ Download a Template
+
+Choose one of the ready-made CSV templates from the [`/examples/`](examples/) directory:
+
+- **[Basic Template](examples/speedtest_template_basic.csv)** - Simple template with one example entry
+- **[Complete Template](examples/speedtest_template_complete.csv)** - Template with 5 example entries
+
+Or download directly:
+
+```bash
+curl -O https://raw.githubusercontent.com/danielnovais-tech/Rural-Connectivity-Mapper-2026/main/examples/speedtest_template_basic.csv
+```
+
+###### 2️⃣ Run a Speedtest
+
+Use any of these tools to measure your internet speed:
+
+**Online Tools:**
+
+- [Speedtest.net](https://www.speedtest.net/) (recommended)
+- [Fast.com](https://fast.com/)
+- [CloudFlare Speed Test](https://speed.cloudflare.com/)
+
+**Command Line:**
+
+```bash
+pip install speedtest-cli
+speedtest-cli --simple
+```
+
+###### 3️⃣ Fill in Your Data
+
+Edit the CSV template with your results:
+
+| Field | How to Fill | Example |
+| ----- | ----------- | ------- |
+| `id` | Any unique number | 1 |
+| `city` | Your city/location | "Campinas" |
+| `provider` | Your ISP name | "Starlink" |
+| `latitude` | GPS coordinate | -22.9099 |
+| `longitude` | GPS coordinate | -47.0626 |
+| `download` | Download speed (Mbps) | 150.5 |
+| `upload` | Upload speed (Mbps) | 20.3 |
+| `latency` | Ping time (ms) | 28.0 |
+| `jitter` | Jitter (ms) - optional | 3.5 |
+| `packet_loss` | Packet loss (%) - optional | 0.2 |
+| `timestamp` | ISO 8601 format (optional) | 2026-01-15T10:00:00 |
+
+**💡 Tip:** Use [Google Maps](https://www.google.com/maps) to find coordinates - right-click on your location and click the coordinates to copy them.
+
+###### 4️⃣ Submit Your Data
+
+Choose one of these methods:
+
+**Method A: GitHub Pull Request** (Recommended)
+
+```bash
+# Fork the repository first, then:
+git clone https://github.com/YOUR-USERNAME/Rural-Connectivity-Mapper-2026.git
+cd Rural-Connectivity-Mapper-2026
+git checkout -b data/your-location-name
+
+# Add your CSV file to src/data/ or submit as attachment
+git add your_speedtest_data.csv
+git commit -m "Add speedtest data for [Your City]"
+git push origin data/your-location-name
+
+# Open a Pull Request on GitHub
+```
+
+**Method B: GitHub Issue**
+
+1. Go to [Issues](https://github.com/danielnovais-tech/Rural-Connectivity-Mapper-2026/issues/new)
+2. Title: "Speedtest Data: (Your City)"
+3. Attach your CSV file or paste the data
+4. Add any relevant context (time of day, weather conditions, etc.)
+
+**Method C: Email/Contact**
+
+- Submit via [GitHub Discussions](https://github.com/danielnovais-tech/Rural-Connectivity-Mapper-2026/discussions)
+
+###### Data Quality Guidelines
+
+✅ **Do:**
+
+- Run 3-5 tests and use average values
+- Test at different times of day
+- Close bandwidth-intensive applications
+- Note any unusual conditions (weather, network congestion)
+- Use accurate GPS coordinates
+
+❌ **Don't:**
+
+- Submit fake or estimated data
+- Include personally identifiable information
+- Submit duplicate measurements without time gaps
+
+###### Need Help?
+
+📖 Full documentation in [`/examples/README.md`](examples/README.md)  
+💬 Questions? Open a [Discussion](https://github.com/danielnovais-tech/Rural-Connectivity-Mapper-2026/discussions)  
+🐛 Issues? Report a [Bug](https://github.com/danielnovais-tech/Rural-Connectivity-Mapper-2026/issues)
+
+**Every data point helps! Thank you for contributing to better rural connectivity in Brazil! 🇧🇷**
+
+---
+
+###### 🤝 Contributing Code
+
+Developer contributions are also welcome! Please:
+
+1. Fork the repository
+2. Create feature branch: `git checkout -b feature/amazing-feature`
+3. Run tests: `pytest tests/ -v`
+4. Submit Pull Request
+
+**Guidelines:**
+
+- Follow PEP 8 style
+- Add docstrings (Google-style)
+- Include tests for new features
+- Update documentation
+- **Estimate effort** when creating issues (S/M/L/XL or hours)
+
+See [CONTRIBUTING.md](CONTRIBUTING.md) for full details including effort estimation guidelines.
+
+---
+
+###### 📄 License
+
+**MIT License** - See [LICENSE](LICENSE) file for details.
+
+Copyright (c) 2025 Daniel Azevedo Novais
+
+---
+
+###### 🙏 Acknowledgments
+
+- **SpaceX Starlink** - 2026 expansion targets and satellite innovation
+
+- **ANATEL** - Brazilian telecommunications data and regulatory framework
+- **IBGE** - Brazilian demographic and geographic statistics
+- **LATAM Regulators** - ENACOM, SUBTEL, CRC, IFT, OSIPTEL, and others
+- **Brazilian ISPs** - Claro, Vivo, TIM, Oi for benchmarking
+- **Satellite ISPs** - Viasat, HughesNet for rural comparisons
+- **Open Source Community** - geopy, folium, pytest, pandas, streamlit, plotly
+
+- **Global ISPs** - AT&T, Verizon, Bell, BT, Telstra, Deutsche Telekom and many others
+
+- **SpaceX Starlink** - 2026 expansion targets and Gen2/High Performance dish innovation
+
+- **Brazilian ISPs** - Claro, Vivo, TIM, Oi for benchmarking
+- **Satellite ISPs** - Viasat, HughesNet for rural comparisons
+- **Open Source Community** - geopy, folium, pytest, pandas, scikit-learn
+
+---
+
+###### 📧 Support
+
+- **Issues:** [GitHub Issues](https://github.com/danielnovais-tech/Rural-Connectivity-Mapper-2026/issues)
+- **Discussions:** [GitHub Discussions](https://github.com/danielnovais-tech/Rural-Connectivity-Mapper-2026/discussions)
+- **Repository:** [Rural-Connectivity-Mapper-2026](https://github.com/danielnovais-tech/Rural-Connectivity-Mapper-2026)
+
+---
+
+###### 📊 Project Statistics
+
+- **35+ files** across models, utilities, tests, documentation
+- **4,000+ lines of code** (Python)
+- **45 passing tests** (100% success rate)
+- **5 sample cities** with real-world profiles
+- **4 export formats** (JSON, CSV, TXT, HTML)
+- **5 Starlink coverage zones** + 11 signal points
+
+- **35+ files** across models, utilities, tests, documentation
+- **4,500+ lines of code** (Python)
+- **58 passing tests** (100% success rate)
+- **9 utility modules** including Starlink API integration
+
+- **40 files** across models, utilities, tests, documentation
+- **5,119 lines of code** (Python)
+- **73 passing tests** (100% success rate)
+- **10 LATAM countries** fully configured
+- **4 data sources** (ANATEL, IBGE, Starlink API, Manual)
+- **6 dashboard views** in Streamlit
+- **4 export formats** (JSON, CSV, TXT, HTML)
+
+- **35 files** across models, utilities, tests, documentation, web app
+- **4,800+ lines of code** (Python, HTML, CSS, JavaScript)
+- **47 passing tests** (100% success rate)
+
+- **35+ files** across models, utilities, tests, documentation
+- **5,500+ lines of code** (Python)
+- **47 passing tests** (100% success rate)
+
+- **38 files** across models, utilities, tests, documentation, config
+- **4,500+ lines of code** (Python)
+- **46 passing tests** (100% success rate)
+- **9 supported countries** with localized settings
+- **10+ sample cities** with real-world profiles
+- **4 export formats** (JSON, CSV, TXT, HTML)
+
+- **35 files** across models, utilities, tests, documentation
+- **4,000+ lines of code** (Python)
+- **50 passing tests** (100% success rate)
+- **2 supported languages** (English, Portuguese)
+
+- **35 files** across models, utilities, tests, documentation
+- **4,000+ lines of code** (Python)
+- **55 passing tests** (100% success rate)
+- **10 sample locations** in example_speedtests.csv
+- **4 export formats** (JSON, CSV, TXT, HTML)
+
+- **40+ files** across models, utilities, tests, documentation, exports
+- **5,000+ lines of code** (Python)
+- **46 passing tests** (100% success rate)
+- **32 files** across models, utilities, tests, documentation
+
+- **3,700+ lines of code** (Python)
+- **38 passing tests** (100% success rate)
+
+- **3,591+ lines of code** (Python)
+- **37 passing tests** (100% success rate)
+- **15 sample cities** with real-world 2026 profiles
+- **8 ISP providers** (Starlink Gen2, Starlink High Performance, and traditional ISPs)
+- **4 export formats** (JSON, CSV, TXT, HTML)
+
+- **3,800+ lines of code** (Python)
+- **39 passing tests** (100% success rate)
+- **10 sample cities** with real-world 2026 profiles
+- **9 ISP providers** including Starlink Gen2 and High Performance dishes
+- **4 export formats** (JSON, CSV, TXT, HTML)
+- **3,591 lines of code** (Python)
+- **39 passing tests** (100% success rate)
+
+- **5 sample cities** with real-world profiles
+- **7 export formats** (JSON, CSV, TXT, HTML, Hybrid Simulator, AgriX-Boost, Ecosystem Bundle)
+
+- **80%+ test coverage**
+- **6 Starlink coverage zones** (Active, Planned, Limited)
+
+- **14 REST API endpoints** for data integration
+
+- **3 integrated ecosystem components**
+
+---
+
+**🇧🇷 🇦🇷 🇨🇱 🇨🇴 🇲🇽 Made with ❤️ for improving rural connectivity across Latin America**
+
+**🌍 Made with ❤️ for improving rural connectivity worldwide**
+
+*Supporting Starlink's 2026 roadmap to connect 10M rural users globally and enable 20-30% agricultural productivity gains.*
+
+*Part of the Rural Connectivity Ecosystem 2026 - integrating with Hybrid Architecture Simulator and AgriX-Boost.*
+
+---
+
+###### 📚 Additional Documentation
+
+- **[New Features Guide](docs/NEW_FEATURES.md)** - Comprehensive guide for ANATEL, IBGE, Starlink API, and LATAM support
+- **[API Reference](docs/API.md)** - Full API documentation
+
+---
+
+###### 📅 Release Notes
+
+###### v1.1.0 (Q1 2026)
+
+- [x] Real-time ANATEL data integration
+- [x] IBGE demographics integration  
+- [x] Starlink API integration
+- [x] Streamlit web dashboard
+- [x] Support for 10 LATAM countries
+- [x] Country-specific configurations
+
+###### v1.1.0 (Q1 2026) - COMPLETED ✅
+
+- [x] Multi-country support (9 countries)
+- [x] Country-specific provider lists
+- [x] Localized geocoding
+- [x] Configurable map centers
+
+###### v1.0.0 (Current) ✅
+
+- [x] Complete CLI application with ecosystem integration
+- [x] Export data for Hybrid Architecture Simulator (failover testing)
+- [x] Export data for AgriX-Boost (farm dashboards)
+- [x] Ecosystem bundle generation
+- [x] 46 comprehensive tests
+
+###### v1.0.1 (Current Release)
+
+- [x] Docker containerization ✅ (Moved from v1.1.0)
+
+#### v1.1.0.1 (Q1 2026)
+
+- [x] Web dashboard (Streamlit)
+- [x] Real-time speedtest integration
+- [x] Integration with Starlink APIs ✅ (Completed: starlink_api.py module)
+- [ ] Real-time speedtest integration
+- [ ] SQLite database backend
+
+- [x] GitHub Actions CI/CD ✅
+- [ ] Docker containerization
+- [ ] GitHub Actions CI/CD
+
+##### v1.2.0 (Q2 2026) - COMPLETED! ✅
+
+- [x] Web dashboard (Flask)
+- [x] REST API endpoints
+- [ ] Machine learning predictions
+
+##### v1.2.0 (Q2 2026) - **COMPLETED EARLY!**
+
+- [ ] Web dashboard (

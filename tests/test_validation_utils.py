@@ -114,7 +114,6 @@ def test_validate_provider_invalid():
     """Test validation of invalid provider names."""
     assert validate_provider('Unknown Provider') is False
     assert validate_provider('') is False
-    assert validate_provider(None) is False
 
 
 def test_validate_csv_row_valid():

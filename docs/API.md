@@ -1,6 +1,7 @@
 # Rural Connectivity Mapper 2026 - API Documentation
 
 ## Table of Contents
+
 - [Models](#models)
   - [SpeedTest](#speedtest)
   - [QualityScore](#qualityscore)
@@ -24,6 +25,7 @@
 Represents a speed test measurement with all network metrics.
 
 **Attributes:**
+
 - `download` (float): Download speed in Mbps
 - `upload` (float): Upload speed in Mbps
 - `latency` (float): Latency in milliseconds
@@ -34,19 +36,23 @@ Represents a speed test measurement with all network metrics.
 **Methods:**
 
 #### `calculate_stability() -> float`
+
 Calculate connection stability score based on jitter and packet loss.
 
 **Returns:** Stability score from 0 to 100 (higher is better)
 
 #### `to_dict() -> Dict`
+
 Convert SpeedTest to dictionary representation.
 
 **Returns:** Dictionary containing all speed test metrics
 
 #### `from_dict(data: Dict) -> SpeedTest` (classmethod)
+
 Create SpeedTest instance from dictionary.
 
 **Example:**
+
 ```python
 from src.models import SpeedTest
 
@@ -76,6 +82,7 @@ restored_st = SpeedTest.from_dict(st_dict)
 Represents the quality score of a connectivity point.
 
 **Attributes:**
+
 - `overall_score` (float): Overall quality score (0-100)
 - `speed_score` (float): Speed component score (0-100)
 - `latency_score` (float): Latency component score (0-100)
@@ -83,6 +90,7 @@ Represents the quality score of a connectivity point.
 - `rating` (str): Quality rating (Excellent/Good/Fair/Poor)
 
 **Class Attributes:**
+
 - `SPEED_WEIGHT = 0.40` (40% weight)
 - `LATENCY_WEIGHT = 0.30` (30% weight)
 - `STABILITY_WEIGHT = 0.30` (30% weight)
@@ -93,9 +101,11 @@ Represents the quality score of a connectivity point.
 **Methods:**
 
 #### `calculate(speed_test: SpeedTest) -> QualityScore` (classmethod)
+
 Calculate quality score from speed test results.
 
 **Example:**
+
 ```python
 from src.models import SpeedTest, QualityScore
 
@@ -113,6 +123,7 @@ print(qs.rating)  # "Excellent"
 Represents a connectivity measurement point with location and quality data.
 
 **Attributes:**
+
 - `latitude` (float): Latitude coordinate
 - `longitude` (float): Longitude coordinate
 - `provider` (str): Internet service provider name
@@ -124,12 +135,15 @@ Represents a connectivity measurement point with location and quality data.
 **Methods:**
 
 #### `to_dict() -> Dict`
+
 Convert ConnectivityPoint to dictionary representation.
 
 #### `from_dict(data: Dict) -> ConnectivityPoint` (classmethod)
+
 Create ConnectivityPoint instance from dictionary.
 
 **Example:**
+
 ```python
 from src.models import ConnectivityPoint, SpeedTest
 
@@ -158,15 +172,18 @@ point_dict = point.to_dict()
 Functions for validating data integrity.
 
 #### `validate_coordinates(latitude: float, longitude: float) -> bool`
+
 Validate geographic coordinates.
 
 **Parameters:**
+
 - `latitude`: Latitude value (-90 to 90)
 - `longitude`: Longitude value (-180 to 180)
 
 **Returns:** `True` if valid, `False` otherwise
 
 **Example:**
+
 ```python
 from src.utils import validate_coordinates
 
@@ -175,14 +192,17 @@ invalid = validate_coordinates(100, 200)  # False
 ```
 
 #### `validate_speed_test(speed_test) -> bool`
+
 Validate speed test measurements.
 
 **Parameters:**
+
 - `speed_test`: SpeedTest object or dict
 
 **Returns:** `True` if all values are positive and required fields exist
 
 #### `validate_provider(provider: str) -> bool`
+
 Validate internet service provider name against known providers.
 
 **Known Providers:** Starlink, Viasat, HughesNet, Claro, Vivo, TIM, Oi, Various, Unknown
@@ -194,19 +214,23 @@ Validate internet service provider name against known providers.
 Functions for loading, saving, and managing data files.
 
 #### `load_data(filepath: str) -> List[Dict]`
+
 Load JSON data from file.
 
 **Returns:** List of dictionaries (empty list if file doesn't exist)
 
 #### `save_data(filepath: str, data: List[Dict]) -> None`
+
 Save data to JSON file (creates directories if needed).
 
 #### `backup_data(filepath: str) -> str`
+
 Create timestamped backup of a data file.
 
 **Returns:** Path to backup file
 
 **Example:**
+
 ```python
 from src.utils import load_data, save_data, backup_data
 
@@ -228,11 +252,13 @@ save_data('src/data/pontos.json', data)
 Functions for network speed testing.
 
 #### `measure_speed() -> Optional[Dict]`
+
 Measure network speed using speedtest-cli.
 
 **Returns:** Dictionary with `download`, `upload`, `latency`, `stability` or `None` if fails
 
 **Example:**
+
 ```python
 from src.utils import measure_speed
 
@@ -250,16 +276,19 @@ if result:
 Functions for coordinate and address conversion.
 
 #### `geocode_coordinates(latitude: float, longitude: float, timeout: int = 10) -> Optional[str]`
+
 Convert coordinates to address using reverse geocoding.
 
 **Returns:** Address string or `None`
 
 #### `geocode_address(address: str, timeout: int = 10) -> Optional[Tuple[float, float]]`
+
 Convert address to coordinates using forward geocoding.
 
 **Returns:** `(latitude, longitude)` tuple or `None`
 
 **Example:**
+
 ```python
 from src.utils import geocode_coordinates, geocode_address
 
@@ -279,9 +308,11 @@ print(coords)  # (-15.7801, -47.9292)
 Functions for multi-format report generation.
 
 #### `generate_report(data: List[Dict], format: str, output_path: str = None) -> str`
+
 Generate report in specified format.
 
 **Parameters:**
+
 - `data`: List of connectivity point dictionaries
 - `format`: Report format ('json', 'csv', 'txt', 'html')
 - `output_path`: Optional output file path (auto-generated if None)
@@ -289,6 +320,7 @@ Generate report in specified format.
 **Returns:** Path to generated report file
 
 **Example:**
+
 ```python
 from src.utils import load_data, generate_report
 
@@ -307,6 +339,7 @@ html_report = generate_report(data, 'html', 'report.html')
 Functions for router impact analysis.
 
 #### `simulate_router_impact(data: List[Dict]) -> List[Dict]`
+
 Simulate the impact of router improvements on quality scores.
 
 Applies random improvement of 15-25% to quality scores to simulate router upgrades.
@@ -314,6 +347,7 @@ Applies random improvement of 15-25% to quality scores to simulate router upgrad
 **Returns:** Updated data with improved quality scores
 
 **Example:**
+
 ```python
 from src.utils import load_data, simulate_router_impact, save_data
 
@@ -331,9 +365,11 @@ save_data('src/data/pontos_improved.json', improved_data)
 Functions for interactive map generation.
 
 #### `generate_map(data: List[Dict], output_path: str = None) -> str`
+
 Generate interactive Folium map from connectivity data.
 
 **Features:**
+
 - Color-coded markers by quality score (green/blue/orange/red)
 - Popup details with provider, speed test, quality metrics
 - Legend for quality ratings
@@ -342,6 +378,7 @@ Generate interactive Folium map from connectivity data.
 **Returns:** Path to generated HTML map file
 
 **Example:**
+
 ```python
 from src.utils import load_data, generate_map
 
@@ -358,9 +395,11 @@ print(f"Open {map_path} in your browser to view the map")
 Functions for temporal evolution and trends analysis.
 
 #### `analyze_temporal_evolution(data: List[Dict]) -> Dict`
+
 Analyze temporal evolution of connectivity quality.
 
 **Returns:** Dictionary with:
+
 - `total_points`: Total number of points analyzed
 - `date_range`: Start date, end date, number of days
 - `daily_averages`: Statistics grouped by date
@@ -369,6 +408,7 @@ Analyze temporal evolution of connectivity quality.
 - `provider_stats`: Statistics by provider
 
 **Example:**
+
 ```python
 from src.utils import load_data, analyze_temporal_evolution
 
@@ -444,12 +484,14 @@ python main.py --importar src/data/sample_data.csv
 ```
 
 **CSV Format:**
+
 ```csv
 id,city,provider,latitude,longitude,download,upload,latency,jitter,packet_loss,timestamp
 1,São Paulo,Starlink,-23.5505,-46.6333,165.4,22.8,28.5,3.2,0.1,2026-01-15T10:30:00
 ```
 
 **Required Fields:**
+
 - `id` - Unique identifier
 - `city` - City or location name
 - `provider` - ISP name (Starlink, Viasat, HughesNet, Claro, Vivo, TIM, Oi, etc.)
@@ -469,6 +511,7 @@ id,city,provider,latitude,longitude,download,upload,latency,jitter,packet_loss,t
 Google Forms provides an easy-to-use web interface for collecting connectivity data without requiring any programming knowledge or CSV file handling skills.
 
 **Key Features:**
+
 - ✅ **User-Friendly** - Simple web form, no technical skills needed
 - ✅ **Mobile Compatible** - Works on smartphones for field data collection
 - ✅ **Free** - No cost for basic usage
@@ -477,6 +520,7 @@ Google Forms provides an easy-to-use web interface for collecting connectivity d
 - ✅ **Shareable** - Easy to distribute via link, email, or social media
 
 **Workflow:**
+
 1. Create Google Form with connectivity data fields
 2. Share form link with users
 3. Collect responses automatically in Google Sheets
@@ -486,6 +530,7 @@ Google Forms provides an easy-to-use web interface for collecting connectivity d
 **Complete Setup Guide:**
 
 See **[docs/GOOGLE_FORMS_INTEGRATION.md](GOOGLE_FORMS_INTEGRATION.md)** for:
+
 - Step-by-step form creation instructions
 - Field configuration and validation rules
 - Data export and formatting procedures
@@ -493,6 +538,7 @@ See **[docs/GOOGLE_FORMS_INTEGRATION.md](GOOGLE_FORMS_INTEGRATION.md)** for:
 - Sample form template
 
 **Example:**
+
 ```bash
 # After exporting from Google Forms
 python main.py --importar google_forms_responses.csv --map --relatorio html
@@ -503,6 +549,7 @@ python main.py --importar google_forms_responses.csv --map --relatorio html
 **Best for:** Real-time data submission, mobile apps, automated systems
 
 A REST API is planned for later in 2026 (v1.2.0 release) that will allow:
+
 - Real-time data submission via HTTP POST
 - JSON-based data format
 - Authentication and rate limiting
@@ -510,6 +557,7 @@ A REST API is planned for later in 2026 (v1.2.0 release) that will allow:
 - Integration with mobile apps and IoT devices
 
 **Planned Endpoints:**
+
 - `POST /api/v1/points` - Submit new connectivity point
 - `GET /api/v1/points` - Retrieve connectivity points
 - `GET /api/v1/analysis` - Get analysis results

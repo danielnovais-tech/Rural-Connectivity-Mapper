@@ -4,5 +4,10 @@
     "python-envs.pythonProjects": [],
     "python.languageServer": "Pylance",
     "git.ignoreLimitWarning": true,
+<<<<<<< Updated upstream
     "python.REPL.enableREPLSmartSend": false
+=======
+    "python.REPL.enableREPLSmartSend": false,
+    "markdown.validate.enabled": true
+>>>>>>> Stashed changes
 }

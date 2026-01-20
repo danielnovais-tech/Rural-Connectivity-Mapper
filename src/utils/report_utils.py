@@ -2,7 +2,7 @@
 
 import json
 import logging
-from typing import List, Dict
+from typing import List, Dict, Optional
 from pathlib import Path
 from datetime import datetime
 import csv
@@ -19,12 +19,12 @@ from .i18n_utils import get_translation, get_rating_translation
 logger = logging.getLogger(__name__)
 
 
-def generate_report(data: List[Dict], format: str, output_path: str = None, language: str = 'en') -> str:
+def generate_report(data: List[Dict], report_format: str, output_path: Optional[str] = None, language: str = 'en') -> str:
     """Generate report in specified format.
     
     Args:
         data: List of connectivity point dictionaries
-        format: Report format (json, csv, txt, html)
+        report_format: Report format (json, csv, txt, html)
         output_path: Optional output file path
         language: Language code for report (en, pt). Default: 'en'
         
@@ -34,9 +34,9 @@ def generate_report(data: List[Dict], format: str, output_path: str = None, lang
     Raises:
         ValueError: If format is not supported
     """
-    format = format.lower()
+    report_format = report_format.lower()
     
-    if format == 'json':
+    if report_format == 'json':
         return _generate_json_report(data, output_path)
     elif format == 'csv':
         return _generate_csv_report(data, output_path)
@@ -48,7 +48,7 @@ def generate_report(data: List[Dict], format: str, output_path: str = None, lang
         raise ValueError(f"Unsupported format: {format}. Use json, csv, txt, or html.")
 
 
-def _generate_json_report(data: List[Dict], output_path: str = None) -> str:
+def _generate_json_report(data: List[Dict], output_path: Optional[str] = None) -> str:
     """Generate JSON format report."""
     try:
         if output_path is None:
@@ -67,7 +67,7 @@ def _generate_json_report(data: List[Dict], output_path: str = None) -> str:
         raise
 
 
-def _generate_csv_report(data: List[Dict], output_path: str = None) -> str:
+def _generate_csv_report(data: List[Dict], output_path: Optional[str] = None) -> str:
     """Generate CSV format report."""
     try:
         if output_path is None:
@@ -133,7 +133,7 @@ def _generate_csv_report(data: List[Dict], output_path: str = None) -> str:
         raise
 
 
-def _generate_txt_report(data: List[Dict], output_path: str = None, language: str = 'en') -> str:
+def _generate_txt_report(data: List[Dict], output_path: Optional[str] = None, language: str = 'en') -> str:
     """Generate TXT format report with color and translations.
     
     Args:
@@ -208,7 +208,7 @@ def _generate_txt_report(data: List[Dict], output_path: str = None, language: st
         raise
 
 
-def _generate_html_report(data: List[Dict], output_path: str = None, language: str = 'en') -> str:
+def _generate_html_report(data: List[Dict], output_path: Optional[str] = None, language: str = 'en') -> str:
     """Generate HTML format report with translations.
     
     Args:

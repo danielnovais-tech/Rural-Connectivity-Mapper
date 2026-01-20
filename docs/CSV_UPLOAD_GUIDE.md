@@ -47,26 +47,26 @@ python upload_csv.py data.csv --dry-run --verbose
 
 All CSV files **must** include these columns:
 
-| Column | Type | Description | Example |
-|--------|------|-------------|---------|
-| `timestamp` | ISO 8601 DateTime | When the test was performed | `2026-01-15T10:30:00` |
-| `latitude` | Float (-90 to 90) | Latitude coordinate | `-23.5505` |
-| `longitude` | Float (-180 to 180) | Longitude coordinate | `-46.6333` |
-| `download` | Float (≥ 0) | Download speed in Mbps | `85.2` |
-| `upload` | Float (≥ 0) | Upload speed in Mbps | `12.5` |
+| Column      | Type                 | Description                 | Example               |
+| ----------- | -------------------- | --------------------------- | --------------------- |
+| `timestamp` | ISO 8601 DateTime    | When the test was performed | `2026-01-15T10:30:00` |
+| `latitude`  | Float (-90 to 90)    | Latitude coordinate         | `-23.5505`            |
+| `longitude` | Float (-180 to 180)  | Longitude coordinate        | `-46.6333`            |
+| `download`  | Float (≥ 0)          | Download speed in Mbps      | `85.2`                |
+| `upload`    | Float (≥ 0)          | Upload speed in Mbps        | `12.5`                |
 
 ### Optional Columns
 
 These columns are optional but recommended:
 
-| Column | Type | Description | Example |
-|--------|------|-------------|---------|
-| `id` | String | Unique identifier | `1` or `test-001` |
-| `city` | String | City name | `São Paulo` |
-| `provider` | String | Internet service provider | `Starlink`, `Claro` |
-| `latency` | Float (≥ 0) | Latency in milliseconds | `45.3` |
-| `jitter` | Float (≥ 0) | Jitter in milliseconds | `8.2` |
-| `packet_loss` | Float (≥ 0) | Packet loss percentage | `1.2` |
+| Column        | Type        | Description                  | Example             |
+| ------------- | ----------- | ---------------------------- | ------------------- |
+| `id`          | String      | Unique identifier            | `1` or `test-001`   |
+| `city`        | String      | City name                    | `São Paulo`         |
+| `provider`    | String      | Internet service provider    | `Starlink`, `Claro` |
+| `latency`     | Float (≥ 0) | Latency in milliseconds      | `45.3`              |
+| `jitter`      | Float (≥ 0) | Jitter in milliseconds       | `8.2`               |
+| `packet_loss` | Float (≥ 0) | Packet loss percentage       | `1.2`               |
 
 ## Example CSV Files
 
@@ -86,26 +86,29 @@ See `example_speedtests.csv` for a complete example with all optional fields inc
 ## Validation Rules
 
 ### Timestamp
+
 - Must be in ISO 8601 format
 - Examples: `2026-01-15T10:30:00`, `2026-12-31T23:59:59`
 - Invalid: `2026/01/15`, `Jan 15 2026`, `not-a-date`
 
 ### Coordinates
+
 - **Latitude**: Must be between -90 and 90
 - **Longitude**: Must be between -180 and 180
 - Must be numeric values
 
 ### Speed Values
+
 - **Download** and **Upload**: Must be positive numbers (≥ 0)
 - Measured in Mbps (megabits per second)
 
-### Optional Numeric Fields
-- **Latency**, **Jitter**, **Packet Loss**: Must be positive numbers if provided
-- Can be left empty or omitted entirely
+ Optional Numeric Fields
+**Latency**, **Jitter**, **Packet Loss**: Must be positive numbers if provided
+Can be left empty or omitted entirely
 
 ## Command-Line Options
 
-```
+```bash
 usage: upload_csv.py [-h] [--output OUTPUT] [--verbose] [--dry-run] csv_file
 
 positional arguments:
@@ -146,34 +149,42 @@ The script converts CSV data to JSON format:
 ### Common Errors
 
 **Missing Required Field**
-```
+
+```bash
 Row 2: Missing required field 'latitude'
 ```
+
 → Add the missing column to your CSV file
 
 **Invalid Timestamp**
-```
+
+```bash
 Row 3: Invalid timestamp format: '2026/01/15'. Expected ISO format (e.g., 2026-01-15T10:30:00)
 ```
+
 → Use ISO 8601 format: `YYYY-MM-DDTHH:MM:SS`
 
 **Out of Range Coordinate**
-```
+
+```bash
 Row 4: Latitude must be between -90 and 90, got 95.0
 ```
+
 → Check your coordinate values
 
 **Negative Speed**
-```
+
+```bash
 Row 5: Download speed must be positive, got -10.5
 ```
+
 → Speed values cannot be negative
 
 ### Validation Report
 
 After processing, you'll see a validation report:
 
-```
+```bash
 ================================================================================
 CSV VALIDATION REPORT
 ================================================================================
@@ -233,21 +244,27 @@ python main.py --importar speedtest_data.json --map --relatorio html
 ## Troubleshooting
 
 ### File Not Found
-```
+
+```bash
 File not found: /path/to/file.csv
 ```
+
 → Check the file path and ensure the file exists
 
 ### Empty CSV
-```
+
+```bash
 CSV file is empty or has no header
-```
+
+
 → Ensure your CSV has a header row with column names
 
 ### Missing Required Columns
-```
+
+```bash
 CSV header missing required fields: download, upload
 ```
+
 → Add the required columns to your CSV header
 
 ## Best Practices
@@ -267,6 +284,7 @@ CSV header missing required fields: download, upload
 ## Support
 
 For issues or questions:
+
 - Check error messages carefully - they indicate exactly what needs fixing
 - Review `example_speedtests.csv` for proper format
 - Use `--verbose` flag for detailed error information

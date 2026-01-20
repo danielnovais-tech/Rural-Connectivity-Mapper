@@ -1,10 +1,13 @@
 # Data Validation and Error Handling Improvements
 
 ## Overview
+
 This document describes the improvements made to enhance data validation and error handling in the Rural Connectivity Mapper 2026 tool, addressing edge cases that could previously crash the application.
 
 ## Problem Statement
+
 The original implementation had several critical issues:
+
 - **CSV Import Crashes**: Invalid or malformed CSV data would cause the tool to crash with unhandled exceptions
 - **Geocoding API Limits**: No rate limiting or retry logic, leading to potential API quota issues
 - **Poor Error Messages**: Users received generic errors without specifics about what went wrong
@@ -15,6 +18,7 @@ The original implementation had several critical issues:
 ### 1. Enhanced CSV Import Validation
 
 #### What Changed
+
 - **Column Validation**: Checks for required columns before processing
 - **Row-Level Validation**: Each row is validated before attempting to create data objects
 - **Type Safety**: All numeric conversions wrapped in try-catch blocks
@@ -23,14 +27,18 @@ The original implementation had several critical issues:
 #### Example: Before vs After
 
 **Before (would crash):**
+
 ```csv
 id,city,provider,latitude,longitude,download,upload,latency
 1,Test,Starlink,95.0,-46.6333,100.0,15.0,30.0  # Invalid latitude
 ```
+
 Error: `ValueError: Invalid latitude` → Tool crashes
 
 **After (handles gracefully):**
-```
+
+```csv
+id,city,provider,latitude,longitude,download,upload,latency
 2026-01-04 00:08:31 - WARNING - Row 2: Invalid latitude 95.0 (must be between -90 and 90)
 2026-01-04 00:08:31 - INFO - Successfully imported 0 points to src/data/pontos.json
 2026-01-04 00:08:31 - WARNING - Skipped 1 invalid rows
@@ -39,12 +47,14 @@ Error: `ValueError: Invalid latitude` → Tool crashes
 ### 2. Geocoding API Protection
 
 #### What Changed
+
 - **Rate Limiting**: Enforces 1 request per second (Nominatim requirement)
 - **Retry Logic**: Up to 3 retries with exponential backoff on timeouts
 - **Quota Management**: Detects and handles quota exceeded errors
 - **Input Validation**: Validates coordinates before making API calls
 
 #### Features
+
 ```python
 # Automatic rate limiting
 geocode_coordinates(-23.5505, -46.6333)  # Waits if needed
@@ -62,6 +72,7 @@ geocode_address("São Paulo, Brazil", max_retries=3)  # Retries with backoff
 
 **`validate_csv_row(row, row_num)`**
 Validates an entire CSV row before processing:
+
 - Checks for missing required fields
 - Validates numeric field types
 - Checks coordinate ranges (-90 to 90 lat, -180 to 180 lon)
@@ -69,6 +80,8 @@ Validates an entire CSV row before processing:
 
 **`validate_speed_test(speed_test, check_bounds=True)`**
 Enhanced with bounds checking:
+
+- Validates numeric types
 - Download: 0-1000 Mbps
 - Upload: 0-500 Mbps
 - Latency: 0-2000 ms
@@ -76,6 +89,7 @@ Enhanced with bounds checking:
 - Packet Loss: 0-100%
 
 #### Realistic Bounds
+
 ```python
 SPEED_TEST_BOUNDS = {
     'download': (0.0, 1000.0),  # Mbps
@@ -89,12 +103,14 @@ SPEED_TEST_BOUNDS = {
 ### 4. Improved Error Messages
 
 #### Before
-```
+
+```csv
 Error importing CSV: could not convert string to float: 'invalid'
 ```
 
 #### After
-```
+
+```csv
 Row 6: Invalid numeric value for download: invalid
 Row 7: Missing required fields: upload, latency
 Row 8: Invalid latitude 95.0 (must be between -90 and 90)
@@ -152,11 +168,13 @@ if coords is None:
 ## Testing
 
 ### Test Coverage
+
 - **Total Tests**: 49 (36 original + 13 new)
 - **Code Coverage**: 83%
 - **All Tests Passing**: ✅
 
 ### Edge Cases Tested
+
 1. Invalid coordinate ranges (lat > 90, lon > 180)
 2. Out-of-bounds speed values (download > 1000 Mbps)
 3. Missing CSV columns
@@ -183,7 +201,8 @@ pytest tests/test_geocoding_utils.py -v
 ## Migration Guide
 
 ### For Existing Code
-No breaking changes! All existing code continues to work. New features are opt-in:
+
+- No breaking changes! All existing code continues to work. New features are opt-in:
 
 ```python
 # Old code still works
@@ -194,7 +213,9 @@ validate_speed_test(speed_test, check_bounds=True)
 ```
 
 ### For CSV Files
+
 Ensure your CSV files include all required columns:
+
 - `latitude` (required)
 - `longitude` (required)
 - `provider` (required)
@@ -207,11 +228,13 @@ Ensure your CSV files include all required columns:
 ### Error Handling Best Practices
 
 1. **Use Debug Mode**: Always use `--debug` flag when troubleshooting:
+
    ```bash
    python main.py --debug --importar data.csv
    ```
 
 2. **Check Return Values**: Geocoding functions now return `None` on failure:
+
    ```python
    address = geocode_coordinates(lat, lon)
    if address is None:
@@ -219,6 +242,7 @@ Ensure your CSV files include all required columns:
    ```
 
 3. **Validate Before Processing**: Use validation functions before processing data:
+
    ```python
    if validate_coordinates(lat, lon):
        # Process data
@@ -244,11 +268,18 @@ Ensure your CSV files include all required columns:
 ## Limitations and Future Work
 
 ### Current Limitations
+
 1. Rate limiting is global (affects all geocoding operations)
 2. Bounds checking uses fixed values (not configurable per deployment)
 3. CSV validation doesn't support custom field names
 
 ### Future Enhancements
+
+- Per-user or per-session rate limiting
+- Configurable bounds via config file
+- Configurable validation rules via config file
+- Configurable rate limiting settings
+- Dynamic rate limiting based on API response headers
 - Configurable bounds via configuration file
 - Per-user rate limiting for multi-user scenarios
 - Custom validation rules via plugins
@@ -257,6 +288,7 @@ Ensure your CSV files include all required columns:
 ## Support
 
 For issues or questions:
+
 - GitHub Issues: https://github.com/danielnovais-tech/Rural-Connectivity-Mapper-2026/issues
 - Documentation: README.md
 - Test Examples: tests/test_validation_utils.py, tests/test_geocoding_utils.py
@@ -264,6 +296,7 @@ For issues or questions:
 ## Summary
 
 The improvements make the Rural Connectivity Mapper 2026 significantly more robust:
+
 - **No More Crashes**: Invalid data is handled gracefully
 - **Better User Experience**: Clear error messages guide users
 - **API Protection**: Rate limiting prevents quota issues

@@ -85,7 +85,7 @@ class QualityScore:
             latency_score=round(latency_score, 2),
             stability_score=round(stability_score, 2)
         )
-    
+
     def get_rating(self) -> str:
         """Get quality rating based on overall score.
 

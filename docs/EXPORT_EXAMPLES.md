@@ -3,6 +3,7 @@
 This document provides detailed examples of the ecosystem export formats.
 
 ## Table of Contents
+
 1. [Ecosystem Bundle Overview](#ecosystem-bundle-overview)
 2. [Hybrid Architecture Simulator Export](#hybrid-architecture-simulator-export)
 3. [AgriX-Boost Export](#agrix-boost-export)
@@ -33,9 +34,11 @@ Three files are generated in `exports/ecosystem/`:
 ## Hybrid Architecture Simulator Export
 
 ### Purpose
+
 Provides connectivity data formatted for realistic network failover testing and simulation.
 
 ### Key Features
+
 - Signal quality metrics for failover decision-making
 - Latency and stability scores for performance modeling
 - Failover indicators for connection reliability
@@ -91,7 +94,7 @@ Provides connectivity data formatted for realistic network failover testing and 
 ### Failover Indicators Explained
 
 | Indicator | Threshold | Description |
-|-----------|-----------|-------------|
+| --------- | --------- | ----------- |
 | `connection_reliable` | Quality ≥ 60 | Connection suitable for general use |
 | `low_latency` | Latency < 100ms | Suitable for real-time applications |
 | `stable_connection` | Stability ≥ 70 | Minimal packet loss and jitter |
@@ -101,7 +104,7 @@ Provides connectivity data formatted for realistic network failover testing and 
 
 **Scenario:** Testing failover between Starlink and 4G LTE
 
-```
+```bash
 Primary Connection: Starlink
 - Signal Quality: 100.0
 - Latency: 28.5ms
@@ -120,9 +123,11 @@ Failover Trigger: When primary quality drops below 60
 ## AgriX-Boost Export
 
 ### Purpose
+
 Provides connectivity layer data for agricultural monitoring and farm dashboard integration.
 
 ### Key Features
+
 - Network performance metrics for farm operations
 - Farm suitability indicators for specific use cases
 - Connectivity recommendations for farmers
@@ -182,7 +187,7 @@ Provides connectivity layer data for agricultural monitoring and farm dashboard 
 ### Farm Suitability Indicators Explained
 
 | Use Case | Requirements | Description |
-|----------|-------------|-------------|
+| --------- | --------- | ----------- |
 | **IoT Sensors** | Latency < 200ms, Quality ≥ 40 | Basic sensor data collection and transmission |
 | **Video Monitoring** | Download ≥ 25 Mbps, Quality ≥ 60 | HD video streaming for surveillance |
 | **Real-time Control** | Latency < 50ms, Quality ≥ 80 | Autonomous equipment and precision agriculture |
@@ -192,7 +197,7 @@ Provides connectivity layer data for agricultural monitoring and farm dashboard 
 
 **Visual Representation:**
 
-```
+```bash
 ╔════════════════════════════════════════════════╗
 ║         Farm Connectivity Dashboard            ║
 ╠════════════════════════════════════════════════╣
@@ -225,6 +230,7 @@ Provides connectivity layer data for agricultural monitoring and farm dashboard 
 ## Ecosystem Manifest
 
 ### Purpose
+
 Provides metadata and integration information for the entire ecosystem.
 
 ### Example Manifest
@@ -280,7 +286,7 @@ Provides metadata and integration information for the entire ecosystem.
 ### Manifest Fields Explained
 
 | Field | Description |
-|-------|-------------|
+| ------ | ----------- |
 | `ecosystem` | Name of the ecosystem |
 | `version` | Ecosystem format version |
 | `created` | Export timestamp |
@@ -327,7 +333,7 @@ python main.py --export agrix
 ## Quality Ratings Reference
 
 | Rating | Score Range | Hybrid Simulator | AgriX-Boost |
-|--------|-------------|------------------|-------------|
+| --------- | --------- | ------------------ | ------------- |
 | **Excellent** | 80-100 | Recommended primary | All applications supported |
 | **Good** | 60-79 | Connection reliable | Most applications supported |
 | **Fair** | 40-59 | Backup only | Basic applications only |

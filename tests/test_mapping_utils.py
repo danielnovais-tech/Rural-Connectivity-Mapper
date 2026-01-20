@@ -94,11 +94,11 @@ def test_generate_map_default_path(sample_data, tmp_path, monkeypatch):
 
 
 
-def test_generate_map_with_starlink_coverage(sample_data, tmp_path):
+def test_generate_map_includes_starlink_coverage_elements(sample_data, tmp_path):
     """Test map generation with Starlink coverage overlay."""
     output_path = tmp_path / "coverage_map.html"
     
-    map_path = generate_map(sample_data, str(output_path), show_starlink_coverage=True)
+    generate_map(sample_data, str(output_path), include_starlink_coverage=True)
 
 
 def test_generate_map_with_starlink_coverage(sample_data, tmp_path):
@@ -156,7 +156,7 @@ def test_get_starlink_coverage_zones():
         assert zone['coverage'] in ['excellent', 'good', 'moderate']
 
 
-def test_generate_map_with_starlink_coverage(sample_data, tmp_path):
+def test_generate_map_coverage_layer_enabled(sample_data, tmp_path):
     """Test map generation with Starlink coverage layer enabled."""
     output_path = tmp_path / "test_map_with_coverage.html"
     
@@ -183,7 +183,7 @@ def test_generate_map_coverage_without_data_file(sample_data, tmp_path, monkeypa
     output_path = tmp_path / "test_no_coverage_data.html"
     
     # Generate map with coverage enabled
-    map_path = generate_map(sample_data, str(output_path), show_starlink_coverage=True)
+    map_path = generate_map(sample_data, str(output_path), include_starlink_coverage=True)
     
     # Should still create a valid map
     assert Path(map_path).exists()

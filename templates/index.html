@@ -244,6 +244,16 @@
             width: 1em;
             margin-left: -1em;
         }
+
+        .map-placeholder {
+            color: #666;
+            text-align: center;
+            padding: 20px;
+        }
+
+        #mapContainer {
+            margin-top: 20px;
+        }
     </style>
 </head>
 <body>
@@ -311,8 +321,8 @@
                 <button onclick="downloadReport('csv')">Download CSV</button>
                 <button onclick="downloadReport('html')">Download HTML</button>
             </div>
-            <div id="mapContainer" style="margin-top: 20px;">
-                <p style="color: #666; text-align: center; padding: 20px;">Click "Load Map" to view the interactive connectivity map</p>
+            <div id="mapContainer">
+                <p class="map-placeholder">Click "Load Map" to view the interactive connectivity map</p>
             </div>
         </div>
     </div>

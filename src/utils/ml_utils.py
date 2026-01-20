@@ -140,10 +140,6 @@ def predict_improvement_potential(data: List[Dict]) -> List[Dict]:
         # Extract features
         X = extract_geospatial_features(data)
         
-        # Normalize features
-        scaler = StandardScaler()
-        X_scaled = scaler.fit_transform(X)
-        
         # Calculate improvement potential score (inverse of current quality, distance weighted)
         # Higher score = more potential for improvement
         improvement_scores = []
@@ -253,7 +249,7 @@ def identify_expansion_zones(data: List[Dict], n_zones: int = 3) -> Dict:
                 'avg_distance_from_city_km': round(avg_distance, 2),
                 'is_primarily_rural': bool(avg_distance > 100),
                 'priority_score': round(priority, 2),
-                'recommendation': _generate_zone_recommendation(avg_quality, avg_distance)
+                'recommendation': _generate_zone_recommendation(float(avg_quality), float(avg_distance))
             }
         
         # Sort zones by priority
