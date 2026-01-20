@@ -1,0 +1,7 @@
+[submodule "Rural-Connectivity-Mapper-2026"]
+	path = Rural-Connectivity-Mapper-2026
+	url = https://github.com/danielnovais-tech/Rural-Connectivity-Mapper-2026.git
+
+[submodule "cli"]
+	path = cli
+	url = https://github.com/danielnovais-tech/cli.git
