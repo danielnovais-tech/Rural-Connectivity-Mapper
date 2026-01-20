@@ -228,6 +228,7 @@ def _generate_html_report(data: List[Dict], output_path: str = None, language: s
         html.append("<html>")
         html.append("<head>")
         html.append("<meta charset='utf-8'>")
+        html.append("<meta name='viewport' content='width=device-width, initial-scale=1.0'>")
         html.append(f"<title>{get_translation('report_title', language)}</title>")
         html.append("<style>")
         html.append("body { font-family: Arial, sans-serif; margin: 20px; }")
