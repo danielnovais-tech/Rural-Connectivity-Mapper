@@ -105,6 +105,11 @@ def test_get_rating_translation_case_insensitive():
     assert get_rating_translation('FaIr', 'pt') == 'Razoável'
 
 
+def test_get_rating_translation_defaults_language():
+    """Test that get_rating_translation defaults to English when language is None."""
+    assert get_rating_translation('Excellent') == 'Excellent'
+
+
 def test_insights_translations():
     """Test insights message translations."""
     # English insights

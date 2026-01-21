@@ -112,3 +112,13 @@ def test_save_data_raises_on_write_error(tmp_path, sample_data):
     with patch('src.utils.data_utils.open', side_effect=OSError('nope')):
         with pytest.raises(OSError):
             save_data(str(test_file), sample_data)
+
+
+def test_load_data_raises_on_read_error(tmp_path):
+    """Test that load_data propagates unexpected read errors."""
+    test_file = tmp_path / "test_data.json"
+    test_file.write_text("[]", encoding="utf-8")
+
+    with patch('src.utils.data_utils.open', side_effect=OSError('read fail')):
+        with pytest.raises(OSError):
+            load_data(str(test_file))
