@@ -23,7 +23,7 @@ import time
 from dataclasses import dataclass
 from datetime import datetime, timedelta
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any, Dict, List, Optional, Tuple, TypedDict
 
 from unittest.mock import Mock, patch
 
@@ -186,6 +186,17 @@ class FlakyGeocoder:
         return loc
 
 
+class GeocodeStressCounters(TypedDict):
+    reverse_ok: int
+    reverse_none: int
+    reverse_fail: int
+    forward_ok: int
+    forward_none: int
+    forward_fail: int
+    seconds: float
+    samples: int
+
+
 def stress_geocoding(
     *,
     rng: random.Random,
@@ -206,13 +217,15 @@ def stress_geocoding(
         p_none=p_none,
     )
 
-    counters = {
+    counters: GeocodeStressCounters = {
         "reverse_ok": 0,
         "reverse_none": 0,
         "reverse_fail": 0,
         "forward_ok": 0,
         "forward_none": 0,
         "forward_fail": 0,
+        "seconds": 0.0,
+        "samples": geocode_samples,
     }
 
     # Avoid the built-in 1 req/sec limiter during stress runs.
@@ -301,7 +314,15 @@ def main() -> int:
 
     # Generate a report (txt) to ensure report code scales with big datasets
     report_path = output_dir / "report.txt"
-    _, t = _timed("generate_report_txt", generate_report, data, "txt", "en", str(report_path))
+    with patch("src.utils.report_utils.COLORAMA_AVAILABLE", False):
+        _, t = _timed(
+            "generate_report_txt",
+            generate_report,
+            data,
+            "txt",
+            str(report_path),
+            "en",
+        )
     timings.append(t)
 
     # Network condition simulation (mocked) - independent from dataset size

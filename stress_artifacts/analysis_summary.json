@@ -1,73 +1,281 @@
 {
-  "total_points": 5000,
+  "total_points": 50000,
   "date_range": {
     "start": "2026-01-01",
-    "end": "2026-01-04",
-    "days": 4
+    "end": "2026-01-30",
+    "days": 30
   },
   "daily_averages": {
     "2026-01-01": {
-      "count": 1440,
-      "avg_quality_score": 59.69,
-      "avg_download": 80.06,
-      "avg_latency": 39.7,
-      "min_quality_score": 23.5,
-      "max_quality_score": 92.0
+      "count": 2880,
+      "avg_quality_score": 60.25,
+      "avg_download": 80.99,
+      "avg_latency": 39.29,
+      "min_quality_score": 20.6,
+      "max_quality_score": 93.8
     },
     "2026-01-02": {
-      "count": 1440,
-      "avg_quality_score": 59.69,
-      "avg_download": 80.04,
-      "avg_latency": 39.82,
-      "min_quality_score": 28.4,
-      "max_quality_score": 93.2
+      "count": 2880,
+      "avg_quality_score": 59.72,
+      "avg_download": 80.09,
+      "avg_latency": 39.95,
+      "min_quality_score": 22.4,
+      "max_quality_score": 93.6
     },
     "2026-01-03": {
-      "count": 1440,
-      "avg_quality_score": 60.08,
-      "avg_download": 80.89,
-      "avg_latency": 39.78,
-      "min_quality_score": 24.3,
+      "count": 2880,
+      "avg_quality_score": 59.97,
+      "avg_download": 80.67,
+      "avg_latency": 39.8,
+      "min_quality_score": 22.0,
       "max_quality_score": 94.1
     },
     "2026-01-04": {
-      "count": 680,
-      "avg_quality_score": 58.71,
-      "avg_download": 77.59,
-      "avg_latency": 40.14,
-      "min_quality_score": 22.6,
+      "count": 2880,
+      "avg_quality_score": 59.67,
+      "avg_download": 79.95,
+      "avg_latency": 40.01,
+      "min_quality_score": 21.5,
+      "max_quality_score": 93.8
+    },
+    "2026-01-05": {
+      "count": 2480,
+      "avg_quality_score": 59.72,
+      "avg_download": 80.16,
+      "avg_latency": 40.2,
+      "min_quality_score": 21.0,
+      "max_quality_score": 98.0
+    },
+    "2026-01-06": {
+      "count": 1440,
+      "avg_quality_score": 59.55,
+      "avg_download": 80.23,
+      "avg_latency": 40.86,
+      "min_quality_score": 26.0,
+      "max_quality_score": 92.4
+    },
+    "2026-01-07": {
+      "count": 1440,
+      "avg_quality_score": 59.94,
+      "avg_download": 80.32,
+      "avg_latency": 39.47,
+      "min_quality_score": 18.2,
+      "max_quality_score": 94.1
+    },
+    "2026-01-08": {
+      "count": 1440,
+      "avg_quality_score": 59.2,
+      "avg_download": 78.75,
+      "avg_latency": 39.86,
+      "min_quality_score": 20.4,
+      "max_quality_score": 92.0
+    },
+    "2026-01-09": {
+      "count": 1440,
+      "avg_quality_score": 60.05,
+      "avg_download": 80.55,
+      "avg_latency": 39.62,
+      "min_quality_score": 23.4,
+      "max_quality_score": 93.7
+    },
+    "2026-01-10": {
+      "count": 1440,
+      "avg_quality_score": 59.8,
+      "avg_download": 80.75,
+      "avg_latency": 40.49,
+      "min_quality_score": 25.1,
+      "max_quality_score": 93.9
+    },
+    "2026-01-11": {
+      "count": 1440,
+      "avg_quality_score": 59.82,
+      "avg_download": 80.23,
+      "avg_latency": 40.15,
+      "min_quality_score": 27.1,
+      "max_quality_score": 93.4
+    },
+    "2026-01-12": {
+      "count": 1440,
+      "avg_quality_score": 59.45,
+      "avg_download": 79.28,
+      "avg_latency": 39.96,
+      "min_quality_score": 25.2,
+      "max_quality_score": 92.3
+    },
+    "2026-01-13": {
+      "count": 1440,
+      "avg_quality_score": 59.53,
+      "avg_download": 79.68,
+      "avg_latency": 40.22,
+      "min_quality_score": 24.1,
+      "max_quality_score": 92.4
+    },
+    "2026-01-14": {
+      "count": 1440,
+      "avg_quality_score": 59.22,
+      "avg_download": 79.19,
+      "avg_latency": 40.37,
+      "min_quality_score": 21.8,
       "max_quality_score": 91.8
+    },
+    "2026-01-15": {
+      "count": 1440,
+      "avg_quality_score": 59.95,
+      "avg_download": 80.32,
+      "avg_latency": 39.41,
+      "min_quality_score": 23.5,
+      "max_quality_score": 95.4
+    },
+    "2026-01-16": {
+      "count": 1440,
+      "avg_quality_score": 60.17,
+      "avg_download": 81.51,
+      "avg_latency": 40.27,
+      "min_quality_score": 25.3,
+      "max_quality_score": 91.3
+    },
+    "2026-01-17": {
+      "count": 1440,
+      "avg_quality_score": 59.99,
+      "avg_download": 80.72,
+      "avg_latency": 39.95,
+      "min_quality_score": 22.5,
+      "max_quality_score": 94.2
+    },
+    "2026-01-18": {
+      "count": 1440,
+      "avg_quality_score": 59.8,
+      "avg_download": 80.15,
+      "avg_latency": 39.53,
+      "min_quality_score": 24.8,
+      "max_quality_score": 95.8
+    },
+    "2026-01-19": {
+      "count": 1440,
+      "avg_quality_score": 59.57,
+      "avg_download": 79.91,
+      "avg_latency": 40.18,
+      "min_quality_score": 21.7,
+      "max_quality_score": 92.8
+    },
+    "2026-01-20": {
+      "count": 1440,
+      "avg_quality_score": 60.11,
+      "avg_download": 80.48,
+      "avg_latency": 38.94,
+      "min_quality_score": 22.0,
+      "max_quality_score": 93.7
+    },
+    "2026-01-21": {
+      "count": 1440,
+      "avg_quality_score": 59.77,
+      "avg_download": 80.34,
+      "avg_latency": 40.16,
+      "min_quality_score": 26.7,
+      "max_quality_score": 92.2
+    },
+    "2026-01-22": {
+      "count": 1440,
+      "avg_quality_score": 59.33,
+      "avg_download": 79.7,
+      "avg_latency": 40.45,
+      "min_quality_score": 20.4,
+      "max_quality_score": 93.1
+    },
+    "2026-01-23": {
+      "count": 1440,
+      "avg_quality_score": 60.24,
+      "avg_download": 81.14,
+      "avg_latency": 39.68,
+      "min_quality_score": 27.2,
+      "max_quality_score": 91.6
+    },
+    "2026-01-24": {
+      "count": 1440,
+      "avg_quality_score": 59.85,
+      "avg_download": 80.7,
+      "avg_latency": 40.3,
+      "min_quality_score": 25.8,
+      "max_quality_score": 90.9
+    },
+    "2026-01-25": {
+      "count": 1440,
+      "avg_quality_score": 60.08,
+      "avg_download": 81.2,
+      "avg_latency": 40.16,
+      "min_quality_score": 22.7,
+      "max_quality_score": 89.1
+    },
+    "2026-01-26": {
+      "count": 1440,
+      "avg_quality_score": 59.83,
+      "avg_download": 80.33,
+      "avg_latency": 39.68,
+      "min_quality_score": 23.5,
+      "max_quality_score": 90.7
+    },
+    "2026-01-27": {
+      "count": 1440,
+      "avg_quality_score": 60.0,
+      "avg_download": 80.66,
+      "avg_latency": 39.79,
+      "min_quality_score": 24.4,
+      "max_quality_score": 93.8
+    },
+    "2026-01-28": {
+      "count": 1440,
+      "avg_quality_score": 59.76,
+      "avg_download": 79.89,
+      "avg_latency": 39.48,
+      "min_quality_score": 26.9,
+      "max_quality_score": 90.7
+    },
+    "2026-01-29": {
+      "count": 1440,
+      "avg_quality_score": 60.12,
+      "avg_download": 81.14,
+      "avg_latency": 40.06,
+      "min_quality_score": 21.9,
+      "max_quality_score": 92.9
+    },
+    "2026-01-30": {
+      "count": 1440,
+      "avg_quality_score": 59.77,
+      "avg_download": 80.53,
+      "avg_latency": 40.31,
+      "min_quality_score": 26.0,
+      "max_quality_score": 95.1
     }
   },
   "trends": {
-    "avg_quality_score": 59.67,
-    "avg_download": 79.96,
-    "avg_latency": 39.82,
-    "min_quality_score": 22.6,
-    "max_quality_score": 94.1
+    "avg_quality_score": 59.82,
+    "avg_download": 80.33,
+    "avg_latency": 39.94,
+    "min_quality_score": 18.2,
+    "max_quality_score": 98.0
   },
   "insights": [
     "Overall connectivity quality needs significant improvement",
     "Download speeds are acceptable but below optimal targets",
     "Latency is within Starlink 2026 target range",
-    "Viasat shows the best average quality score (60.2/100)"
+    "HughesNet shows the best average quality score (59.9/100)"
   ],
   "provider_stats": {
     "Starlink": {
-      "count": 1250,
-      "avg_score": 59.48
+      "count": 12500,
+      "avg_score": 59.77
     },
     "Claro": {
-      "count": 1250,
-      "avg_score": 59.28
+      "count": 12500,
+      "avg_score": 59.78
     },
     "Viasat": {
-      "count": 1250,
-      "avg_score": 60.18
+      "count": 12500,
+      "avg_score": 59.83
     },
     "HughesNet": {
-      "count": 1250,
-      "avg_score": 59.74
+      "count": 12500,
+      "avg_score": 59.88
     }
   }
 }

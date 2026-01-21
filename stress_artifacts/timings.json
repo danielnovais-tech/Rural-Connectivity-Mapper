@@ -1,0 +1,34 @@
+{
+  "timings": [
+    {
+      "label": "generate_data",
+      "seconds": 1.1445
+    },
+    {
+      "label": "analyze_temporal_evolution",
+      "seconds": 0.2633
+    },
+    {
+      "label": "export_ecosystem_bundle",
+      "seconds": 35.8741
+    },
+    {
+      "label": "generate_report_txt",
+      "seconds": 4.5118
+    },
+    {
+      "label": "geocoding_stress",
+      "seconds": 51.0141
+    }
+  ],
+  "geocoding": {
+    "reverse_ok": 228,
+    "reverse_none": 22,
+    "reverse_fail": 0,
+    "forward_ok": 233,
+    "forward_none": 17,
+    "forward_fail": 0,
+    "seconds": 51.0141,
+    "samples": 500
+  }
+}
