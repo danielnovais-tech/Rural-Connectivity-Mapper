@@ -3,6 +3,7 @@
 import pytest
 import json
 from pathlib import Path
+from unittest.mock import patch
 
 from src.utils.data_utils import load_data, save_data, backup_data
 
@@ -93,3 +94,21 @@ def test_save_creates_directory(tmp_path, sample_data):
     # Verify data
     loaded_data = load_data(str(test_file))
     assert len(loaded_data) == 2
+
+
+def test_load_invalid_json_raises(tmp_path):
+    """Test that invalid JSON triggers JSONDecodeError."""
+    test_file = tmp_path / "invalid.json"
+    test_file.write_text("{ not valid json ]", encoding="utf-8")
+
+    with pytest.raises(json.JSONDecodeError):
+        load_data(str(test_file))
+
+
+def test_save_data_raises_on_write_error(tmp_path, sample_data):
+    """Test that save_data propagates IO errors (e.g., permission issues)."""
+    test_file = tmp_path / "test_data.json"
+
+    with patch('src.utils.data_utils.open', side_effect=OSError('nope')):
+        with pytest.raises(OSError):
+            save_data(str(test_file), sample_data)

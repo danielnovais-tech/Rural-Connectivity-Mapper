@@ -1,6 +1,7 @@
 """Tests for internationalization utilities."""
 
 import pytest
+from unittest.mock import patch
 from src.utils.i18n_utils import (
     get_translation, 
     get_rating_translation, 
@@ -63,6 +64,22 @@ def test_get_translation_with_formatting():
                               provider='Starlink', score='95.0')
     assert 'Starlink' in result_pt
     assert '95.0' in result_pt
+
+
+def test_get_translation_language_normalization_and_truncation():
+    """Test language normalization: case/whitespace + truncation to 2 chars."""
+    assert get_translation('provider', ' PT ') == 'Provedor'
+    assert get_translation('provider', 'pt-BR') == 'Provedor'
+
+
+def test_get_translation_missing_format_parameter_logs_warning():
+    """Test that missing format params do not raise and log a warning."""
+    with patch('src.utils.i18n_utils.logger.warning') as warn:
+        result = get_translation('insight_best_provider', 'en', provider='Starlink')
+
+    # Because a required param is missing, formatting is skipped and placeholders remain.
+    assert result == '{provider} shows the best average quality score ({score}/100)'
+    assert warn.call_count >= 1
 
 
 def test_get_rating_translation_english():
