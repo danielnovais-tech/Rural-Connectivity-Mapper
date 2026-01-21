@@ -1,0 +1,73 @@
+{
+  "total_points": 5000,
+  "date_range": {
+    "start": "2026-01-01",
+    "end": "2026-01-04",
+    "days": 4
+  },
+  "daily_averages": {
+    "2026-01-01": {
+      "count": 1440,
+      "avg_quality_score": 59.69,
+      "avg_download": 80.06,
+      "avg_latency": 39.7,
+      "min_quality_score": 23.5,
+      "max_quality_score": 92.0
+    },
+    "2026-01-02": {
+      "count": 1440,
+      "avg_quality_score": 59.69,
+      "avg_download": 80.04,
+      "avg_latency": 39.82,
+      "min_quality_score": 28.4,
+      "max_quality_score": 93.2
+    },
+    "2026-01-03": {
+      "count": 1440,
+      "avg_quality_score": 60.08,
+      "avg_download": 80.89,
+      "avg_latency": 39.78,
+      "min_quality_score": 24.3,
+      "max_quality_score": 94.1
+    },
+    "2026-01-04": {
+      "count": 680,
+      "avg_quality_score": 58.71,
+      "avg_download": 77.59,
+      "avg_latency": 40.14,
+      "min_quality_score": 22.6,
+      "max_quality_score": 91.8
+    }
+  },
+  "trends": {
+    "avg_quality_score": 59.67,
+    "avg_download": 79.96,
+    "avg_latency": 39.82,
+    "min_quality_score": 22.6,
+    "max_quality_score": 94.1
+  },
+  "insights": [
+    "Overall connectivity quality needs significant improvement",
+    "Download speeds are acceptable but below optimal targets",
+    "Latency is within Starlink 2026 target range",
+    "Viasat shows the best average quality score (60.2/100)"
+  ],
+  "provider_stats": {
+    "Starlink": {
+      "count": 1250,
+      "avg_score": 59.48
+    },
+    "Claro": {
+      "count": 1250,
+      "avg_score": 59.28
+    },
+    "Viasat": {
+      "count": 1250,
+      "avg_score": 60.18
+    },
+    "HughesNet": {
+      "count": 1250,
+      "avg_score": 59.74
+    }
+  }
+}

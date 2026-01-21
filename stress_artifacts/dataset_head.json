@@ -1,0 +1,382 @@
+[
+  {
+    "id": "synthetic-0",
+    "latitude": -11.646938,
+    "longitude": -43.80273,
+    "provider": "Starlink",
+    "timestamp": "2026-01-01T00:00:00",
+    "speed_test": {
+      "download": 59.61,
+      "upload": 17.22,
+      "latency": 24.75,
+      "jitter": 5.78,
+      "packet_loss": 0.508,
+      "stability": 77.6
+    },
+    "quality_score": {
+      "overall_score": 56.2,
+      "rating": "Fair"
+    }
+  },
+  {
+    "id": "synthetic-1",
+    "latitude": -16.060837,
+    "longitude": -46.595887,
+    "provider": "Claro",
+    "timestamp": "2026-01-01T00:01:00",
+    "speed_test": {
+      "download": 55.07,
+      "upload": 20.96,
+      "latency": 30.3,
+      "jitter": 5.0,
+      "packet_loss": 1.387,
+      "stability": 71.1
+    },
+    "quality_score": {
+      "overall_score": 51.8,
+      "rating": "Fair"
+    }
+  },
+  {
+    "id": "synthetic-2",
+    "latitude": -14.359572,
+    "longitude": -51.921899,
+    "provider": "Viasat",
+    "timestamp": "2026-01-01T00:02:00",
+    "speed_test": {
+      "download": 152.12,
+      "upload": 5.81,
+      "latency": 51.95,
+      "jitter": 0.0,
+      "packet_loss": 0.042,
+      "stability": 99.6
+    },
+    "quality_score": {
+      "overall_score": 86.9,
+      "rating": "Excellent"
+    }
+  },
+  {
+    "id": "synthetic-3",
+    "latitude": -10.993941,
+    "longitude": -44.986257,
+    "provider": "HughesNet",
+    "timestamp": "2026-01-01T00:03:00",
+    "speed_test": {
+      "download": 125.11,
+      "upload": 12.28,
+      "latency": 41.2,
+      "jitter": 2.23,
+      "packet_loss": 0.731,
+      "stability": 86.0
+    },
+    "quality_score": {
+      "overall_score": 77.8,
+      "rating": "Good"
+    }
+  },
+  {
+    "id": "synthetic-4",
+    "latitude": -10.823867,
+    "longitude": -40.464298,
+    "provider": "Starlink",
+    "timestamp": "2026-01-01T00:04:00",
+    "speed_test": {
+      "download": 20.55,
+      "upload": 16.73,
+      "latency": 38.21,
+      "jitter": 11.41,
+      "packet_loss": 0.304,
+      "stability": 62.7
+    },
+    "quality_score": {
+      "overall_score": 35.5,
+      "rating": "Poor"
+    }
+  },
+  {
+    "id": "synthetic-5",
+    "latitude": -13.143544,
+    "longitude": -49.548823,
+    "provider": "Claro",
+    "timestamp": "2026-01-01T00:05:00",
+    "speed_test": {
+      "download": 78.48,
+      "upload": 19.04,
+      "latency": 20.14,
+      "jitter": 9.5,
+      "packet_loss": 0.405,
+      "stability": 67.5
+    },
+    "quality_score": {
+      "overall_score": 62.2,
+      "rating": "Fair"
+    }
+  },
+  {
+    "id": "synthetic-6",
+    "latitude": -11.368767,
+    "longitude": -52.027426,
+    "provider": "Viasat",
+    "timestamp": "2026-01-01T00:06:00",
+    "speed_test": {
+      "download": 52.39,
+      "upload": 25.8,
+      "latency": 47.03,
+      "jitter": 9.62,
+      "packet_loss": 0.512,
+      "stability": 66.0
+    },
+    "quality_score": {
+      "overall_score": 45.7,
+      "rating": "Poor"
+    }
+  },
+  {
+    "id": "synthetic-7",
+    "latitude": -12.141846,
+    "longitude": -48.762487,
+    "provider": "HughesNet",
+    "timestamp": "2026-01-01T00:07:00",
+    "speed_test": {
+      "download": 158.35,
+      "upload": 19.61,
+      "latency": 46.38,
+      "jitter": 0.0,
+      "packet_loss": 0.33,
+      "stability": 96.7
+    },
+    "quality_score": {
+      "overall_score": 87.7,
+      "rating": "Excellent"
+    }
+  },
+  {
+    "id": "synthetic-8",
+    "latitude": -20.471306,
+    "longitude": -47.109724,
+    "provider": "Starlink",
+    "timestamp": "2026-01-01T00:08:00",
+    "speed_test": {
+      "download": 69.82,
+      "upload": 7.72,
+      "latency": 47.37,
+      "jitter": 2.56,
+      "packet_loss": 1.195,
+      "stability": 80.4
+    },
+    "quality_score": {
+      "overall_score": 54.8,
+      "rating": "Fair"
+    }
+  },
+  {
+    "id": "synthetic-9",
+    "latitude": -14.728595,
+    "longitude": -48.810176,
+    "provider": "Claro",
+    "timestamp": "2026-01-01T00:09:00",
+    "speed_test": {
+      "download": 70.81,
+      "upload": 10.13,
+      "latency": 31.59,
+      "jitter": 3.79,
+      "packet_loss": 0.173,
+      "stability": 86.9
+    },
+    "quality_score": {
+      "overall_score": 60.4,
+      "rating": "Fair"
+    }
+  },
+  {
+    "id": "synthetic-10",
+    "latitude": -19.507304,
+    "longitude": -52.942328,
+    "provider": "Viasat",
+    "timestamp": "2026-01-01T00:10:00",
+    "speed_test": {
+      "download": 46.69,
+      "upload": 9.29,
+      "latency": 33.56,
+      "jitter": 6.19,
+      "packet_loss": 0.459,
+      "stability": 76.8
+    },
+    "quality_score": {
+      "overall_score": 49.1,
+      "rating": "Poor"
+    }
+  },
+  {
+    "id": "synthetic-11",
+    "latitude": -10.699428,
+    "longitude": -42.450636,
+    "provider": "HughesNet",
+    "timestamp": "2026-01-01T00:11:00",
+    "speed_test": {
+      "download": 18.68,
+      "upload": 25.9,
+      "latency": 19.72,
+      "jitter": 3.11,
+      "packet_loss": 0.249,
+      "stability": 88.2
+    },
+    "quality_score": {
+      "overall_score": 44.6,
+      "rating": "Poor"
+    }
+  },
+  {
+    "id": "synthetic-12",
+    "latitude": -13.316599,
+    "longitude": -51.519854,
+    "provider": "Starlink",
+    "timestamp": "2026-01-01T00:12:00",
+    "speed_test": {
+      "download": 102.05,
+      "upload": 4.19,
+      "latency": 55.83,
+      "jitter": 3.55,
+      "packet_loss": 1.151,
+      "stability": 77.9
+    },
+    "quality_score": {
+      "overall_score": 64.0,
+      "rating": "Fair"
+    }
+  },
+  {
+    "id": "synthetic-13",
+    "latitude": -16.373243,
+    "longitude": -45.366074,
+    "provider": "Claro",
+    "timestamp": "2026-01-01T00:13:00",
+    "speed_test": {
+      "download": 67.74,
+      "upload": 28.38,
+      "latency": 39.21,
+      "jitter": 6.33,
+      "packet_loss": 0.16,
+      "stability": 79.4
+    },
+    "quality_score": {
+      "overall_score": 55.9,
+      "rating": "Fair"
+    }
+  },
+  {
+    "id": "synthetic-14",
+    "latitude": -14.426603,
+    "longitude": -48.146893,
+    "provider": "Viasat",
+    "timestamp": "2026-01-01T00:14:00",
+    "speed_test": {
+      "download": 40.38,
+      "upload": 6.55,
+      "latency": 41.06,
+      "jitter": 10.86,
+      "packet_loss": 0.714,
+      "stability": 60.3
+    },
+    "quality_score": {
+      "overall_score": 41.6,
+      "rating": "Poor"
+    }
+  },
+  {
+    "id": "synthetic-15",
+    "latitude": -12.245004,
+    "longitude": -50.609422,
+    "provider": "HughesNet",
+    "timestamp": "2026-01-01T00:15:00",
+    "speed_test": {
+      "download": 94.21,
+      "upload": 16.11,
+      "latency": 33.68,
+      "jitter": 8.81,
+      "packet_loss": 1.138,
+      "stability": 62.2
+    },
+    "quality_score": {
+      "overall_score": 63.6,
+      "rating": "Fair"
+    }
+  },
+  {
+    "id": "synthetic-16",
+    "latitude": -21.237191,
+    "longitude": -46.748143,
+    "provider": "Starlink",
+    "timestamp": "2026-01-01T00:16:00",
+    "speed_test": {
+      "download": 111.31,
+      "upload": 11.03,
+      "latency": 38.53,
+      "jitter": 5.37,
+      "packet_loss": 0.0,
+      "stability": 83.9
+    },
+    "quality_score": {
+      "overall_score": 73.0,
+      "rating": "Good"
+    }
+  },
+  {
+    "id": "synthetic-17",
+    "latitude": -14.868565,
+    "longitude": -49.670649,
+    "provider": "Claro",
+    "timestamp": "2026-01-01T00:17:00",
+    "speed_test": {
+      "download": 49.27,
+      "upload": 3.46,
+      "latency": 70.66,
+      "jitter": 6.61,
+      "packet_loss": 0.428,
+      "stability": 75.9
+    },
+    "quality_score": {
+      "overall_score": 40.6,
+      "rating": "Poor"
+    }
+  },
+  {
+    "id": "synthetic-18",
+    "latitude": -10.247625,
+    "longitude": -52.970449,
+    "provider": "Viasat",
+    "timestamp": "2026-01-01T00:18:00",
+    "speed_test": {
+      "download": 94.69,
+      "upload": 17.9,
+      "latency": 51.06,
+      "jitter": 0.0,
+      "packet_loss": 1.025,
+      "stability": 89.7
+    },
+    "quality_score": {
+      "overall_score": 64.9,
+      "rating": "Fair"
+    }
+  },
+  {
+    "id": "synthetic-19",
+    "latitude": -20.561997,
+    "longitude": -51.771282,
+    "provider": "HughesNet",
+    "timestamp": "2026-01-01T00:19:00",
+    "speed_test": {
+      "download": 84.51,
+      "upload": 16.58,
+      "latency": 61.28,
+      "jitter": 4.89,
+      "packet_loss": 0.706,
+      "stability": 78.3
+    },
+    "quality_score": {
+      "overall_score": 56.3,
+      "rating": "Fair"
+    }
+  }
+]
