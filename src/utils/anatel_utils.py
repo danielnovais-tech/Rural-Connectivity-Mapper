@@ -8,6 +8,8 @@ import logging
 import requests
 from typing import Dict, List, Optional
 import pandas as pd
+import json
+import os
 
 logger = logging.getLogger(__name__)
 
@@ -18,6 +20,12 @@ ANATEL_ENDPOINTS = {
     'telefonia_movel': '/dados-abertos/telefonia-movel',
     'cobertura': '/dados-abertos/cobertura-movel'
 }
+
+# ANATEL CKAN API endpoints for backhaul data
+ANATEL_CKAN_BASE_URL = "https://dadosabertos.anatel.gov.br/api/3/action"
+
+# Backup data file path
+ANATEL_BACKUP_BACKHAUL_FILE = "data/backup/anatel_backhaul_sample.json"
 
 
 def fetch_anatel_broadband_data(state: Optional[str] = None, year: Optional[int] = 2026) -> List[Dict]:
@@ -249,3 +257,103 @@ def convert_anatel_to_connectivity_points(anatel_data: List[Dict]) -> List[Dict]
     
     logger.info(f"Converted {len(connectivity_points)} connectivity points")
     return connectivity_points
+
+
+def load_anatel_backhaul_backup(path: str = ANATEL_BACKUP_BACKHAUL_FILE) -> List[Dict]:
+    """Load ANATEL backhaul data from backup JSON file.
+    
+    Args:
+        path: Path to the backup JSON file (default: ANATEL_BACKUP_BACKHAUL_FILE)
+        
+    Returns:
+        List[Dict]: List of backhaul data records, empty list if file missing or invalid
+    """
+    logger.info(f"Loading ANATEL backhaul backup from {path}")
+    
+    # Check if file exists
+    if not os.path.exists(path):
+        logger.warning(f"Backup file not found: {path}")
+        return []
+    
+    try:
+        with open(path, 'r', encoding='utf-8') as f:
+            data = json.load(f)
+        
+        # Validate top-level structure
+        if not isinstance(data, dict):
+            logger.warning(f"Invalid backup file structure: expected dict, got {type(data)}")
+            return []
+        
+        if 'data' not in data:
+            logger.warning(f"Backup file missing 'data' key")
+            return []
+        
+        records = data['data']
+        if not isinstance(records, list):
+            logger.warning(f"Invalid data structure: expected list, got {type(records)}")
+            return []
+        
+        # Validate required fields in each record
+        required_fields = ['uf', 'municipio', 'latitude', 'longitude', 
+                          'technology', 'capacity_mbps', 'provider', 
+                          'timestamp_utc', 'id', 'source']
+        
+        valid_records = []
+        for idx, record in enumerate(records):
+            if not isinstance(record, dict):
+                logger.warning(f"Record {idx} is not a dict, skipping")
+                continue
+            
+            missing_fields = [field for field in required_fields if field not in record]
+            if missing_fields:
+                logger.warning(f"Record {idx} missing required fields: {missing_fields}, skipping")
+                continue
+            
+            valid_records.append(record)
+        
+        logger.info(f"Loaded {len(valid_records)} valid backhaul records from backup")
+        return valid_records
+        
+    except json.JSONDecodeError as e:
+        logger.warning(f"Failed to parse JSON from {path}: {e}")
+        return []
+    except Exception as e:
+        logger.warning(f"Error loading backup file {path}: {e}")
+        return []
+
+
+def fetch_anatel_backhaul_data(limit: int = 1000, use_backup_on_failure: bool = True) -> List[Dict]:
+    """Fetch ANATEL backhaul infrastructure data.
+    
+    This function attempts to fetch backhaul data from the ANATEL CKAN API.
+    If the API is not configured or fails, it falls back to the backup sample data.
+    
+    Args:
+        limit: Maximum number of records to return (default: 1000)
+        use_backup_on_failure: Whether to use backup data if API fails (default: True)
+        
+    Returns:
+        List[Dict]: List of backhaul data records
+    """
+    logger.info(f"Fetching ANATEL backhaul data (limit={limit})")
+    
+    # Placeholder for future API implementation
+    # TODO: Configure ANATEL backhaul resource_id when available
+    # Future implementation will call: {ANATEL_CKAN_BASE_URL}/datastore_search
+    resource_id = None
+    
+    if resource_id:
+        try:
+            # TODO: Implement actual API call when resource_id is configured
+            pass
+        except Exception as e:
+            logger.warning(f"Failed to fetch from ANATEL API: {e}")
+            if use_backup_on_failure:
+                logger.info("Falling back to backup data")
+                return load_anatel_backhaul_backup()[:limit]
+            return []
+    else:
+        # No resource_id configured, use backup directly
+        logger.info("No ANATEL API resource_id configured, using backup data")
+        return load_anatel_backhaul_backup()[:limit]
+
