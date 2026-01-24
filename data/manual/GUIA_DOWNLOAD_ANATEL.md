@@ -1,6 +1,6 @@
 # Guia para Download de Datasets Prioritários da ANATEL
 
-**Gerado automaticamente em:** 2026-01-24 18:19:00
+**Gerado automaticamente em:** 2026-01-24 18:41:11
 
 ## 🎯 Datasets Mais Importantes para Conectividade Rural
 
