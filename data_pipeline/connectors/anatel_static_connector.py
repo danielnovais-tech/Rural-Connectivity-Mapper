@@ -11,6 +11,13 @@ import logging
 from typing import Dict, List, Optional
 import shutil
 
+# Optional dependency for geohash
+try:
+    import geohash2
+    GEOHASH_AVAILABLE = True
+except ImportError:
+    GEOHASH_AVAILABLE = False
+
 # Configuração
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -97,8 +104,19 @@ class AnatelStaticConnector:
                 df_clean['capacidade_mbps'] = pd.to_numeric(df_clean['capacidade_mbps'], errors='coerce')
         
         elif dataset_type == 'estacoes':
-            # Adicionar geohash para agrupamento espacial futuro
-            if all(col in df_clean.columns for col in ['latitude', 'longitude']):
+            # Garantir coordenadas válidas primeiro
+            if 'latitude' in df_clean.columns and 'longitude' in df_clean.columns:
+                df_clean['latitude'] = pd.to_numeric(df_clean['latitude'], errors='coerce')
+                df_clean['longitude'] = pd.to_numeric(df_clean['longitude'], errors='coerce')
+                # Remover coordenadas inválidas
+                df_clean = df_clean.dropna(subset=['latitude', 'longitude'])
+                # Filtrar para Brasil
+                df_clean = df_clean[
+                    (df_clean['latitude'].between(-33.75, 5.27)) & 
+                    (df_clean['longitude'].between(-73.99, -34.79))
+                ]
+                
+                # Adicionar geohash para agrupamento espacial futuro (após validação)
                 df_clean['geohash'] = df_clean.apply(
                     lambda row: self._compute_geohash(row['latitude'], row['longitude'], precision=7), 
                     axis=1
@@ -113,11 +131,9 @@ class AnatelStaticConnector:
     
     def _compute_geohash(self, lat: float, lon: float, precision: int = 7) -> str:
         """Calcula geohash para agrupamento espacial (simplificado para exemplo)."""
-        try:
-            # Em produção, usar biblioteca como geohash2
-            import geohash2
+        if GEOHASH_AVAILABLE:
             return geohash2.encode(lat, lon, precision)
-        except ImportError:
+        else:
             # Fallback simplificado
             return f"{lat:.4f},{lon:.4f}"
     
