@@ -279,7 +279,7 @@ def load_anatel_backhaul_backup(path: str = ANATEL_BACKUP_BACKHAUL_FILE) -> list
         return []
 
     try:
-        with open(path, encoding='utf-8') as f:
+        with open(path, 'r', encoding='utf-8') as f:
             data = json.load(f)
 
         # Validate top-level structure
@@ -297,9 +297,18 @@ def load_anatel_backhaul_backup(path: str = ANATEL_BACKUP_BACKHAUL_FILE) -> list
             return []
 
         # Validate required fields in each record
-        required_fields = ['uf', 'municipio', 'latitude', 'longitude',
-                          'technology', 'capacity_mbps', 'provider',
-                          'timestamp_utc', 'id', 'source']
+        required_fields = [
+            'uf',
+            'municipio',
+            'latitude',
+            'longitude',
+            'technology',
+            'capacity_mbps',
+            'provider',
+            'timestamp_utc',
+            'id',
+            'source',
+        ]
 
         valid_records = []
         for idx, record in enumerate(records):
