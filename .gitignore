@@ -37,6 +37,11 @@ speedtest_data.json
 # Ecosystem exports
 exports/
 
+# Data pipeline generated files
+data/bronze/
+data/silver/
+data/gold/
+
 
 # Distribution / packaging
 .Python
