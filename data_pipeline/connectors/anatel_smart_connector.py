@@ -206,7 +206,8 @@ class AnatelSmartConnector:
 
     def process_all_manual_files(self):
         """Processa todos os arquivos CSV na pasta manual."""
-        from data_pipeline.connectors.anatel_static_connector import AnatelStaticConnector  # Importar o conector base
+        # Import here to avoid circular dependency issues
+        from data_pipeline.connectors.anatel_static_connector import AnatelStaticConnector
 
         static_connector = AnatelStaticConnector(self.manual_dir)
         results = static_connector.run()
@@ -263,7 +264,7 @@ class AnatelSmartConnector:
                 f.write("DATASETS PRIORITÁRIOS DISPONÍVEIS (não baixados):\n")
                 for ds in report['datasets_prioritarios_disponiveis'][:10]:  # Mostrar só os 10 primeiros
                     f.write(f"  #{ds['Item']} {ds['Nome da Base de Dados']}\n")
-                    if pd.notna(ds['Link dados.gov.br']):
+                    if not pd.isna(ds['Link dados.gov.br']):
                         f.write(f"     Link: {ds['Link dados.gov.br']}\n")
 
         return report_path
