@@ -137,11 +137,15 @@ class AnatelSmartConnector:
 
                 if pd.notna(row['Link dados.gov.br']):
                     f.write(f"- **Link direto:** [{row['Link dados.gov.br']}]({row['Link dados.gov.br']})\n")
+                    f.write("- **Instruções:** Acesse o link acima, procure pela opção de download "
+                            "(geralmente CSV ou ZIP)\n")
                 elif pd.notna(row['Link Painéis de Dados da Anatel']):
                     f.write(f"- **Painel da ANATEL:** {row['Link Painéis de Dados da Anatel']}\n")
+                    f.write("- **Instruções:** Acesse o painel acima, procure pela opção de download "
+                            "(geralmente CSV ou ZIP)\n")
+                else:
+                    f.write("- **Instruções:** Dataset sem link direto. Verifique o site da ANATEL ou use fontes alternativas.\n")
 
-                f.write("- **Instruções:** Acesse o link acima, procure pela opção de download "
-                        "(geralmente CSV ou ZIP)\n")
                 dataset_name = row['Nome da Base de Dados'].replace(' ', '_').replace('/', '_')
                 f.write(f"- **Salve como:** `{dataset_name}_{{DATA}}.csv`\n")
                 f.write(f"- **Coloque em:** `{self.manual_dir.absolute()}/`\n\n")
