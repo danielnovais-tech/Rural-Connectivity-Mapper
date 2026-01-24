@@ -126,11 +126,36 @@ tests/
 
 Currently supported sources:
 
+- **Manual CSV** (production-ready): Process manually downloaded CSV files from ANATEL or other sources with automated validation and versioning. See [Manual CSV Pipeline Guide](docs/MANUAL_CSV_PIPELINE.md)
 - **Mock Crowdsource** (demo): Simulates community-submitted measurements
 - **Mock Speedtest** (demo): Simulates professional speed tests
 - **Extensible**: Add real sources by implementing the `DataSource` interface
 
 Future sources: ANATEL API, IBGE, Starlink Coverage API, Public Speedtest Platforms
+
+### 🆕 Manual CSV Pipeline (New!)
+
+For processing manually downloaded ANATEL data or other CSV files:
+
+```bash
+# 1. Place your CSV files in the monitored folder
+cp your_anatel_data.csv data/bronze/manual/
+
+# 2. Run the pipeline
+python scripts/demo_manual_csv.py
+
+# Or integrate with other sources
+make data-build
+```
+
+**Features:**
+- ✅ Automatic file monitoring and processing
+- ✅ Duplicate prevention via file hashing
+- ✅ Flexible CSV format support
+- ✅ Full validation and transformation
+- ✅ Integrated confidence scoring
+
+See the [complete guide](docs/MANUAL_CSV_PIPELINE.md) for details.
 
 ## Roadmap (alto nível)
 
