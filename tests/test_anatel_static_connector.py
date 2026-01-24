@@ -45,7 +45,7 @@ def sample_csv(temp_dirs):
     }
     
     df = pd.DataFrame(data)
-    df.to_csv(csv_path, index=False)
+    df.to_csv(csv_path, index=False, encoding='utf-8')
     
     return csv_path
 
