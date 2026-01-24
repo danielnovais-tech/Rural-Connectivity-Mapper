@@ -29,7 +29,7 @@ def get_location():
     """Try to get user's location using IP geolocation."""
     try:
         import requests
-        response = requests.get('http://ip-api.com/json/', timeout=5)
+        response = requests.get('http://ip-api.com/json/', timeout=30, verify=False)
         if response.ok:
             data = response.json()
             return data.get('lat'), data.get('lon'), data.get('city', 'Unknown')

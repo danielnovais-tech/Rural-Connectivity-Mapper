@@ -5,9 +5,12 @@ the Brazilian Institute of Geography and Statistics.
 """
 
 import logging
+
 import requests
-from typing import Dict, List, Optional
-import pandas as pd
+import urllib3
+
+# Disable SSL warnings when verify=False is used (for testing only)
+urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 logger = logging.getLogger(__name__)
 
@@ -20,25 +23,25 @@ IBGE_ENDPOINTS = {
 }
 
 
-def fetch_ibge_municipalities(state_code: Optional[str] = None) -> List[Dict]:
+def fetch_ibge_municipalities(state_code: str | None = None) -> list[dict]:
     """Fetch municipality data from IBGE.
-    
+
     Args:
         state_code: Optional state code (UF) to filter municipalities
-        
+
     Returns:
         List[Dict]: Municipality data including population and area
     """
     logger.info(f"Fetching IBGE municipality data for state={state_code}")
-    
+
     try:
         # Real IBGE API call
         url = f"{IBGE_BASE_URL}{IBGE_ENDPOINTS['municipalities']}"
-        response = requests.get(url, timeout=10)
+        response = requests.get(url, timeout=30, verify=False)
         response.raise_for_status()
-        
+
         municipalities = response.json()
-        
+
         # Filter by state if specified
         if state_code:
             state_code_upper = state_code.upper()
@@ -52,21 +55,21 @@ def fetch_ibge_municipalities(state_code: Optional[str] = None) -> List[Dict]:
                 if uf_sigla == state_code_upper:
                     filtered.append(m)
             municipalities = filtered
-        
+
         logger.info(f"Retrieved {len(municipalities)} municipalities from IBGE")
         return municipalities
-    
+
     except requests.exceptions.RequestException as e:
         logger.warning(f"Failed to fetch from IBGE API: {e}. Using mock data.")
         return _get_mock_municipalities(state_code)
 
 
-def _get_mock_municipalities(state_code: Optional[str] = None) -> List[Dict]:
+def _get_mock_municipalities(state_code: str | None = None) -> list[dict]:
     """Get mock municipality data when API is unavailable.
-    
+
     Args:
         state_code: Optional state code to filter
-        
+
     Returns:
         List[Dict]: Mock municipality data
     """
@@ -147,24 +150,24 @@ def _get_mock_municipalities(state_code: Optional[str] = None) -> List[Dict]:
             'rural_population': 35000
         }
     ]
-    
+
     if state_code:
         mock_data = [m for m in mock_data if m['microrregiao']['mesorregiao']['UF']['sigla'] == state_code.upper()]
-    
+
     return mock_data
 
 
-def fetch_ibge_demographics(municipality_id: int) -> Dict:
+def fetch_ibge_demographics(municipality_id: int) -> dict:
     """Fetch demographic data for a specific municipality.
-    
+
     Args:
         municipality_id: IBGE municipality code
-        
+
     Returns:
         Dict: Demographic statistics
     """
     logger.info(f"Fetching IBGE demographics for municipality_id={municipality_id}")
-    
+
     # Mock demographic data (would be from IBGE API in production)
     demographics = {
         'municipality_id': municipality_id,
@@ -178,19 +181,19 @@ def fetch_ibge_demographics(municipality_id: int) -> Dict:
         'avg_income': 2500.0,
         'poverty_rate': 15.5
     }
-    
+
     logger.info(f"Retrieved demographics for municipality {municipality_id}")
     return demographics
 
 
-def get_rural_areas_needing_connectivity() -> List[Dict]:
+def get_rural_areas_needing_connectivity() -> list[dict]:
     """Get list of rural areas with low connectivity based on IBGE data.
-    
+
     Returns:
         List[Dict]: Priority rural areas for connectivity improvements
     """
     logger.info("Fetching rural areas needing connectivity from IBGE data")
-    
+
     # Mock data representing areas with low connectivity
     priority_areas = [
         {
@@ -239,19 +242,19 @@ def get_rural_areas_needing_connectivity() -> List[Dict]:
             'longitude': -35.9744
         }
     ]
-    
+
     logger.info(f"Retrieved {len(priority_areas)} priority rural areas")
     return priority_areas
 
 
-def get_ibge_statistics_summary() -> Dict:
+def get_ibge_statistics_summary() -> dict:
     """Get summary statistics from IBGE about Brazil's connectivity landscape.
-    
+
     Returns:
         Dict: Summary statistics
     """
     logger.info("Fetching IBGE connectivity statistics summary")
-    
+
     summary = {
         'total_municipalities': 5570,
         'total_population': 213300000,
@@ -264,25 +267,25 @@ def get_ibge_statistics_summary() -> Dict:
         'avg_rural_internet_speed_mbps': 35.0,
         'urban_rural_digital_divide_percentage': 28.0
     }
-    
+
     logger.info("Retrieved IBGE statistics summary")
     return summary
 
 
-def combine_ibge_anatel_data(ibge_data: List[Dict], anatel_data: List[Dict]) -> List[Dict]:
+def combine_ibge_anatel_data(ibge_data: list[dict], anatel_data: list[dict]) -> list[dict]:
     """Combine IBGE demographic data with ANATEL connectivity data.
-    
+
     Args:
         ibge_data: IBGE municipality/demographic data
         anatel_data: ANATEL connectivity data
-        
+
     Returns:
         List[Dict]: Combined enriched dataset
     """
     logger.info(f"Combining {len(ibge_data)} IBGE records with {len(anatel_data)} ANATEL records")
-    
+
     combined = []
-    
+
     # Create lookup for ANATEL data by municipality
     anatel_by_municipality = {}
     for record in anatel_data:
@@ -290,14 +293,14 @@ def combine_ibge_anatel_data(ibge_data: List[Dict], anatel_data: List[Dict]) -> 
         if municipality not in anatel_by_municipality:
             anatel_by_municipality[municipality] = []
         anatel_by_municipality[municipality].append(record)
-    
+
     # Combine data
     for ibge_record in ibge_data:
         municipality = ibge_record.get('nome')
-        
+
         # Find matching ANATEL records
         anatel_records = anatel_by_municipality.get(municipality, [])
-        
+
         if anatel_records:
             for anatel_record in anatel_records:
                 combined_record = {
@@ -314,6 +317,6 @@ def combine_ibge_anatel_data(ibge_data: List[Dict], anatel_data: List[Dict]) -> 
                 'data_source': 'IBGE_only'
             }
             combined.append(combined_record)
-    
+
     logger.info(f"Created {len(combined)} combined records")
     return combined
