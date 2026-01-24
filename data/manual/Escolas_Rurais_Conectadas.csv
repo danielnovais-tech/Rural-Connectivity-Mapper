@@ -1,0 +1,41 @@
+id,nome_escola,municipio,uf,tipo_escola,alunos_total,conectada,tipo_conexao,velocidade_mbps,latitude,longitude
+1,Escola Municipal Rural Vale Verde,Anápolis,GO,Municipal,150,Sim,Fibra Óptica,50,-16.3281,-48.9534
+2,Escola Estadual Fazenda Esperança,Uberaba,MG,Estadual,280,Sim,Rádio,20,-19.7472,-47.9381
+3,Colégio Rural São José,Piracicaba,SP,Municipal,95,Não,,,,-22.7253,-47.6492
+4,Escola Municipal Sítio Alegre,Campinas,SP,Municipal,120,Sim,Satélite,15,-22.9056,-47.0608
+5,Escola Estadual Rural Flor do Campo,Uberlândia,MG,Estadual,210,Sim,Fibra Óptica,100,-18.9186,-48.2772
+6,Escola Rural Dois Irmãos,Londrina,PR,Municipal,85,Sim,Rádio,10,-23.3045,-51.1696
+7,Escola Municipal Fazenda Nova,Ribeirão Preto,SP,Municipal,140,Sim,Fibra Óptica,30,-21.1704,-47.8103
+8,Colégio Estadual Rural Boa Vista,Caxias do Sul,RS,Estadual,175,Sim,Rádio,25,-29.1634,-51.1797
+9,Escola Municipal Vale do Sol,Sorocaba,SP,Municipal,110,Não,,,,-23.5015,-47.4526
+10,Escola Rural Santa Clara,Joinville,SC,Municipal,95,Sim,Satélite,20,-26.3045,-48.8487
+11,Escola Estadual Fazenda São Pedro,Goiânia,GO,Estadual,200,Sim,Fibra Óptica,50,-16.6869,-49.2648
+12,Escola Municipal Rural Horizonte,Cuiabá,MT,Municipal,130,Sim,Rádio,15,-15.5989,-56.0949
+13,Colégio Rural Três Marias,Campo Grande,MS,Estadual,165,Sim,Satélite,25,-20.4697,-54.6201
+14,Escola Municipal Sítio Bela Vista,São José dos Campos,SP,Municipal,105,Sim,Fibra Óptica,100,-23.1791,-45.8872
+15,Escola Rural Estrela do Norte,Feira de Santana,BA,Municipal,145,Não,,,,,-12.2664,-38.9663
+16,Escola Estadual Fazenda Rio Verde,Juiz de Fora,MG,Estadual,190,Sim,Rádio,20,-21.7642,-43.3502
+17,Escola Municipal Vale Feliz,Aparecida de Goiânia,GO,Municipal,115,Sim,Fibra Óptica,50,-16.8233,-49.2439
+18,Escola Rural Serra Azul,Betim,MG,Municipal,125,Sim,Satélite,15,-19.9678,-44.1983
+19,Colégio Estadual Rural Bom Jardim,Contagem,MG,Estadual,155,Sim,Rádio,25,-19.9320,-44.0540
+20,Escola Municipal Fazenda Recanto,Campos dos Goytacazes,RJ,Municipal,100,Sim,Fibra Óptica,30,-21.7622,-41.3181
+21,Escola Rural Primavera,Belém,PA,Municipal,180,Sim,Satélite,20,-1.4558,-48.5039
+22,Escola Estadual Vale do Rio,Manaus,AM,Estadual,220,Sim,Rádio,15,-3.1190,-60.0217
+23,Escola Municipal Sítio Paraíso,Teresina,PI,Municipal,135,Não,,,,,-5.0892,-42.8019
+24,Escola Rural Boa Esperança,Aracaju,SE,Municipal,90,Sim,Fibra Óptica,50,-10.9091,-37.0677
+25,Colégio Estadual Fazenda Vitória,Maceió,AL,Estadual,170,Sim,Rádio,20,-9.6658,-35.7350
+26,Escola Municipal Rural Novo Horizonte,Natal,RN,Municipal,120,Sim,Satélite,25,-5.7945,-35.2110
+27,Escola Rural São Francisco,João Pessoa,PB,Municipal,105,Sim,Fibra Óptica,30,-7.1195,-34.8450
+28,Escola Estadual Fazenda União,Recife,PE,Estadual,195,Sim,Rádio,15,-8.0476,-34.8770
+29,Escola Municipal Vale Verde,São Luís,MA,Municipal,140,Sim,Satélite,20,-2.5387,-44.2825
+30,Escola Rural Santa Rita,Salvador,BA,Municipal,160,Sim,Fibra Óptica,50,-12.9714,-38.5014
+31,Escola Estadual Fazenda Bom Retiro,Fortaleza,CE,Estadual,185,Sim,Rádio,25,-3.7172,-38.5433
+32,Escola Municipal Sítio Felicidade,Brasília,DF,Municipal,110,Sim,Fibra Óptica,100,-15.7801,-47.9292
+33,Escola Rural Monte Verde,Curitiba,PR,Municipal,125,Sim,Satélite,15,-25.4284,-49.2733
+34,Colégio Estadual Rural Bela Vista,Porto Alegre,RS,Estadual,175,Sim,Rádio,20,-30.0346,-51.2177
+35,Escola Municipal Fazenda Progresso,Belo Horizonte,MG,Municipal,145,Sim,Fibra Óptica,50,-19.9167,-43.9345
+36,Escola Rural Caminho Novo,Rio de Janeiro,RJ,Municipal,130,Sim,Satélite,25,-22.9068,-43.1729
+37,Escola Estadual Vale da Paz,São Paulo,SP,Estadual,200,Sim,Fibra Óptica,100,-23.5505,-46.6333
+38,Escola Municipal Fazenda Aurora,Guarulhos,SP,Municipal,115,Sim,Rádio,15,-23.4538,-46.5333
+39,Escola Rural Primeiros Passos,Campinas,SP,Municipal,95,Não,,,,-22.9056,-47.0608
+40,Escola Estadual Sítio das Flores,São Bernardo do Campo,SP,Estadual,165,Sim,Fibra Óptica,30,-23.6914,-46.5650
