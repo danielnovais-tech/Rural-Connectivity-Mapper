@@ -1,0 +1,23 @@
+Item;Nome da Base de Dados;Descrição da Base de Dados;Periodicidade de Atualização;Link dados.gov.br;Link Painéis de Dados da Anatel
+109;Cobertura da Telefonia Móvel;Dados de cobertura da telefonia móvel por município e operadora;Mensal;https://dados.gov.br/dataset/cobertura_movel;https://informacoes.anatel.gov.br/paineis/infraestrutura/cobertura-movel
+120;Backhaul em Municípios;Dados sobre infraestrutura de backhaul em municípios brasileiros;Trimestral;;https://informacoes.anatel.gov.br/paineis/infraestrutura
+21;Satélites;Dados sobre satélites autorizados e em operação no Brasil;Anual;https://dados.gov.br/dataset/satelites;
+92;Estações de Banda Larga Fixa;Estações de telecomunicações de banda larga fixa com coordenadas geográficas;Mensal;https://dados.gov.br/dataset/estacoes-banda-larga;
+94;Estações de Telefonia Móvel;Estações de telecomunicações de telefonia móvel com coordenadas geográficas;Mensal;https://dados.gov.br/dataset/estacoes-telefonia-movel;
+95;Estações de TV;Estações de radiodifusão de TV com coordenadas geográficas;Mensal;https://dados.gov.br/dataset/estacoes-tv;
+96;Estações de Rádio;Estações de radiodifusão de rádio com coordenadas geográficas;Mensal;https://dados.gov.br/dataset/estacoes-radio;
+97;Estações de Satélite;Estações terrenas de satélite com coordenadas geográficas;Mensal;https://dados.gov.br/dataset/estacoes-satelite;
+33;População Coberta com Telefonia Móvel;Indicador de população coberta com telefonia móvel (ODS 9 - ONU);Anual;https://dados.gov.br/dataset/populacao-coberta-movel;
+36;Escolas Rurais Conectadas;Dados sobre escolas em área rural com acesso à internet;Anual;https://dados.gov.br/dataset/escolas-rurais-conectadas;
+37;Municípios com Área Rural Atendida;Municípios com cobertura em área rural;Anual;https://dados.gov.br/dataset/municipios-rural-atendida;
+3;Acessos - Banda Larga Fixa;Dados de acessos de banda larga fixa por município, densidade e velocidade;Mensal;https://dados.gov.br/dataset/acessos-banda-larga;
+32;Acessos por Velocidade Contratada;Acessos de banda larga fixa por faixa de velocidade contratada;Mensal;https://dados.gov.br/dataset/acessos-velocidade;
+111;Acessos por Velocidade - Painel;Painel interativo de acessos por velocidade contratada;Mensal;;https://informacoes.anatel.gov.br/paineis/acessos/banda-larga-fixa
+5;Indicadores de Qualidade - Banda Larga;Indicadores de qualidade de banda larga fixa;Mensal;https://dados.gov.br/dataset/qualidade-banda-larga;
+6;Indicadores de Qualidade - Telefonia Móvel;Indicadores de qualidade de telefonia móvel (Descontinuado);Descontinuado;;
+7;Indicadores de Qualidade - TV por Assinatura;Indicadores de qualidade de TV por assinatura (Descontinuado);Descontinuado;;
+8;Indicadores de Qualidade - Telefonia Fixa;Indicadores de qualidade de telefonia fixa (Descontinuado);Descontinuado;;
+110;Meu Município - Consolidado;Visão consolidada de acessos e cobertura de telecomunicações (Descontinuada);Descontinuado;;
+40;Arrecadação de Taxas;Dados de arrecadação de taxas de fiscalização;Anual;https://dados.gov.br/dataset/arrecadacao-taxas;
+41;Reclamações de Usuários;Dados de reclamações de usuários de serviços de telecomunicações;Mensal;https://dados.gov.br/dataset/reclamacoes-usuarios;
+42;Portabilidade Numérica;Dados sobre portabilidade numérica de telefonia móvel;Mensal;https://dados.gov.br/dataset/portabilidade-numerica;
