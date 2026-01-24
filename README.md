@@ -1,3 +1,137 @@
+# Rural Connectivity Mapper 2026
+
+A comprehensive platform for mapping, analyzing, and improving rural connectivity across Latin America and beyond.
+
+## 🚀 Quick Start
+
+### Data Pipeline (Pilar 1: Source of Truth)
+
+The data pipeline processes connectivity measurements through a robust bronze/silver/gold architecture with quality scoring.
+
+**Run the complete pipeline:**
+
+```bash
+# Install dependencies
+make install
+
+# Run end-to-end pipeline
+make data-build
+
+# Run tests
+make test
+```
+
+**What happens:**
+1. **Bronze Layer**: Ingests raw data from multiple sources (immutable storage)
+2. **Silver Layer**: Normalizes, validates, deduplicates, and adds confidence scores
+3. **Gold Layer**: Aggregates data for geographic and analytical consumption
+
+**Output:** Enriched data with confidence scores in `data/gold/full_dataset_*.json`
+
+### Understanding Confidence Scores
+
+Every measurement includes a **confidence score (0-100)** calculated from:
+
+- **Recency (40%)**: How fresh is the data?
+- **Source Reliability (30%)**: How trustworthy is the source? (ANATEL: 95%, Crowdsource: 60%, etc.)
+- **Consistency (20%)**: Are values within expected ranges?
+- **Completeness (10%)**: How complete is the metadata?
+
+Higher scores = more reliable data for decision-making.
+
+**Example:**
+```json
+{
+  "id": "measurement_123",
+  "lat": -15.7801,
+  "lon": -47.9292,
+  "download_mbps": 100.5,
+  "upload_mbps": 20.3,
+  "source": "anatel",
+  "confidence_score": 87.5,
+  "confidence_breakdown": {
+    "recency_score": 100.0,
+    "source_reliability_score": 95.0,
+    "consistency_score": 85.0,
+    "completeness_score": 70.0
+  }
+}
+```
+
+## 📚 Documentation
+
+- **[Data Architecture Guide](docs/ARCHITECTURE_DATA.md)** - Complete pipeline documentation, schema definitions, and confidence scoring methodology
+- **[API Documentation](docs/API.md)** - API reference
+- **[Multi-Country Support](docs/MULTI_COUNTRY.md)** - International deployment
+- **[Crowdsourcing Guide](docs/CROWDSOURCING.md)** - Community data collection
+
+## 🏗️ Architecture Overview
+
+### Data Pipeline (Bronze → Silver → Gold)
+
+```
+Sources (Crowdsource, ANATEL, etc.)
+    ↓
+Bronze Layer (Raw, Immutable)
+    ↓
+Silver Layer (Normalized, Validated, Confidence Scored)
+    ↓
+Gold Layer (Aggregated, Analysis-Ready)
+```
+
+### Key Features
+
+- **Quality First**: Confidence scoring on all measurements
+- **Reproducible**: Immutable bronze layer, versioned transformations
+- **Extensible**: Easy to add new data sources
+- **Geographic Aggregation**: H3 hexagonal spatial indexing
+- **Data Contracts**: Pydantic schemas ensure data quality
+
+## 🛠️ Development
+
+### Available Commands
+
+```bash
+make help           # Show all available commands
+make install        # Install dependencies
+make data-build     # Run data pipeline
+make test           # Run all tests
+make test-quality   # Run quality/confidence tests only
+make clean          # Clean generated data files
+```
+
+### Project Structure
+
+```
+src/
+├── schemas/        # Canonical data schemas (Pydantic)
+├── sources/        # Data source connectors
+├── pipeline/       # Bronze/Silver/Gold pipeline
+├── quality/        # Confidence scoring
+├── models/         # Legacy models (ConnectivityPoint, etc.)
+└── utils/          # Utility functions
+
+data/
+├── bronze/         # Raw immutable data by source
+├── silver/         # Normalized & enriched data
+└── gold/           # Aggregated analysis-ready data
+
+tests/
+├── test_schemas.py             # Schema validation tests
+├── test_quality_confidence.py  # Confidence scoring tests
+└── ...
+```
+
+## 📊 Data Sources
+
+Currently supported sources:
+
+- **Mock Crowdsource** (demo): Simulates community-submitted measurements
+- **Mock Speedtest** (demo): Simulates professional speed tests
+- **Extensible**: Add real sources by implementing the `DataSource` interface
+
+Future sources: ANATEL API, IBGE, Starlink Coverage API, Public Speedtest Platforms
+
 ## Roadmap (alto nível)
 
 | Área                          | Hoje                                                                 | Futuro                                                          | Próximo passo                                                                 |
