@@ -1,5 +1,8 @@
 """Configuration constants for Rural Connectivity Mapper."""
 
+# Application version
+APP_VERSION = "1.0.0-beta"
+
 # Data storage
 DATA_FILE_PATH = 'src/data/pontos.json'
 

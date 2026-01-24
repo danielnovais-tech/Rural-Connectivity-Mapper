@@ -8,6 +8,7 @@ sys.path.insert(0, str(Path(__file__).parent.parent))
 
 import json
 import pytest
+from unittest.mock import patch, MagicMock
 
 from app import app
 from src.utils import save_data
@@ -270,3 +271,192 @@ def test_get_nonexistent_data_point(client, sample_data, tmp_path):
         assert 'not found' in result['error']
     finally:
         app_module.DATA_PATH = original_path
+
+
+# ============================================================================
+# Tests for /api/v2/recommendation endpoint
+# ============================================================================
+
+def test_recommendation_endpoint_success(client, tmp_path, monkeypatch):
+    """Test successful recommendation request."""
+    # Mock analytics to avoid creating files
+    import src.utils.analytics as analytics_module
+    analytics_dir = tmp_path / "analytics"
+    analytics_dir.mkdir()
+    monkeypatch.setattr(analytics_module, 'ANALYTICS_DIR', analytics_dir)
+    monkeypatch.setattr(analytics_module, 'EVENTS_FILE', analytics_dir / "events.jsonl")
+    
+    request_data = {
+        'latitude': -15.7801,
+        'longitude': -47.9292,
+        'use_case': 'rural_home'
+    }
+    
+    response = client.post('/api/v2/recommendation',
+                          data=json.dumps(request_data),
+                          content_type='application/json')
+    
+    assert response.status_code == 200
+    
+    result = json.loads(response.data)
+    assert result['success'] is True
+    assert 'recommendation' in result
+    assert 'providers' in result
+    assert 'location' in result
+    assert 'response_time_ms' in result
+    assert result['recommendation']['best_provider'] is not None
+
+
+def test_recommendation_endpoint_missing_latitude(client):
+    """Test recommendation request with missing latitude."""
+    request_data = {
+        'longitude': -47.9292
+    }
+    
+    response = client.post('/api/v2/recommendation',
+                          data=json.dumps(request_data),
+                          content_type='application/json')
+    
+    assert response.status_code == 400
+    
+    result = json.loads(response.data)
+    assert result['success'] is False
+    assert 'Missing required fields' in result['error']
+
+
+def test_recommendation_endpoint_missing_longitude(client):
+    """Test recommendation request with missing longitude."""
+    request_data = {
+        'latitude': -15.7801
+    }
+    
+    response = client.post('/api/v2/recommendation',
+                          data=json.dumps(request_data),
+                          content_type='application/json')
+    
+    assert response.status_code == 400
+    
+    result = json.loads(response.data)
+    assert result['success'] is False
+    assert 'Missing required fields' in result['error']
+
+
+def test_recommendation_endpoint_invalid_coordinates(client):
+    """Test recommendation request with invalid coordinates."""
+    request_data = {
+        'latitude': 999,  # Invalid
+        'longitude': -47.9292
+    }
+    
+    response = client.post('/api/v2/recommendation',
+                          data=json.dumps(request_data),
+                          content_type='application/json')
+    
+    assert response.status_code == 400
+    
+    result = json.loads(response.data)
+    assert result['success'] is False
+    assert 'Invalid coordinates' in result['error']
+
+
+def test_recommendation_endpoint_with_session_id(client, tmp_path, monkeypatch):
+    """Test recommendation request with custom session ID."""
+    # Mock analytics to avoid creating files
+    import src.utils.analytics as analytics_module
+    analytics_dir = tmp_path / "analytics"
+    analytics_dir.mkdir()
+    monkeypatch.setattr(analytics_module, 'ANALYTICS_DIR', analytics_dir)
+    monkeypatch.setattr(analytics_module, 'EVENTS_FILE', analytics_dir / "events.jsonl")
+    
+    request_data = {
+        'latitude': -23.5505,
+        'longitude': -46.6333
+    }
+    
+    custom_session_id = 'test-session-123'
+    
+    response = client.post('/api/v2/recommendation',
+                          data=json.dumps(request_data),
+                          content_type='application/json',
+                          headers={'X-Session-ID': custom_session_id})
+    
+    assert response.status_code == 200
+    
+    result = json.loads(response.data)
+    assert result['success'] is True
+    
+    # Verify session ID was used in analytics
+    events_file = analytics_dir / "events.jsonl"
+    if events_file.exists():
+        with open(events_file, 'r') as f:
+            events = [json.loads(line) for line in f if line.strip()]
+            # At least one event should have our custom session ID
+            session_ids = [e['session_id'] for e in events]
+            assert custom_session_id in session_ids
+
+
+def test_recommendation_endpoint_tracks_analytics(client, tmp_path, monkeypatch):
+    """Test that recommendation endpoint tracks analytics events."""
+    # Mock analytics to avoid creating files in default location
+    import src.utils.analytics as analytics_module
+    analytics_dir = tmp_path / "analytics"
+    analytics_dir.mkdir()
+    events_file = analytics_dir / "events.jsonl"
+    monkeypatch.setattr(analytics_module, 'ANALYTICS_DIR', analytics_dir)
+    monkeypatch.setattr(analytics_module, 'EVENTS_FILE', events_file)
+    
+    request_data = {
+        'latitude': -15.7801,
+        'longitude': -47.9292
+    }
+    
+    response = client.post('/api/v2/recommendation',
+                          data=json.dumps(request_data),
+                          content_type='application/json')
+    
+    assert response.status_code == 200
+    
+    # Verify analytics events were tracked
+    assert events_file.exists()
+    
+    with open(events_file, 'r') as f:
+        events = [json.loads(line) for line in f if line.strip()]
+    
+    # Should have at least 2 events: api_called and api_succeeded
+    assert len(events) >= 2
+    
+    event_names = [e['event_name'] for e in events]
+    assert 'recommendation_api_called' in event_names
+    assert 'recommendation_api_succeeded' in event_names
+    
+    # Check that geo data is privacy-safe (rounded)
+    for event in events:
+        if 'geo' in event:
+            # Coordinates should be rounded to 2 decimal places
+            lat_str = str(event['geo']['lat'])
+            lon_str = str(event['geo']['lon'])
+            # Check that they don't have more than 2 decimal places
+            if '.' in lat_str:
+                assert len(lat_str.split('.')[1]) <= 2
+            if '.' in lon_str:
+                assert len(lon_str.split('.')[1]) <= 2
+
+
+def test_recommendation_endpoint_empty_body(client):
+    """Test recommendation request with empty body."""
+    response = client.post('/api/v2/recommendation',
+                          data='',
+                          content_type='application/json')
+    
+    # Flask returns 500 when get_json() is called on empty body
+    assert response.status_code in [400, 500]
+
+
+def test_recommendation_endpoint_invalid_json(client):
+    """Test recommendation request with invalid JSON."""
+    response = client.post('/api/v2/recommendation',
+                          data='not valid json',
+                          content_type='application/json')
+    
+    # Flask should return 400 for invalid JSON
+    assert response.status_code in [400, 500]

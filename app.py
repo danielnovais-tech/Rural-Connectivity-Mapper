@@ -4,8 +4,10 @@
 import logging
 import os
 import tempfile
+import uuid
 from datetime import datetime
 from pathlib import Path
+from time import time
 
 from flask import Flask, jsonify, render_template, request, send_file
 from flask_cors import CORS  # type: ignore
@@ -20,6 +22,8 @@ from src.utils import (
     simulate_router_impact,
     validate_coordinates,
 )
+from src.utils.analytics import track_event, safe_geo
+from src.utils.starlink_api import compare_with_competitors
 
 # Initialize Flask app
 app = Flask(__name__)
@@ -358,6 +362,120 @@ def health_check():
         'status': 'healthy',
         'timestamp': datetime.now().isoformat()
     })
+
+
+@app.route('/api/v2/recommendation', methods=['POST'])
+def get_recommendation():
+    """Get connectivity recommendation for a location.
+    
+    Analyzes available providers at a given location and returns
+    the best recommendation based on speed, coverage, and cost.
+    
+    Request body:
+        {
+            "latitude": float,
+            "longitude": float,
+            "use_case": string (optional)
+        }
+    
+    Returns:
+        JSON: Recommendation with provider comparison
+    """
+    # Get or generate session ID from request
+    session_id = request.headers.get('X-Session-ID', str(uuid.uuid4()))
+    start_time = time()
+    
+    try:
+        data = request.get_json()
+        
+        # Validate required fields
+        if not data or 'latitude' not in data or 'longitude' not in data:
+            track_event(
+                event_name='recommendation_api_failed',
+                session_id=session_id,
+                properties={'error_code': 'missing_required_fields'}
+            )
+            return jsonify({
+                'success': False,
+                'error': 'Missing required fields: latitude, longitude'
+            }), 400
+        
+        latitude = float(data['latitude'])
+        longitude = float(data['longitude'])
+        use_case = data.get('use_case', 'general')
+        
+        # Validate coordinates
+        if not validate_coordinates(latitude, longitude):
+            track_event(
+                event_name='recommendation_api_failed',
+                session_id=session_id,
+                properties={'error_code': 'invalid_coordinates'}
+            )
+            return jsonify({
+                'success': False,
+                'error': 'Invalid coordinates'
+            }), 400
+        
+        # Track API call
+        track_event(
+            event_name='recommendation_api_called',
+            session_id=session_id,
+            context={'use_case': use_case},
+            geo=safe_geo(latitude, longitude)
+        )
+        
+        # Get recommendation using existing utility
+        comparison = compare_with_competitors(latitude, longitude)
+        
+        # Calculate response time
+        response_time_ms = (time() - start_time) * 1000
+        
+        # Track success
+        track_event(
+            event_name='recommendation_api_succeeded',
+            session_id=session_id,
+            context={'use_case': use_case},
+            metrics={'response_time_ms': round(response_time_ms, 2)},
+            properties={
+                'recommended_provider': comparison['recommendation']['best_provider']
+            },
+            geo=safe_geo(latitude, longitude)
+        )
+        
+        return jsonify({
+            'success': True,
+            'recommendation': comparison['recommendation'],
+            'providers': comparison['providers'],
+            'location': comparison['location'],
+            'response_time_ms': round(response_time_ms, 2)
+        })
+        
+    except ValueError as e:
+        response_time_ms = (time() - start_time) * 1000
+        track_event(
+            event_name='recommendation_api_failed',
+            session_id=session_id,
+            metrics={'response_time_ms': round(response_time_ms, 2)},
+            properties={'error_code': 'value_error', 'error_message': str(e)}
+        )
+        return jsonify({
+            'success': False,
+            'error': f'Invalid value: {str(e)}'
+        }), 400
+        
+    except Exception as e:
+        response_time_ms = (time() - start_time) * 1000
+        logger.error(f"Error generating recommendation: {e}")
+        track_event(
+            event_name='recommendation_api_failed',
+            session_id=session_id,
+            metrics={'response_time_ms': round(response_time_ms, 2)},
+            properties={'error_code': 'internal_error', 'error_message': str(e)}
+        )
+        return jsonify({
+            'success': False,
+            'error': 'Internal server error'
+        }), 500
 
 
 if __name__ == '__main__':
