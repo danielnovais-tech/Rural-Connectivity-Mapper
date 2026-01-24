@@ -43,6 +43,7 @@ import plotly.graph_objects as go
 from datetime import datetime
 import sys
 from pathlib import Path
+import uuid
 
 # Add src to path
 sys.path.insert(0, str(Path(__file__).parent.parent))
@@ -70,6 +71,7 @@ from src.utils.country_config import (
     get_country_config,
     get_latam_summary
 )
+from src.utils.analytics import track_event, timed_event, compute_analytics_summary
 
 
 # Page configuration
@@ -273,14 +275,30 @@ def run_speed_test():
     
     col1, col2, col3 = st.columns([1, 1, 2])
     
+    session_id = st.session_state.get('session_id', str(uuid.uuid4()))
+    
     with col1:
         if st.button("Run Speed Test", type="primary"):
+            track_event(
+                event_name='speed_test_started',
+                session_id=session_id,
+                context={'page': 'Speed Test'}
+            )
+            
             with st.spinner("Running speed test... This may take up to 60 seconds."):
-                result = measure_speed()
+                with timed_event('speed_test_completed', session_id, 
+                               context={'page': 'Speed Test'}):
+                    result = measure_speed()
                 
                 if result:
                     st.session_state['speed_test_result'] = result
                 else:
+                    track_event(
+                        event_name='error_shown',
+                        session_id=session_id,
+                        context={'page': 'Speed Test'},
+                        properties={'error_type': 'speed_test_failed'}
+                    )
                     st.error("Speed test failed. Please try again.")
     
     # Display results if available
@@ -425,6 +443,17 @@ def analyze_trends(data):
 
 def main():
     """Main dashboard application."""
+    # Initialize session ID for analytics
+    if 'session_id' not in st.session_state:
+        st.session_state.session_id = str(uuid.uuid4())
+        track_event(
+            event_name='app_loaded',
+            session_id=st.session_state.session_id,
+            context={'app': 'streamlit_dashboard_legacy'}
+        )
+    
+    session_id = st.session_state.session_id
+    
     display_header()
     
     # Sidebar navigation
@@ -433,6 +462,15 @@ def main():
         "Select a page:",
         ["📊 Dashboard", "📤 Upload Data", "🚀 Speed Test", "🗺️ Map View", "📈 Analysis", "🔧 Simulation"]
     )
+    
+    # Track page selection
+    if 'last_page' not in st.session_state or st.session_state.last_page != page:
+        track_event(
+            event_name='page_selected',
+            session_id=session_id,
+            context={'page': page}
+        )
+        st.session_state.last_page = page
     
     # Load data
     data = load_data(DATA_PATH)
@@ -481,6 +519,17 @@ def main():
 def main_alternative():
     """Main dashboard application."""
     
+    # Initialize session ID for analytics
+    if 'session_id' not in st.session_state:
+        st.session_state.session_id = str(uuid.uuid4())
+        track_event(
+            event_name='app_loaded',
+            session_id=st.session_state.session_id,
+            context={'app': 'streamlit_dashboard'}
+        )
+    
+    session_id = st.session_state.session_id
+    
     # Header
     st.markdown('<div class="main-header">🛰️ Rural Connectivity Mapper 2026</div>', 
                 unsafe_allow_html=True)
@@ -522,8 +571,17 @@ def main_alternative():
         view = st.radio(
             "Select View",
             ["Overview", "ANATEL Data", "IBGE Demographics", 
-             "Starlink Availability", "LATAM Comparison", "Interactive Map"]
+             "Starlink Availability", "LATAM Comparison", "Interactive Map", "📈 Beta Analytics"]
         )
+        
+        # Track page selection
+        if 'last_view' not in st.session_state or st.session_state.last_view != view:
+            track_event(
+                event_name='page_selected',
+                session_id=session_id,
+                context={'page': view}
+            )
+            st.session_state.last_view = view
         
         st.markdown("---")
         st.caption(f"Last updated: {datetime.now().strftime('%Y-%m-%d %H:%M')}")
@@ -541,6 +599,8 @@ def main_alternative():
         show_latam_comparison()
     elif view == "Interactive Map":
         show_interactive_map(selected_country)
+    elif view == "📈 Beta Analytics":
+        show_beta_analytics()
 
 
 def show_overview(country_code: str):
@@ -738,8 +798,12 @@ def show_starlink_data(country_code: str):
         lon = st.number_input("Longitude", value=-47.9292, format="%.4f")
     
     if st.button("Check Availability"):
+        session_id = st.session_state.get('session_id', str(uuid.uuid4()))
         with st.spinner("Checking Starlink availability..."):
-            availability = check_starlink_availability(lat, lon)
+            with timed_event('starlink_availability_check', session_id, 
+                           context={'page': 'Starlink Availability'},
+                           geo={'lat': round(lat, 2), 'lon': round(lon, 2)}):
+                availability = check_starlink_availability(lat, lon)
             
             if availability['service_available']:
                 st.success(f"✅ Starlink is available at ({lat}, {lon})")
@@ -848,6 +912,128 @@ def show_interactive_map(country_code: str):
     st_folium(m, width=1200, height=600)
     
     st.info("💡 Click on markers to see connectivity details for each location")
+
+
+def show_beta_analytics():
+    """Show beta analytics dashboard with tracked metrics."""
+    st.markdown('<div class="sub-header">📈 Beta Analytics Dashboard</div>', 
+                unsafe_allow_html=True)
+    
+    st.info("**Privacy Notice:** All analytics are collected locally without third-party services. "
+            "Geographic data is rounded to ~1km precision. No personally identifiable information is stored.")
+    
+    try:
+        # Compute analytics summary
+        summary = compute_analytics_summary()
+        
+        # Display overview metrics
+        st.subheader("📊 Overview Metrics")
+        col1, col2, col3, col4 = st.columns(4)
+        
+        with col1:
+            st.metric("Total Events", summary['total_events'])
+        with col2:
+            st.metric("Unique Sessions", summary['unique_sessions'])
+        with col3:
+            recommendations = summary['event_counts'].get('recommendation_api_called', 0)
+            st.metric("Recommendations", recommendations)
+        with col4:
+            page_views = summary['event_counts'].get('page_selected', 0)
+            st.metric("Page Views", page_views)
+        
+        st.markdown("---")
+        
+        # Event type distribution
+        st.subheader("📌 Event Distribution")
+        if summary['event_counts']:
+            event_df = pd.DataFrame([
+                {'Event Type': k, 'Count': v}
+                for k, v in summary['event_counts'].items()
+            ]).sort_values('Count', ascending=False)
+            
+            fig = px.bar(event_df, x='Event Type', y='Count',
+                        title='Events by Type',
+                        color='Count',
+                        color_continuous_scale='Viridis')
+            fig.update_layout(xaxis_tickangle=-45)
+            st.plotly_chart(fig, use_container_width=True)
+        else:
+            st.info("No events tracked yet. Start using the dashboard to see analytics!")
+        
+        st.markdown("---")
+        
+        # Time-to-recommendation metrics
+        st.subheader("⚡ Performance Metrics")
+        if summary['time_to_recommendation']:
+            col1, col2, col3 = st.columns(3)
+            
+            ttr = summary['time_to_recommendation']
+            with col1:
+                st.metric("Median Time to Recommendation", 
+                         f"{ttr.get('median_ms', 0):.0f} ms")
+            with col2:
+                st.metric("P90 Time to Recommendation", 
+                         f"{ttr.get('p90_ms', 0):.0f} ms")
+            with col3:
+                st.metric("Total Recommendations", 
+                         ttr.get('count', 0))
+        else:
+            st.info("No recommendation timing data available yet.")
+        
+        st.markdown("---")
+        
+        # CTR metrics
+        st.subheader("🎯 Engagement Metrics")
+        if summary['ctr']:
+            col1, col2, col3 = st.columns(3)
+            
+            ctr = summary['ctr']
+            with col1:
+                st.metric("CTA Clicks", ctr.get('cta_clicked', 0))
+            with col2:
+                st.metric("Recommendations Rendered", ctr.get('recommendation_rendered', 0))
+            with col3:
+                st.metric("Click-Through Rate", f"{ctr.get('rate', 0):.1f}%")
+        else:
+            st.info("No CTR data available yet. Track 'recommendation_rendered' and 'cta_clicked' events.")
+        
+        st.markdown("---")
+        
+        # Export analytics
+        st.subheader("📥 Export Analytics")
+        col1, col2 = st.columns(2)
+        
+        with col1:
+            if st.button("📊 Download Summary (JSON)"):
+                import json
+                summary_json = json.dumps(summary, indent=2)
+                st.download_button(
+                    label="Download JSON",
+                    data=summary_json,
+                    file_name=f"analytics_summary_{datetime.now().strftime('%Y%m%d_%H%M%S')}.json",
+                    mime="application/json"
+                )
+        
+        with col2:
+            if st.button("📋 Download Raw Events (CSV)"):
+                from src.utils.analytics import read_events
+                events = read_events(limit=1000)
+                if events:
+                    events_df = pd.DataFrame(events)
+                    csv = events_df.to_csv(index=False)
+                    st.download_button(
+                        label="Download CSV",
+                        data=csv,
+                        file_name=f"analytics_events_{datetime.now().strftime('%Y%m%d_%H%M%S')}.csv",
+                        mime="text/csv"
+                    )
+                else:
+                    st.warning("No events to export.")
+    
+    except Exception as e:
+        st.error(f"Error loading analytics: {e}")
+        st.info("This might be because no analytics events have been tracked yet. "
+                "Use the dashboard to generate some events!")
 
 
 if __name__ == "__main__":
