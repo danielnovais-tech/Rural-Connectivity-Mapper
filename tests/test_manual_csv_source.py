@@ -370,3 +370,101 @@ class TestManualCSVSource:
             source2 = ManualCSVSource(watch_dir=Path(tmpdir))
             measurements2 = source2.fetch()
             assert len(measurements2) == 0
+    
+    def test_zero_values_handling(self):
+        """Test that zero values are correctly parsed, not treated as None."""
+        with tempfile.TemporaryDirectory() as tmpdir:
+            csv_path = Path(tmpdir) / "zeros.csv"
+            with open(csv_path, 'w', newline='') as f:
+                writer = csv.DictWriter(f, fieldnames=[
+                    'latitude', 'longitude', 'timestamp', 'download', 'upload', 'latency'
+                ])
+                writer.writeheader()
+                writer.writerow({
+                    'latitude': '-23.5505',
+                    'longitude': '-46.6333',
+                    'timestamp': '2026-01-15T10:00:00',
+                    'download': '0',  # Zero should be parsed as 0.0, not None
+                    'upload': '0.0',  # Zero should be parsed as 0.0, not None
+                    'latency': '0'
+                })
+            
+            source = ManualCSVSource(watch_dir=Path(tmpdir))
+            measurements = source.fetch()
+            
+            assert len(measurements) == 1
+            m = measurements[0]
+            assert m.download_mbps == 0.0
+            assert m.upload_mbps == 0.0
+            assert m.latency_ms == 0.0
+    
+    def test_none_values_in_csv(self):
+        """Test handling of None values in CSV cells."""
+        with tempfile.TemporaryDirectory() as tmpdir:
+            csv_path = Path(tmpdir) / "none_values.csv"
+            # Create CSV with empty cells (which read as empty strings, not None in csv module)
+            with open(csv_path, 'w', newline='') as f:
+                writer = csv.DictWriter(f, fieldnames=[
+                    'latitude', 'longitude', 'timestamp', 'download', 'provider'
+                ])
+                writer.writeheader()
+                writer.writerow({
+                    'latitude': '-23.5505',
+                    'longitude': '-46.6333',
+                    'timestamp': '2026-01-15T10:00:00',
+                    'download': '',  # Empty cell
+                    'provider': ''  # Empty cell
+                })
+            
+            source = ManualCSVSource(watch_dir=Path(tmpdir))
+            measurements = source.fetch()
+            
+            # Should successfully parse with None for empty fields
+            assert len(measurements) == 1
+            m = measurements[0]
+            assert m.download_mbps is None
+            assert m.provider is None
+    
+    def test_missing_required_fields(self):
+        """Test that rows with missing required fields are skipped."""
+        with tempfile.TemporaryDirectory() as tmpdir:
+            csv_path = Path(tmpdir) / "missing_required.csv"
+            with open(csv_path, 'w', newline='') as f:
+                writer = csv.DictWriter(f, fieldnames=[
+                    'latitude', 'longitude', 'timestamp', 'download'
+                ])
+                writer.writeheader()
+                # Valid row
+                writer.writerow({
+                    'latitude': '-23.5505',
+                    'longitude': '-46.6333',
+                    'timestamp': '2026-01-15T10:00:00',
+                    'download': '100.0'
+                })
+                # Missing latitude
+                writer.writerow({
+                    'latitude': '',
+                    'longitude': '-46.6333',
+                    'timestamp': '2026-01-15T11:00:00',
+                    'download': '85.0'
+                })
+                # Missing longitude
+                writer.writerow({
+                    'latitude': '-23.5505',
+                    'longitude': '',
+                    'timestamp': '2026-01-15T12:00:00',
+                    'download': '90.0'
+                })
+                # Valid row
+                writer.writerow({
+                    'latitude': '-22.9068',
+                    'longitude': '-43.1729',
+                    'timestamp': '2026-01-15T13:00:00',
+                    'download': '95.0'
+                })
+            
+            source = ManualCSVSource(watch_dir=Path(tmpdir))
+            measurements = source.fetch()
+            
+            # Should only get the 2 valid rows
+            assert len(measurements) == 2

@@ -164,11 +164,22 @@ class ManualCSVSource(DataSource):
         """
         try:
             # Normalize column names (handle case variations)
-            row_lower = {k.lower().strip(): v.strip() for k, v in row.items()}
+            # Handle None values before stripping
+            row_lower = {
+                k.lower().strip(): (v.strip() if v is not None else '') 
+                for k, v in row.items()
+            }
             
-            # Required fields
-            lat = float(row_lower.get('latitude', row_lower.get('lat', '')))
-            lon = float(row_lower.get('longitude', row_lower.get('lon', row_lower.get('lng', ''))))
+            # Required fields - check for empty strings before converting
+            lat_str = row_lower.get('latitude', row_lower.get('lat', ''))
+            lon_str = row_lower.get('longitude', row_lower.get('lon', row_lower.get('lng', '')))
+            
+            if not lat_str or not lon_str:
+                logger.warning(f"Row {row_num} in {filename}: Missing required latitude or longitude")
+                return None
+            
+            lat = float(lat_str)
+            lon = float(lon_str)
             
             # Parse timestamp
             timestamp_str = row_lower.get('timestamp', row_lower.get('timestamp_utc', row_lower.get('date', '')))
@@ -193,14 +204,14 @@ class ManualCSVSource(DataSource):
             else:
                 timestamp = datetime.now(timezone.utc)
             
-            # Optional fields
-            download_str = row_lower.get('download', row_lower.get('download_mbps', ''))
+            # Optional fields - handle '0' and '0.0' as valid values
+            download_str = row_lower.get('download', row_lower.get('download_mbps', '')).strip()
             download = float(download_str) if download_str else None
             
-            upload_str = row_lower.get('upload', row_lower.get('upload_mbps', ''))
+            upload_str = row_lower.get('upload', row_lower.get('upload_mbps', '')).strip()
             upload = float(upload_str) if upload_str else None
             
-            latency_str = row_lower.get('latency', row_lower.get('latency_ms', row_lower.get('ping', '')))
+            latency_str = row_lower.get('latency', row_lower.get('latency_ms', row_lower.get('ping', ''))).strip()
             latency = float(latency_str) if latency_str else None
             
             provider = row_lower.get('provider', row_lower.get('isp', '')) or None
