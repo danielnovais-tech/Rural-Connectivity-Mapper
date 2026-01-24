@@ -201,7 +201,7 @@ class FusionEngine:
             # Download speed component (0-100 scale)
             # Scale: 0 Mbps = 0, 100+ Mbps = 100
             if measurement.download_mbps is not None:
-                download_score = min(100, (measurement.download_mbps / 100.0) * 100)
+                download_score = min(100, measurement.download_mbps)
                 icr_components['download_score'] = round(download_score, 2)
             else:
                 icr_components['download_score'] = 0.0
@@ -209,7 +209,7 @@ class FusionEngine:
             # Upload speed component (0-100 scale)
             # Scale: 0 Mbps = 0, 50+ Mbps = 100
             if measurement.upload_mbps is not None:
-                upload_score = min(100, (measurement.upload_mbps / 50.0) * 100)
+                upload_score = min(100, measurement.upload_mbps * 2)
                 icr_components['upload_score'] = round(upload_score, 2)
             else:
                 icr_components['upload_score'] = 0.0

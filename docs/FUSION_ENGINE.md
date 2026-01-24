@@ -279,6 +279,4 @@ Potential improvements for future versions:
 ## See Also
 
 - [Data Architecture](ARCHITECTURE_DATA.md) - Overall pipeline architecture
-- [Bronze Layer](../src/pipeline/bronze.py) - Raw data ingestion
-- [Silver Layer](../src/pipeline/silver.py) - Data validation and enrichment
-- [Gold Layer](../src/pipeline/gold.py) - Data aggregation
+- [README](../README.md) - Project overview and quick start guide
