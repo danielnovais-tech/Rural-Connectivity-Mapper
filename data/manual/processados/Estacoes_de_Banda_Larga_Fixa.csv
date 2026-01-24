@@ -1,0 +1,51 @@
+id,municipio,uf,operadora,tecnologia,latitude,longitude,capacidade_mbps,status,data_ativacao
+EST001,São Paulo,SP,Vivo,Fibra Óptica,-23.5505,-46.6333,10000,Ativo,2024-01-15
+EST002,Rio de Janeiro,RJ,Claro,Fibra Óptica,-22.9068,-43.1729,10000,Ativo,2024-01-20
+EST003,Belo Horizonte,MG,TIM,Fibra Óptica,-19.9167,-43.9345,5000,Ativo,2024-02-01
+EST004,Brasília,DF,Oi,Fibra Óptica,-15.7801,-47.9292,10000,Ativo,2024-02-10
+EST005,Salvador,BA,Vivo,Fibra Óptica,-12.9714,-38.5014,5000,Ativo,2024-02-15
+EST006,Fortaleza,CE,Claro,Fibra Óptica,-3.7172,-38.5433,5000,Ativo,2024-03-01
+EST007,Curitiba,PR,TIM,Fibra Óptica,-25.4284,-49.2733,10000,Ativo,2024-03-05
+EST008,Porto Alegre,RS,Oi,Fibra Óptica,-30.0346,-51.2177,10000,Ativo,2024-03-10
+EST009,Manaus,AM,Vivo,Cabo,-3.1190,-60.0217,2500,Ativo,2024-03-15
+EST010,Belém,PA,Claro,Fibra Óptica,-1.4558,-48.5039,5000,Ativo,2024-04-01
+EST011,Recife,PE,TIM,Fibra Óptica,-8.0476,-34.8770,5000,Ativo,2024-04-05
+EST012,Goiânia,GO,Oi,Fibra Óptica,-16.6869,-49.2648,5000,Ativo,2024-04-10
+EST013,Guarulhos,SP,Vivo,Fibra Óptica,-23.4538,-46.5333,10000,Ativo,2024-04-15
+EST014,Campinas,SP,Claro,Fibra Óptica,-22.9056,-47.0608,10000,Ativo,2024-05-01
+EST015,São Luís,MA,TIM,Cabo,-2.5387,-44.2825,2500,Ativo,2024-05-05
+EST016,São Gonçalo,RJ,Oi,Fibra Óptica,-22.8268,-43.0539,5000,Ativo,2024-05-10
+EST017,Maceió,AL,Vivo,Fibra Óptica,-9.6658,-35.7350,2500,Ativo,2024-05-15
+EST018,Duque de Caxias,RJ,Claro,Fibra Óptica,-22.7858,-43.3054,5000,Ativo,2024-06-01
+EST019,Natal,RN,TIM,Fibra Óptica,-5.7945,-35.2110,5000,Ativo,2024-06-05
+EST020,Campo Grande,MS,Oi,Fibra Óptica,-20.4697,-54.6201,5000,Ativo,2024-06-10
+EST021,Teresina,PI,Vivo,Cabo,-5.0892,-42.8019,2500,Ativo,2024-06-15
+EST022,Nova Iguaçu,RJ,Claro,Fibra Óptica,-22.7592,-43.4511,5000,Ativo,2024-07-01
+EST023,São Bernardo do Campo,SP,TIM,Fibra Óptica,-23.6914,-46.5650,10000,Ativo,2024-07-05
+EST024,João Pessoa,PB,Oi,Fibra Óptica,-7.1195,-34.8450,2500,Ativo,2024-07-10
+EST025,Santo André,SP,Vivo,Fibra Óptica,-23.6633,-46.5308,10000,Ativo,2024-07-15
+EST026,Osasco,SP,Claro,Fibra Óptica,-23.5320,-46.7916,10000,Ativo,2024-08-01
+EST027,Jaboatão dos Guararapes,PE,TIM,Fibra Óptica,-8.1130,-35.0150,2500,Ativo,2024-08-05
+EST028,São José dos Campos,SP,Oi,Fibra Óptica,-23.1791,-45.8872,10000,Ativo,2024-08-10
+EST029,Ribeirão Preto,SP,Vivo,Fibra Óptica,-21.1704,-47.8103,10000,Ativo,2024-08-15
+EST030,Uberlândia,MG,Claro,Fibra Óptica,-18.9186,-48.2772,5000,Ativo,2024-09-01
+EST031,Sorocaba,SP,TIM,Fibra Óptica,-23.5015,-47.4526,10000,Ativo,2024-09-05
+EST032,Contagem,MG,Oi,Fibra Óptica,-19.9320,-44.0540,5000,Ativo,2024-09-10
+EST033,Aracaju,SE,Vivo,Fibra Óptica,-10.9091,-37.0677,2500,Ativo,2024-09-15
+EST034,Feira de Santana,BA,Claro,Cabo,-12.2664,-38.9663,2500,Ativo,2024-10-01
+EST035,Cuiabá,MT,TIM,Fibra Óptica,-15.5989,-56.0949,5000,Ativo,2024-10-05
+EST036,Joinville,SC,Oi,Fibra Óptica,-26.3045,-48.8487,5000,Ativo,2024-10-10
+EST037,Juiz de Fora,MG,Vivo,Fibra Óptica,-21.7642,-43.3502,5000,Ativo,2024-10-15
+EST038,Londrina,PR,Claro,Fibra Óptica,-23.3045,-51.1696,5000,Ativo,2024-11-01
+EST039,Aparecida de Goiânia,GO,TIM,Fibra Óptica,-16.8233,-49.2439,5000,Ativo,2024-11-05
+EST040,Belford Roxo,RJ,Oi,Cabo,-22.7642,-43.3995,2500,Ativo,2024-11-10
+EST041,Vila Velha,ES,Vivo,Fibra Óptica,-20.3297,-40.2925,5000,Ativo,2024-11-15
+EST042,São João de Meriti,RJ,Claro,Cabo,-22.8041,-43.3722,2500,Ativo,2024-12-01
+EST043,Diadema,SP,TIM,Fibra Óptica,-23.6858,-46.6228,10000,Ativo,2024-12-05
+EST044,Campos dos Goytacazes,RJ,Oi,Fibra Óptica,-21.7622,-41.3181,2500,Ativo,2024-12-10
+EST045,Mauá,SP,Vivo,Fibra Óptica,-23.6672,-46.4612,10000,Ativo,2024-12-15
+EST046,Olinda,PE,Claro,Fibra Óptica,-8.0089,-34.8553,2500,Ativo,2025-01-01
+EST047,Betim,MG,TIM,Fibra Óptica,-19.9678,-44.1983,5000,Ativo,2025-01-05
+EST048,Caxias do Sul,RS,Oi,Fibra Óptica,-29.1634,-51.1797,5000,Ativo,2025-01-10
+EST049,Carapicuíba,SP,Vivo,Cabo,-23.5225,-46.8358,5000,Ativo,2025-01-15
+EST050,Piracicaba,SP,Claro,Fibra Óptica,-22.7253,-47.6492,5000,Ativo,2025-01-20
