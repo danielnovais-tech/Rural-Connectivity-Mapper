@@ -16,12 +16,17 @@ Output:
     - JSON validation report
 """
 
-import os
 import json
+import logging
+import traceback
 import pandas as pd
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Dict, List, Tuple
+
+# Configure logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 
 class ANATELStaticConnector:
@@ -107,6 +112,41 @@ class ANATELStaticConnector:
                 if null_count > 0:
                     errors.append(f"Field '{field}' has {null_count} null values")
         
+        # Validate coordinate ranges where applicable
+        if 'latitude' in df.columns:
+            lat_series = pd.to_numeric(df['latitude'], errors='coerce')
+            # Count non-numeric values (originally non-null but became NaN)
+            non_numeric_lat = (~df['latitude'].isnull()) & (lat_series.isnull())
+            non_numeric_lat_count = non_numeric_lat.sum()
+            if non_numeric_lat_count > 0:
+                errors.append(
+                    f"Field 'latitude' has {non_numeric_lat_count} non-numeric values"
+                )
+            # Count out-of-range latitude values (-90 to 90)
+            out_of_range_lat = lat_series.notnull() & ((lat_series < -90) | (lat_series > 90))
+            out_of_range_lat_count = out_of_range_lat.sum()
+            if out_of_range_lat_count > 0:
+                errors.append(
+                    f"Field 'latitude' has {out_of_range_lat_count} values outside [-90, 90]"
+                )
+        
+        if 'longitude' in df.columns:
+            lon_series = pd.to_numeric(df['longitude'], errors='coerce')
+            # Count non-numeric values (originally non-null but became NaN)
+            non_numeric_lon = (~df['longitude'].isnull()) & (lon_series.isnull())
+            non_numeric_lon_count = non_numeric_lon.sum()
+            if non_numeric_lon_count > 0:
+                errors.append(
+                    f"Field 'longitude' has {non_numeric_lon_count} non-numeric values"
+                )
+            # Count out-of-range longitude values (-180 to 180)
+            out_of_range_lon = lon_series.notnull() & ((lon_series < -180) | (lon_series > 180))
+            out_of_range_lon_count = out_of_range_lon.sum()
+            if out_of_range_lon_count > 0:
+                errors.append(
+                    f"Field 'longitude' has {out_of_range_lon_count} values outside [-180, 180]"
+                )
+        
         is_valid = len(errors) == 0
         return is_valid, errors
     
@@ -131,8 +171,8 @@ class ANATELStaticConnector:
         try:
             print(f"\n📄 Processing: {csv_file.name}")
             
-            # Read CSV file
-            df = pd.read_csv(csv_file)
+            # Read CSV file with explicit encoding for consistent behavior
+            df = pd.read_csv(csv_file, encoding="utf-8")
             print(f"   ✓ Read {len(df)} records")
             print(f"   ✓ Columns: {list(df.columns)}")
             
@@ -163,16 +203,27 @@ class ANATELStaticConnector:
             result["records_processed"] = len(df)
             result["output_file"] = str(output_path)
             
-            # Add basic statistics
+            # Add basic statistics (exclude sample record for privacy/security)
             result["statistics"] = {
                 "total_records": len(df),
-                "columns": list(df.columns),
-                "sample_record": df.iloc[0].to_dict() if len(df) > 0 else {}
+                "columns": list(df.columns)
             }
             
+        except FileNotFoundError as e:
+            result["status"] = "failed"
+            result["errors"] = [f"File not found: {str(e)}"]
+            logger.error(f"File not found: {csv_file}: {e}")
+            print(f"   ✗ Error: File not found - {e}")
+        except pd.errors.ParserError as e:
+            result["status"] = "failed"
+            result["errors"] = [f"CSV parsing error: {str(e)}"]
+            logger.error(f"CSV parsing error in {csv_file}: {e}")
+            print(f"   ✗ Error: CSV parsing failed - {e}")
         except Exception as e:
             result["status"] = "failed"
             result["errors"] = [str(e)]
+            logger.error(f"Unexpected error processing {csv_file}: {e}")
+            logger.debug(traceback.format_exc())
             print(f"   ✗ Error: {e}")
         
         return result

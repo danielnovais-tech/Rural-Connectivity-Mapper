@@ -1,7 +1,6 @@
 """Tests for ANATEL Static Connector."""
 
 import pytest
-import os
 import tempfile
 import shutil
 from pathlib import Path
@@ -139,6 +138,54 @@ def test_validate_dataframe_empty(temp_dirs):
     
     assert is_valid is False
     assert len(errors) > 0
+
+
+def test_validate_dataframe_invalid_coordinates(temp_dirs):
+    """Test validation fails with coordinates outside valid ranges."""
+    temp_input, temp_output = temp_dirs
+    
+    connector = ANATELStaticConnector(
+        input_dir=temp_input,
+        output_dir=temp_output
+    )
+    
+    # Create DataFrame with invalid coordinates
+    df = pd.DataFrame({
+        'latitude': [-95.0, 100.0, -23.5505],  # First two out of range
+        'longitude': [-200.0, 200.0, -46.6333],  # First two out of range
+        'speed': [100, 200, 300]
+    })
+    
+    is_valid, errors = connector.validate_dataframe(df, "test.csv")
+    
+    assert is_valid is False
+    assert len(errors) > 0
+    assert any('latitude' in str(error).lower() and 'outside' in str(error).lower() for error in errors)
+    assert any('longitude' in str(error).lower() and 'outside' in str(error).lower() for error in errors)
+
+
+def test_validate_dataframe_non_numeric_coordinates(temp_dirs):
+    """Test validation fails with non-numeric coordinates."""
+    temp_input, temp_output = temp_dirs
+    
+    connector = ANATELStaticConnector(
+        input_dir=temp_input,
+        output_dir=temp_output
+    )
+    
+    # Create DataFrame with non-numeric coordinates
+    df = pd.DataFrame({
+        'latitude': ['invalid', 'text', -23.5505],
+        'longitude': ['abc', 'xyz', -46.6333],
+        'speed': [100, 200, 300]
+    })
+    
+    is_valid, errors = connector.validate_dataframe(df, "test.csv")
+    
+    assert is_valid is False
+    assert len(errors) > 0
+    assert any('latitude' in str(error).lower() and 'non-numeric' in str(error).lower() for error in errors)
+    assert any('longitude' in str(error).lower() and 'non-numeric' in str(error).lower() for error in errors)
 
 
 def test_process_csv_file_success(temp_dirs, sample_csv):
