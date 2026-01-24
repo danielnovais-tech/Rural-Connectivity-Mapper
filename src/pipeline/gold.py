@@ -3,7 +3,7 @@
 import json
 from pathlib import Path
 from typing import List, Dict, Any
-from datetime import datetime
+from datetime import datetime, timezone
 from collections import defaultdict
 
 from src.schemas import MeasurementSchema
@@ -128,13 +128,13 @@ class GoldLayer:
             }
         
         # Save
-        timestamp = datetime.utcnow().strftime("%Y%m%d_%H%M%S")
+        timestamp = datetime.now(timezone.utc).strftime("%Y%m%d_%H%M%S")
         filepath = self.gold_dir / f"geographic_h3_{timestamp}.json"
         
         with open(filepath, 'w') as f:
             json.dump({
                 'aggregation_type': 'geographic_h3',
-                'timestamp': datetime.utcnow().isoformat(),
+                'timestamp': datetime.now(timezone.utc).isoformat(),
                 'cell_count': len(aggregated),
                 'total_measurements': len(measurements),
                 'cells': aggregated,
@@ -171,13 +171,13 @@ class GoldLayer:
             del agg['confidence_sum']  # Remove intermediate sum
         
         # Save
-        timestamp = datetime.utcnow().strftime("%Y%m%d_%H%M%S")
+        timestamp = datetime.now(timezone.utc).strftime("%Y%m%d_%H%M%S")
         filepath = self.gold_dir / f"by_source_{timestamp}.json"
         
         with open(filepath, 'w') as f:
             json.dump({
                 'aggregation_type': 'by_source',
-                'timestamp': datetime.utcnow().isoformat(),
+                'timestamp': datetime.now(timezone.utc).isoformat(),
                 'sources': dict(source_aggregates),
             }, f, indent=2)
         
@@ -188,12 +188,12 @@ class GoldLayer:
         
         This is the primary consumption endpoint with all enrichments applied.
         """
-        timestamp = datetime.utcnow().strftime("%Y%m%d_%H%M%S")
+        timestamp = datetime.now(timezone.utc).strftime("%Y%m%d_%H%M%S")
         filepath = self.gold_dir / f"full_dataset_{timestamp}.json"
         
         data = {
             'dataset_type': 'full_enriched',
-            'timestamp': datetime.utcnow().isoformat(),
+            'timestamp': datetime.now(timezone.utc).isoformat(),
             'count': len(measurements),
             'measurements': [m.to_dict() for m in measurements]
         }

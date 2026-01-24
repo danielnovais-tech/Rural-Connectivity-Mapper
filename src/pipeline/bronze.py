@@ -3,7 +3,7 @@
 import json
 from pathlib import Path
 from typing import List
-from datetime import datetime
+from datetime import datetime, timezone
 
 from src.schemas import MeasurementSchema
 from src.sources import DataSource
@@ -42,14 +42,14 @@ class BronzeLayer:
         source_dir.mkdir(parents=True, exist_ok=True)
         
         # Create filename with timestamp
-        timestamp = datetime.utcnow().strftime("%Y%m%d_%H%M%S")
+        timestamp = datetime.now(timezone.utc).strftime("%Y%m%d_%H%M%S")
         filename = f"{source.source_name}_{timestamp}.json"
         filepath = source_dir / filename
         
         # Convert measurements to dictionaries
         data = {
             "source": source.source_name,
-            "ingestion_timestamp": datetime.utcnow().isoformat(),
+            "ingestion_timestamp": datetime.now(timezone.utc).isoformat(),
             "count": len(measurements),
             "measurements": [m.to_dict() for m in measurements]
         }

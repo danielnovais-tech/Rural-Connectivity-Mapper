@@ -3,7 +3,7 @@
 import json
 from pathlib import Path
 from typing import List, Set
-from datetime import datetime
+from datetime import datetime, timezone
 import h3
 
 from src.schemas import MeasurementSchema
@@ -159,12 +159,12 @@ class SilverLayer:
         Returns:
             Path to saved file
         """
-        timestamp = datetime.utcnow().strftime("%Y%m%d_%H%M%S")
+        timestamp = datetime.now(timezone.utc).strftime("%Y%m%d_%H%M%S")
         filename = f"silver_{timestamp}.json"
         filepath = self.silver_dir / filename
         
         data = {
-            "processed_timestamp": datetime.utcnow().isoformat(),
+            "processed_timestamp": datetime.now(timezone.utc).isoformat(),
             "count": len(measurements),
             "measurements": [m.to_dict() for m in measurements]
         }
