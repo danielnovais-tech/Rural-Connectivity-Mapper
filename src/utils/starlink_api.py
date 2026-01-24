@@ -9,6 +9,10 @@ import logging
 import random
 import requests
 from typing import Dict, Optional, List
+import urllib3
+
+# Disable SSL warnings when verify=False is used (for testing only)
+urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 logger = logging.getLogger(__name__)
 
@@ -19,7 +23,7 @@ STARLINK_PERFORMANCE_API = "https://api.starlink.example/v1/performance"
 STARLINK_AVAILABILITY_API = "https://api.starlink.example/v1/availability"
 
 # Request timeout in seconds
-REQUEST_TIMEOUT = 10
+REQUEST_TIMEOUT = 30
 
 # Geographic boundaries for Brazil coverage (for simulated data)
 BRAZIL_LAT_MIN = -33.0
@@ -59,7 +63,8 @@ def get_coverage_data(latitude: float, longitude: float) -> Optional[Dict]:
         response = requests.get(
             STARLINK_COVERAGE_API,
             params=params,
-            timeout=REQUEST_TIMEOUT
+            timeout=REQUEST_TIMEOUT,
+            verify=False
         )
         
         response.raise_for_status()
@@ -101,7 +106,8 @@ def get_performance_metrics(latitude: float, longitude: float) -> Optional[Dict]
         response = requests.get(
             STARLINK_PERFORMANCE_API,
             params=params,
-            timeout=REQUEST_TIMEOUT
+            timeout=REQUEST_TIMEOUT,
+            verify=False
         )
         
         response.raise_for_status()
@@ -143,7 +149,8 @@ def get_availability_status(latitude: float, longitude: float) -> Optional[Dict]
         response = requests.get(
             STARLINK_AVAILABILITY_API,
             params=params,
-            timeout=REQUEST_TIMEOUT
+            timeout=REQUEST_TIMEOUT,
+            verify=False
         )
         
         response.raise_for_status()

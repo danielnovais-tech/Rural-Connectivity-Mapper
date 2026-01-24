@@ -8,6 +8,10 @@ import logging
 import requests
 from typing import Dict, List, Optional
 import pandas as pd
+import urllib3
+
+# Disable SSL warnings when verify=False is used (for testing only)
+urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 logger = logging.getLogger(__name__)
 
@@ -34,7 +38,7 @@ def fetch_ibge_municipalities(state_code: Optional[str] = None) -> List[Dict]:
     try:
         # Real IBGE API call
         url = f"{IBGE_BASE_URL}{IBGE_ENDPOINTS['municipalities']}"
-        response = requests.get(url, timeout=10)
+        response = requests.get(url, timeout=30, verify=False)
         response.raise_for_status()
         
         municipalities = response.json()

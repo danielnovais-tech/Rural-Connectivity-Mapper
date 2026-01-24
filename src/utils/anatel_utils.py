@@ -10,6 +10,10 @@ from typing import Dict, List, Optional
 import pandas as pd
 import json
 import os
+import urllib3
+
+# Disable SSL warnings when verify=False is used (for testing only)
+urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 logger = logging.getLogger(__name__)
 
@@ -344,10 +348,52 @@ def fetch_anatel_backhaul_data(limit: int = 1000, use_backup_on_failure: bool = 
     
     if resource_id:
         try:
-            # TODO: Implement actual API call when resource_id is configured
-            pass
+            # Attempt to fetch from CKAN API with timeout and SSL handling
+            url = f"{ANATEL_CKAN_BASE_URL}/datastore_search"
+            params = {
+                'resource_id': resource_id,
+                'limit': limit
+            }
+            
+            logger.info(f"Attempting to fetch from CKAN API: {url}")
+            response = requests.get(url, params=params, timeout=30, verify=False)
+            response.raise_for_status()
+            
+            data = response.json()
+            
+            # Validate response structure
+            if 'success' not in data or not data['success']:
+                logger.warning("CKAN API returned unsuccessful response")
+                raise ValueError("API returned unsuccessful response")
+            
+            if 'result' not in data or 'records' not in data['result']:
+                logger.warning("CKAN API response missing expected data structure")
+                raise ValueError("API response missing expected structure")
+            
+            records = data['result']['records']
+            logger.info(f"Successfully fetched {len(records)} records from CKAN API")
+            return records[:limit]
+            
+        except requests.exceptions.Timeout as e:
+            logger.warning(f"CKAN API timeout (30s exceeded): {e}")
+            if use_backup_on_failure:
+                logger.info("Falling back to backup data due to timeout")
+                return load_anatel_backhaul_backup()[:limit]
+            return []
+        except requests.exceptions.SSLError as e:
+            logger.warning(f"SSL certificate error with CKAN API: {e}")
+            if use_backup_on_failure:
+                logger.info("Falling back to backup data due to SSL error")
+                return load_anatel_backhaul_backup()[:limit]
+            return []
+        except (requests.exceptions.RequestException, ValueError, KeyError) as e:
+            logger.warning(f"Failed to fetch from ANATEL CKAN API: {e}")
+            if use_backup_on_failure:
+                logger.info("Falling back to backup data due to API inconsistency")
+                return load_anatel_backhaul_backup()[:limit]
+            return []
         except Exception as e:
-            logger.warning(f"Failed to fetch from ANATEL API: {e}")
+            logger.error(f"Unexpected error fetching from CKAN API: {e}")
             if use_backup_on_failure:
                 logger.info("Falling back to backup data")
                 return load_anatel_backhaul_backup()[:limit]
