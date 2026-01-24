@@ -35,6 +35,8 @@ flask>=3.0.0
 # Data pipeline dependencies
 pydantic>=2.0.0
 h3>=3.7.0
+pyarrow>=10.0.0
+geohash2>=1.1
 
 
 
