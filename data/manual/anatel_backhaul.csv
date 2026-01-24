@@ -1,0 +1,21 @@
+id,uf,municipio,latitude,longitude,technology,capacity_mbps,provider,timestamp_utc,source
+backhaul-sp-001,SP,São Paulo,-23.5505,-46.6333,Fibra Óptica,10000,Claro,2026-01-20T10:00:00Z,anatel
+backhaul-rj-001,RJ,Rio de Janeiro,-22.9068,-43.1729,Fibra Óptica,8000,Vivo,2026-01-20T10:15:00Z,anatel
+backhaul-mg-001,MG,Belo Horizonte,-19.9167,-43.9345,Fibra Óptica,5000,Oi,2026-01-20T10:30:00Z,anatel
+backhaul-ba-001,BA,Salvador,-12.9714,-38.5014,Fibra Óptica,4000,TIM,2026-01-20T10:45:00Z,anatel
+backhaul-ce-001,CE,Fortaleza,-3.7172,-38.5433,Fibra Óptica,3500,Claro,2026-01-20T11:00:00Z,anatel
+backhaul-pe-001,PE,Recife,-8.0476,-34.877,Fibra Óptica,3000,Vivo,2026-01-20T11:15:00Z,anatel
+backhaul-df-001,DF,Brasília,-15.7801,-47.9292,Fibra Óptica,6000,TIM,2026-01-20T11:30:00Z,anatel
+backhaul-pr-001,PR,Curitiba,-25.4284,-49.2733,Fibra Óptica,4500,Claro,2026-01-20T11:45:00Z,anatel
+backhaul-rs-001,RS,Porto Alegre,-30.0346,-51.2177,Fibra Óptica,4000,Oi,2026-01-20T12:00:00Z,anatel
+backhaul-go-001,GO,Goiânia,-16.6869,-49.2648,Fibra Óptica,2500,Vivo,2026-01-20T12:15:00Z,anatel
+backhaul-am-001,AM,Manaus,-3.119,-60.0217,Satélite,1000,Viasat,2026-01-20T12:30:00Z,anatel
+backhaul-pa-001,PA,Belém,-1.4558,-48.5039,Fibra Óptica,2000,TIM,2026-01-20T12:45:00Z,anatel
+backhaul-ma-001,MA,São Luís,-2.5387,-44.2825,Fibra Óptica,1800,Claro,2026-01-20T13:00:00Z,anatel
+backhaul-sc-001,SC,Florianópolis,-27.5954,-48.548,Fibra Óptica,3000,Vivo,2026-01-20T13:15:00Z,anatel
+backhaul-es-001,ES,Vitória,-20.3155,-40.3128,Fibra Óptica,2200,Oi,2026-01-20T13:30:00Z,anatel
+backhaul-pb-001,PB,João Pessoa,-7.1195,-34.845,Fibra Óptica,1500,TIM,2026-01-20T13:45:00Z,anatel
+backhaul-rn-001,RN,Natal,-5.7945,-35.211,Fibra Óptica,1600,Claro,2026-01-20T14:00:00Z,anatel
+backhaul-al-001,AL,Maceió,-9.6498,-35.7089,Fibra Óptica,1400,Vivo,2026-01-20T14:15:00Z,anatel
+backhaul-se-001,SE,Aracaju,-10.9472,-37.0731,Fibra Óptica,1300,Oi,2026-01-20T14:30:00Z,anatel
+backhaul-pi-001,PI,Teresina,-5.0892,-42.8019,Fibra Óptica,1200,TIM,2026-01-20T14:45:00Z,anatel
