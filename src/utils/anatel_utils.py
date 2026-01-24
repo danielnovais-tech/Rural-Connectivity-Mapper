@@ -10,7 +10,6 @@ from typing import Dict, List, Optional
 import pandas as pd
 import json
 import os
-from pathlib import Path
 
 logger = logging.getLogger(__name__)
 
@@ -339,20 +338,13 @@ def fetch_anatel_backhaul_data(limit: int = 1000, use_backup_on_failure: bool = 
     logger.info(f"Fetching ANATEL backhaul data (limit={limit})")
     
     # Placeholder for future API implementation
-    # For now, we don't have a configured resource_id, so we use backup directly
-    resource_id = None  # TODO: Configure ANATEL backhaul resource_id when available
+    # TODO: Configure ANATEL backhaul resource_id when available
+    # Future implementation will call: {ANATEL_CKAN_BASE_URL}/datastore_search
+    resource_id = None
     
     if resource_id:
         try:
-            # Future API call implementation
-            # url = f"{ANATEL_CKAN_BASE_URL}/datastore_search"
-            # params = {'resource_id': resource_id, 'limit': limit}
-            # response = requests.get(url, params=params, timeout=30)
-            # response.raise_for_status()
-            # api_data = response.json()
-            # records = api_data.get('result', {}).get('records', [])
-            # logger.info(f"Retrieved {len(records)} records from ANATEL API")
-            # return records[:limit]
+            # TODO: Implement actual API call when resource_id is configured
             pass
         except Exception as e:
             logger.warning(f"Failed to fetch from ANATEL API: {e}")
