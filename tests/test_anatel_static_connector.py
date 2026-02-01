@@ -6,7 +6,7 @@ import tempfile
 import shutil
 from pathlib import Path
 
-from data_pipeline.connectors.anatel_static_connector import AnatelStaticConnector
+from data_pipeline.connectors.anatel_static_connector import ANATELStaticConnector
 from data_pipeline.connectors.data_schemas import get_schema, validate_dataset
 
 
@@ -66,7 +66,7 @@ def sample_estacoes_csv(temp_dirs):
 
 def test_connector_initialization(temp_dirs):
     """Test that connector initializes correctly."""
-    connector = AnatelStaticConnector(manual_dir=temp_dirs['manual'])
+    connector = ANATELStaticConnector(manual_dir=temp_dirs['manual'])
     
     assert connector.manual_dir == temp_dirs['manual']
     assert connector.manual_dir.exists()
@@ -75,7 +75,7 @@ def test_connector_initialization(temp_dirs):
 
 def test_discover_new_files_empty(temp_dirs):
     """Test file discovery with no files."""
-    connector = AnatelStaticConnector(manual_dir=temp_dirs['manual'])
+    connector = ANATELStaticConnector(manual_dir=temp_dirs['manual'])
     files = connector.discover_new_files()
     
     assert isinstance(files, list)
@@ -84,7 +84,7 @@ def test_discover_new_files_empty(temp_dirs):
 
 def test_discover_new_files_with_csv(temp_dirs, sample_backhaul_csv):
     """Test file discovery with CSV files."""
-    connector = AnatelStaticConnector(manual_dir=temp_dirs['manual'])
+    connector = ANATELStaticConnector(manual_dir=temp_dirs['manual'])
     files = connector.discover_new_files()
     
     assert len(files) == 1
@@ -93,7 +93,7 @@ def test_discover_new_files_with_csv(temp_dirs, sample_backhaul_csv):
 
 def test_infer_dataset_type_backhaul(temp_dirs, sample_backhaul_csv):
     """Test dataset type inference for backhaul data."""
-    connector = AnatelStaticConnector(manual_dir=temp_dirs['manual'])
+    connector = ANATELStaticConnector(manual_dir=temp_dirs['manual'])
     df = pd.read_csv(sample_backhaul_csv)
     
     dataset_type = connector.infer_dataset_type(df, 'Anatel_Backhaul_Test.csv')
@@ -102,7 +102,7 @@ def test_infer_dataset_type_backhaul(temp_dirs, sample_backhaul_csv):
 
 def test_infer_dataset_type_estacoes(temp_dirs, sample_estacoes_csv):
     """Test dataset type inference for estacoes data."""
-    connector = AnatelStaticConnector(manual_dir=temp_dirs['manual'])
+    connector = ANATELStaticConnector(manual_dir=temp_dirs['manual'])
     df = pd.read_csv(sample_estacoes_csv)
     
     # The inference looks for 'estacao' or 'estação' in the filename (singular form)
@@ -112,7 +112,7 @@ def test_infer_dataset_type_estacoes(temp_dirs, sample_estacoes_csv):
 
 def test_validate_and_clean_backhaul(temp_dirs, sample_backhaul_csv):
     """Test validation and cleaning for backhaul data."""
-    connector = AnatelStaticConnector(manual_dir=temp_dirs['manual'])
+    connector = ANATELStaticConnector(manual_dir=temp_dirs['manual'])
     df = pd.read_csv(sample_backhaul_csv)
     
     df_clean = connector.validate_and_clean(df, 'backhaul')
@@ -135,7 +135,7 @@ def test_validate_and_clean_backhaul(temp_dirs, sample_backhaul_csv):
 
 def test_process_file_success(temp_dirs, sample_backhaul_csv):
     """Test successful file processing."""
-    connector = AnatelStaticConnector(manual_dir=temp_dirs['manual'])
+    connector = ANATELStaticConnector(manual_dir=temp_dirs['manual'])
     result = connector.process_file(sample_backhaul_csv)
     
     assert result['status'] == 'success'
@@ -150,7 +150,7 @@ def test_process_file_success(temp_dirs, sample_backhaul_csv):
 
 def test_process_file_creates_parquet(temp_dirs, sample_backhaul_csv):
     """Test that processing creates a parquet file."""
-    connector = AnatelStaticConnector(manual_dir=temp_dirs['manual'])
+    connector = ANATELStaticConnector(manual_dir=temp_dirs['manual'])
     result = connector.process_file(sample_backhaul_csv)
     
     assert result['status'] == 'success'
@@ -168,7 +168,7 @@ def test_process_file_creates_parquet(temp_dirs, sample_backhaul_csv):
 
 def test_process_file_moves_original(temp_dirs, sample_backhaul_csv):
     """Test that processing moves the original CSV to processed folder."""
-    connector = AnatelStaticConnector(manual_dir=temp_dirs['manual'])
+    connector = ANATELStaticConnector(manual_dir=temp_dirs['manual'])
     
     # Verify file exists before processing
     assert sample_backhaul_csv.exists()
@@ -186,7 +186,7 @@ def test_process_file_moves_original(temp_dirs, sample_backhaul_csv):
 
 def test_run_with_no_files(temp_dirs):
     """Test run method with no files."""
-    connector = AnatelStaticConnector(manual_dir=temp_dirs['manual'])
+    connector = ANATELStaticConnector(manual_dir=temp_dirs['manual'])
     results = connector.run()
     
     assert isinstance(results, list)
@@ -195,7 +195,7 @@ def test_run_with_no_files(temp_dirs):
 
 def test_run_with_files(temp_dirs, sample_backhaul_csv):
     """Test run method with files."""
-    connector = AnatelStaticConnector(manual_dir=temp_dirs['manual'])
+    connector = ANATELStaticConnector(manual_dir=temp_dirs['manual'])
     results = connector.run()
     
     assert len(results) == 1

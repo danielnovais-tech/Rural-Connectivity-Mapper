@@ -211,9 +211,9 @@ class AnatelSmartConnector:
     def process_all_manual_files(self):
         """Processa todos os arquivos CSV na pasta manual."""
         # Import here to avoid circular dependency issues
-        from data_pipeline.connectors.anatel_static_connector import AnatelStaticConnector
+        from data_pipeline.connectors.anatel_static_connector import ANATELStaticConnector
 
-        static_connector = AnatelStaticConnector(self.manual_dir)
+        static_connector = ANATELStaticConnector(self.manual_dir)
         results = static_connector.run()
 
         # Gerar relatório consolidado
