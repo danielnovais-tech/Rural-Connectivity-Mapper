@@ -1,305 +1,269 @@
-#!/usr/bin/env python3
 """
-ANATEL Static Connector
-
-This connector reads CSV files from the manual data directory, converts them to 
-Parquet format for efficient storage and processing, and generates a validation report.
-
-Usage:
-    python data_pipeline/connectors/anatel_static_connector.py
-
-Input:
-    - CSV files from data/manual/ directory
-
-Output:
-    - Parquet files in data/bronze/anatel/ directory
-    - JSON validation report
+Conector para dados estáticos da ANATEL (download manual de CSV).
+Assume que o usuário baixou os arquivos do Portal de Dados Abertos.
 """
-
-import json
-import logging
-import traceback
 import pandas as pd
-from datetime import datetime, timezone
+import json
 from pathlib import Path
-from typing import Dict, List, Tuple
+from datetime import datetime
+import hashlib
+import logging
+from typing import Dict, List, Optional
+import shutil
 
-# Configure logging
+# Optional dependency for geohash
+try:
+    import geohash2
+    GEOHASH_AVAILABLE = True
+except ImportError:
+    GEOHASH_AVAILABLE = False
+
+# Configuração
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-
-class ANATELStaticConnector:
-    """Connector for processing ANATEL static CSV data files."""
+class AnatelStaticConnector:
+    """
+    Processa arquivos CSV baixados manualmente do portal da ANATEL.
+    """
     
-    def __init__(
-        self, 
-        input_dir: str = "data/manual",
-        output_dir: str = "data/bronze/anatel"
-    ):
-        """
-        Initialize the ANATEL Static Connector.
-        
-        Args:
-            input_dir: Directory containing input CSV files
-            output_dir: Directory for output Parquet files
-        """
-        self.input_dir = Path(input_dir)
-        self.output_dir = Path(output_dir)
-        
-        # Create output directory if it doesn't exist
+    # Mapeamento de datasets conhecidos da ANATEL e seus schemas esperados
+    KNOWN_DATASETS = {
+        'backhaul': {
+            'expected_columns': ['id', 'municipio', 'uf', 'operadora', 'latitude', 'longitude', 'frequencia', 'capacidade_mbps'],
+            'description': 'Infraestrutura de transporte (backhaul)'
+        },
+        'estacoes': {
+            'expected_columns': ['id', 'municipio', 'uf', 'operadora', 'tecnologia', 'latitude', 'longitude'],
+            'description': 'Estações de telecomunicações'
+        },
+        'acesso_fixo': {
+            'expected_columns': ['municipio', 'uf', 'quantidade', 'velocidade', 'tecnologia'],
+            'description': 'Acessos fixos de banda larga'
+        }
+    }
+    
+    def __init__(self, manual_dir: Path = Path("data/manual")):
+        self.manual_dir = manual_dir
+        self.manual_dir.mkdir(parents=True, exist_ok=True)
+        self.output_dir = Path("data/bronze/anatel")
         self.output_dir.mkdir(parents=True, exist_ok=True)
         
-        # Report data
-        self.report = {
-            "connector": "ANATEL Static Connector",
-            "execution_timestamp": datetime.now(timezone.utc).isoformat(),
-            "files_processed": [],
-            "summary": {
-                "total_files": 0,
-                "successful": 0,
-                "failed": 0,
-                "total_records": 0
-            },
-            "errors": []
-        }
-    
-    def find_csv_files(self) -> List[Path]:
-        """
-        Find all CSV files in the input directory.
-        
-        Returns:
-            List of Path objects for CSV files
-        """
-        if not self.input_dir.exists():
-            print(f"⚠️  Input directory does not exist: {self.input_dir}")
-            return []
-        
-        csv_files = list(self.input_dir.glob("*.csv"))
-        print(f"📁 Found {len(csv_files)} CSV file(s) in {self.input_dir}")
+    def discover_new_files(self) -> List[Path]:
+        """Descobre novos arquivos CSV na pasta manual."""
+        csv_files = list(self.manual_dir.glob("*.csv")) + list(self.manual_dir.glob("*.CSV"))
+        logger.info(f"Encontrados {len(csv_files)} arquivos CSV em {self.manual_dir}")
         return csv_files
     
-    def validate_dataframe(self, df: pd.DataFrame, filename: str) -> Tuple[bool, List[str]]:
-        """
-        Validate the loaded DataFrame.
+    def infer_dataset_type(self, df: pd.DataFrame, filename: str) -> str:
+        """Infere o tipo de dataset com base nas colunas e nome do arquivo."""
+        filename_lower = filename.lower()
         
-        Args:
-            df: DataFrame to validate
-            filename: Name of the source file (for error reporting)
-            
-        Returns:
-            Tuple of (is_valid, list_of_errors)
-        """
-        errors = []
+        # Primeiro, tenta inferir pelo nome do arquivo
+        if 'backhaul' in filename_lower:
+            return 'backhaul'
+        elif 'estacao' in filename_lower or 'estação' in filename_lower:
+            return 'estacoes'
+        elif 'acesso' in filename_lower and 'fixo' in filename_lower:
+            return 'acesso_fixo'
         
-        # Check if DataFrame is empty
-        if df.empty:
-            errors.append(f"DataFrame is empty")
-            return False, errors
+        # Se não der pelo nome, tenta pelas colunas
+        for ds_type, config in self.KNOWN_DATASETS.items():
+            if all(col in df.columns for col in config['expected_columns'][:3]):  # Pelo menos 3 colunas essenciais
+                return ds_type
         
-        # Required fields for ANATEL backhaul data
-        required_fields = ['latitude', 'longitude']
-        
-        # Check for required fields
-        missing_fields = [field for field in required_fields if field not in df.columns]
-        if missing_fields:
-            errors.append(f"Missing required fields: {missing_fields}")
-        
-        # Check for null values in critical fields
-        for field in required_fields:
-            if field in df.columns:
-                null_count = df[field].isnull().sum()
-                if null_count > 0:
-                    errors.append(f"Field '{field}' has {null_count} null values")
-        
-        # Validate coordinate ranges where applicable
-        if 'latitude' in df.columns:
-            lat_series = pd.to_numeric(df['latitude'], errors='coerce')
-            # Count non-numeric values (originally non-null but became NaN)
-            non_numeric_lat = (~df['latitude'].isnull()) & (lat_series.isnull())
-            non_numeric_lat_count = non_numeric_lat.sum()
-            if non_numeric_lat_count > 0:
-                errors.append(
-                    f"Field 'latitude' has {non_numeric_lat_count} non-numeric values"
-                )
-            # Count out-of-range latitude values (-90 to 90)
-            out_of_range_lat = lat_series.notnull() & ((lat_series < -90) | (lat_series > 90))
-            out_of_range_lat_count = out_of_range_lat.sum()
-            if out_of_range_lat_count > 0:
-                errors.append(
-                    f"Field 'latitude' has {out_of_range_lat_count} values outside [-90, 90]"
-                )
-        
-        if 'longitude' in df.columns:
-            lon_series = pd.to_numeric(df['longitude'], errors='coerce')
-            # Count non-numeric values (originally non-null but became NaN)
-            non_numeric_lon = (~df['longitude'].isnull()) & (lon_series.isnull())
-            non_numeric_lon_count = non_numeric_lon.sum()
-            if non_numeric_lon_count > 0:
-                errors.append(
-                    f"Field 'longitude' has {non_numeric_lon_count} non-numeric values"
-                )
-            # Count out-of-range longitude values (-180 to 180)
-            out_of_range_lon = lon_series.notnull() & ((lon_series < -180) | (lon_series > 180))
-            out_of_range_lon_count = out_of_range_lon.sum()
-            if out_of_range_lon_count > 0:
-                errors.append(
-                    f"Field 'longitude' has {out_of_range_lon_count} values outside [-180, 180]"
-                )
-        
-        is_valid = len(errors) == 0
-        return is_valid, errors
+        return 'desconhecido'
     
-    def process_csv_file(self, csv_file: Path) -> Dict:
-        """
-        Process a single CSV file: read, validate, and convert to Parquet.
+    def validate_and_clean(self, df: pd.DataFrame, dataset_type: str) -> pd.DataFrame:
+        """Aplica validação e limpeza específica para cada tipo de dataset."""
         
-        Args:
-            csv_file: Path to the CSV file
+        # Cópia para não modificar o original
+        df_clean = df.copy()
+        
+        # 1. Limpeza básica de strings
+        string_cols = df_clean.select_dtypes(include=['object']).columns
+        for col in string_cols:
+            df_clean[col] = df_clean[col].astype(str).str.strip().str.normalize('NFKD').str.encode('ascii', errors='ignore').str.decode('ascii')
+        
+        # 2. Validações específicas por tipo
+        if dataset_type == 'backhaul':
+            # Garantir coordenadas
+            if 'latitude' in df_clean.columns and 'longitude' in df_clean.columns:
+                df_clean['latitude'] = pd.to_numeric(df_clean['latitude'], errors='coerce')
+                df_clean['longitude'] = pd.to_numeric(df_clean['longitude'], errors='coerce')
+                # Remover coordenadas inválidas
+                df_clean = df_clean.dropna(subset=['latitude', 'longitude'])
+                # Filtrar para Brasil
+                df_clean = df_clean[
+                    (df_clean['latitude'].between(-33.75, 5.27)) & 
+                    (df_clean['longitude'].between(-73.99, -34.79))
+                ]
             
-        Returns:
-            Dictionary with processing results
-        """
-        result = {
-            "filename": csv_file.name,
-            "status": "unknown",
-            "records_processed": 0,
-            "output_file": None,
-            "errors": []
-        }
+            # Converter capacidade para numérico
+            if 'capacidade_mbps' in df_clean.columns:
+                df_clean['capacidade_mbps'] = pd.to_numeric(df_clean['capacidade_mbps'], errors='coerce')
+        
+        elif dataset_type == 'estacoes':
+            # Garantir coordenadas válidas primeiro
+            if 'latitude' in df_clean.columns and 'longitude' in df_clean.columns:
+                df_clean['latitude'] = pd.to_numeric(df_clean['latitude'], errors='coerce')
+                df_clean['longitude'] = pd.to_numeric(df_clean['longitude'], errors='coerce')
+                # Remover coordenadas inválidas
+                df_clean = df_clean.dropna(subset=['latitude', 'longitude'])
+                # Filtrar para Brasil
+                df_clean = df_clean[
+                    (df_clean['latitude'].between(-33.75, 5.27)) & 
+                    (df_clean['longitude'].between(-73.99, -34.79))
+                ]
+                
+                # Adicionar geohash para agrupamento espacial futuro (após validação)
+                df_clean['geohash'] = df_clean.apply(
+                    lambda row: self._compute_geohash(row['latitude'], row['longitude'], precision=7), 
+                    axis=1
+                )
+        
+        # 3. Adicionar metadados de processamento
+        df_clean['_processamento_data'] = datetime.now().isoformat()
+        df_clean['_dataset_tipo'] = dataset_type
+        df_clean['_confidence_score'] = 0.9  # Alto para dados oficiais
+        
+        return df_clean
+    
+    def _compute_geohash(self, lat: float, lon: float, precision: int = 7) -> str:
+        """Calcula geohash para agrupamento espacial (simplificado para exemplo)."""
+        if GEOHASH_AVAILABLE:
+            return geohash2.encode(lat, lon, precision)
+        else:
+            # Fallback simplificado
+            return f"{lat:.4f},{lon:.4f}"
+    
+    def process_file(self, filepath: Path) -> Dict:
+        """Processa um único arquivo CSV."""
+        logger.info(f"Processando: {filepath.name}")
         
         try:
-            print(f"\n📄 Processing: {csv_file.name}")
+            # Ler CSV com detecção automática de encoding (comum em dados BR)
+            for encoding in ['utf-8', 'latin-1', 'cp1252']:
+                try:
+                    df = pd.read_csv(filepath, encoding=encoding, low_memory=False)
+                    break
+                except UnicodeDecodeError:
+                    continue
+            else:
+                raise ValueError(f"Não foi possível decodificar {filepath.name} com encodings comuns")
             
-            # Read CSV file with explicit encoding for consistent behavior
-            df = pd.read_csv(csv_file, encoding="utf-8")
-            print(f"   ✓ Read {len(df)} records")
-            print(f"   ✓ Columns: {list(df.columns)}")
+            # Inferir tipo de dataset
+            dataset_type = self.infer_dataset_type(df, filepath.name)
+            logger.info(f"Dataset inferido: {dataset_type}")
             
-            # Validate DataFrame
-            is_valid, validation_errors = self.validate_dataframe(df, csv_file.name)
+            # Validar e limpar
+            df_clean = self.validate_and_clean(df, dataset_type)
             
-            if not is_valid:
-                result["status"] = "failed"
-                result["errors"] = validation_errors
-                print(f"   ✗ Validation failed:")
-                for error in validation_errors:
-                    print(f"      - {error}")
-                return result
+            # Gerar hash do conteúdo para versionamento
+            content_hash = hashlib.md5(pd.util.hash_pandas_object(df_clean).values).hexdigest()[:8]
             
-            print(f"   ✓ Validation passed")
-            
-            # Generate output filename
-            timestamp = datetime.now(timezone.utc).strftime("%Y%m%d_%H%M%S")
-            output_filename = f"{csv_file.stem}_{timestamp}.parquet"
+            # Nome do arquivo de saída
+            timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+            output_filename = f"anatel_{dataset_type}_{timestamp}_{content_hash}.parquet"
             output_path = self.output_dir / output_filename
             
-            # Convert to Parquet
-            df.to_parquet(output_path, index=False, engine='pyarrow')
-            print(f"   ✓ Saved to: {output_path}")
+            # Salvar como Parquet (eficiente e preserva tipos)
+            df_clean.to_parquet(output_path, index=False)
             
-            # Update result
-            result["status"] = "success"
-            result["records_processed"] = len(df)
-            result["output_file"] = str(output_path)
-            
-            # Add basic statistics (exclude sample record for privacy/security)
-            result["statistics"] = {
-                "total_records": len(df),
-                "columns": list(df.columns)
+            # Estatísticas
+            stats = {
+                'arquivo_origem': filepath.name,
+                'dataset_tipo': dataset_type,
+                'registros_processados': len(df_clean),
+                'registros_originais': len(df),
+                'hash_conteudo': content_hash,
+                'caminho_saida': str(output_path),
+                'data_processamento': timestamp,
+                'colunas': list(df_clean.columns)
             }
             
-        except FileNotFoundError as e:
-            result["status"] = "failed"
-            result["errors"] = [f"File not found: {str(e)}"]
-            logger.error(f"File not found: {csv_file}: {e}")
-            print(f"   ✗ Error: File not found - {e}")
-        except pd.errors.ParserError as e:
-            result["status"] = "failed"
-            result["errors"] = [f"CSV parsing error: {str(e)}"]
-            logger.error(f"CSV parsing error in {csv_file}: {e}")
-            print(f"   ✗ Error: CSV parsing failed - {e}")
-        except Exception as e:
-            result["status"] = "failed"
-            result["errors"] = [str(e)]
-            logger.error(f"Unexpected error processing {csv_file}: {e}")
-            logger.debug(traceback.format_exc())
-            print(f"   ✗ Error: {e}")
-        
-        return result
-    
-    def process_all(self) -> Dict:
-        """
-        Process all CSV files in the input directory.
-        
-        Returns:
-            Processing report dictionary
-        """
-        print("=" * 70)
-        print("🚀 ANATEL Static Connector - Starting Processing")
-        print("=" * 70)
-        
-        # Find CSV files
-        csv_files = self.find_csv_files()
-        self.report["summary"]["total_files"] = len(csv_files)
-        
-        if not csv_files:
-            print("\n⚠️  No CSV files found to process")
-            return self.report
-        
-        # Process each file
-        for csv_file in csv_files:
-            result = self.process_csv_file(csv_file)
-            self.report["files_processed"].append(result)
+            # Mover arquivo original para subpasta "processados"
+            processed_dir = self.manual_dir / "processados"
+            processed_dir.mkdir(exist_ok=True)
+            shutil.move(filepath, processed_dir / filepath.name)
             
-            if result["status"] == "success":
-                self.report["summary"]["successful"] += 1
-                self.report["summary"]["total_records"] += result["records_processed"]
-            else:
-                self.report["summary"]["failed"] += 1
-                self.report["errors"].extend(result["errors"])
+            logger.info(f"✅ Processado: {len(df_clean)} registros salvos em {output_path}")
+            return {'status': 'success', 'stats': stats}
+            
+        except Exception as e:
+            logger.error(f"❌ Falha ao processar {filepath.name}: {e}")
+            return {'status': 'error', 'file': filepath.name, 'error': str(e)}
+    
+    def run(self) -> List[Dict]:
+        """Executa o pipeline completo para todos os novos arquivos."""
+        logger.info("=" * 50)
+        logger.info("Iniciando processamento de dados estáticos da ANATEL")
+        logger.info("=" * 50)
         
-        # Generate summary
-        print("\n" + "=" * 70)
-        print("📊 Processing Summary")
-        print("=" * 70)
-        print(f"Total files: {self.report['summary']['total_files']}")
-        print(f"Successful: {self.report['summary']['successful']}")
-        print(f"Failed: {self.report['summary']['failed']}")
-        print(f"Total records processed: {self.report['summary']['total_records']}")
+        files = self.discover_new_files()
+        if not files:
+            logger.warning(f"Nenhum novo arquivo CSV encontrado em {self.manual_dir}")
+            logger.info(f"👉 Instruções: Baixe os CSVs do Portal de Dados Abertos e cole em {self.manual_dir.absolute()}")
+            return []
         
-        # Save report
-        report_filename = f"anatel_processing_report_{datetime.now(timezone.utc).strftime('%Y%m%d_%H%M%S')}.json"
-        report_path = self.output_dir / report_filename
+        results = []
+        for filepath in files:
+            result = self.process_file(filepath)
+            results.append(result)
         
+        # Gerar relatório de execução
+        self._generate_report(results)
+        return results
+    
+    def _generate_report(self, results: List[Dict]):
+        """Gera um relatório JSON do processamento."""
+        report = {
+            'data_execucao': datetime.now().isoformat(),
+            'total_arquivos': len(results),
+            'sucessos': sum(1 for r in results if r['status'] == 'success'),
+            'erros': sum(1 for r in results if r['status'] == 'error'),
+            'detalhes': results
+        }
+        
+        report_path = self.output_dir / f"relatorio_processamento_{datetime.now().strftime('%Y%m%d_%H%M')}.json"
         with open(report_path, 'w', encoding='utf-8') as f:
-            json.dump(self.report, f, indent=2, ensure_ascii=False)
+            json.dump(report, f, ensure_ascii=False, indent=2)
         
-        print(f"\n📋 Report saved to: {report_path}")
-        print("=" * 70)
-        
-        return self.report
+        logger.info(f"📊 Relatório gerado: {report_path}")
 
-
-def main():
-    """Main execution function."""
-    # Initialize connector
-    connector = ANATELStaticConnector()
-    
-    # Process all files
-    report = connector.process_all()
-    
-    # Exit with appropriate code
-    if report["summary"]["failed"] > 0:
-        print("\n⚠️  Some files failed to process. Check the report for details.")
-        exit(1)
-    elif report["summary"]["successful"] == 0:
-        print("\n⚠️  No files were processed.")
-        exit(1)
-    else:
-        print("\n✅ All files processed successfully!")
-        exit(0)
-
+# ----------------------------------------------------
+# INSTRUÇÕES PARA O USUÁRIO
+# ----------------------------------------------------
+def print_instructions():
+    """Exibe instruções claras para o usuário."""
+    print("\n" + "=" * 60)
+    print("📥 INSTRUÇÕES: COMO BAIXAR OS DADOS DA ANATEL")
+    print("=" * 60)
+    print("1. Acesse: https://dadosabertos.anatel.gov.br/")
+    print("2. Busque por:")
+    print("   • 'Backhaul' (infraestrutura de transporte)")
+    print("   • 'Estações de Telecomunicações'")
+    print("   • 'Acessos Fixos' (banda larga fixa)")
+    print("3. Faça download dos CSVs disponíveis")
+    print("4. Cole os arquivos .csv na pasta:")
+    print(f"   {Path('data/manual').absolute()}")
+    print("5. Execute: python anatel_static_connector.py")
+    print("=" * 60)
 
 if __name__ == "__main__":
-    main()
+    # Mostrar instruções
+    print_instructions()
+    
+    # Executar o processamento
+    connector = AnatelStaticConnector()
+    results = connector.run()
+    
+    # Resumo final
+    if results:
+        success_count = sum(1 for r in results if r['status'] == 'success')
+        print(f"\n🎯 Processamento concluído: {success_count}/{len(results)} arquivos processados com sucesso!")
+        print("   Os dados estão disponíveis em: data/bronze/anatel/")
+        print("   Próximo passo: Execute o fusion_engine.py para unificar com outras fontes.")
+    else:
+        print("\n⚠️  Nenhum arquivo para processar.")
+        print("   Cole os CSVs na pasta 'data/manual/' e execute novamente.")
