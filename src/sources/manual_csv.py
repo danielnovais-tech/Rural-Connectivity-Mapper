@@ -274,19 +274,35 @@ class ManualCSVSource(DataSource):
         logger.info(f"Processing CSV file: {filepath}")
         
         try:
-            with open(filepath, 'r', encoding='utf-8') as f:
-                # Detect delimiter (support both comma and semicolon)
-                sample = f.read(1024)
-                f.seek(0)
-                
-                delimiter = ',' if sample.count(',') > sample.count(';') else ';'
-                
-                reader = csv.DictReader(f, delimiter=delimiter)
-                
-                for row_num, row in enumerate(reader, start=2):  # Start at 2 (header is row 1)
-                    measurement = self._parse_csv_row(row, row_num, filepath.name)
-                    if measurement:
-                        measurements.append(measurement)
+            # Try common encodings for Brazilian CSV exports.
+            encodings_to_try = ["utf-8", "utf-8-sig", "cp1252", "latin-1"]
+            last_error: Exception | None = None
+
+            for encoding in encodings_to_try:
+                try:
+                    with open(filepath, "r", encoding=encoding) as f:
+                        # Detect delimiter (support both comma and semicolon)
+                        sample = f.read(1024)
+                        f.seek(0)
+
+                        delimiter = "," if sample.count(",") > sample.count(";") else ";"
+
+                        reader = csv.DictReader(f, delimiter=delimiter)
+
+                        for row_num, row in enumerate(reader, start=2):  # Start at 2 (header is row 1)
+                            measurement = self._parse_csv_row(row, row_num, filepath.name)
+                            if measurement:
+                                measurements.append(measurement)
+
+                    # If we successfully read the file, stop trying other encodings.
+                    last_error = None
+                    break
+                except UnicodeDecodeError as e:
+                    last_error = e
+                    continue
+
+            if last_error is not None:
+                raise last_error
             
             logger.info(f"Successfully parsed {len(measurements)} measurements from {filepath.name}")
             

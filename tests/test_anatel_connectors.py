@@ -8,12 +8,12 @@ import json
 
 pytest.importorskip("pandas", exc_type=ImportError)
 
-from data_pipeline.connectors.anatel_static_connector import AnatelStaticConnector
+from data_pipeline.connectors.anatel_static_connector import ANATELStaticConnector
 from data_pipeline.connectors.anatel_smart_connector import AnatelSmartConnector
 
 
 class TestAnatelStaticConnector:
-    """Tests for AnatelStaticConnector."""
+    """Tests for ANATELStaticConnector."""
     
     @pytest.fixture
     def temp_dirs(self):
@@ -28,7 +28,7 @@ class TestAnatelStaticConnector:
     def test_connector_initialization(self, temp_dirs):
         """Test connector initialization."""
         manual_dir, output_dir = temp_dirs
-        connector = AnatelStaticConnector(manual_dir, output_dir)
+        connector = ANATELStaticConnector(manual_dir=manual_dir, output_dir=output_dir)
         
         assert connector.manual_dir == manual_dir
         assert connector.output_dir == output_dir
@@ -38,64 +38,68 @@ class TestAnatelStaticConnector:
     def test_find_csv_files_empty(self, temp_dirs):
         """Test finding CSV files in empty directory."""
         manual_dir, output_dir = temp_dirs
-        connector = AnatelStaticConnector(manual_dir, output_dir)
+        connector = ANATELStaticConnector(manual_dir=manual_dir, output_dir=output_dir)
         
-        csv_files = connector.find_csv_files()
+        csv_files = connector.discover_new_files()
         assert len(csv_files) == 0
     
     def test_process_csv_file(self, temp_dirs):
         """Test processing a single CSV file."""
         manual_dir, output_dir = temp_dirs
         
-        # Create a sample CSV file
-        csv_path = manual_dir / "test_data.csv"
-        csv_content = """Nome;Idade;Cidade
-João;25;São Paulo
-Maria;30;Rio de Janeiro"""
-        csv_path.write_text(csv_content, encoding='utf-8')
-        
-        connector = AnatelStaticConnector(manual_dir, output_dir)
-        result = connector.process_csv_file(csv_path)
-        
-        assert result['status'] == 'success'
-        assert result['file'] == 'test_data.csv'
-        assert result['rows'] == 2
-        assert result['columns'] == 3
-        
-        # Check output file was created
-        output_files = list(output_dir.glob("test_data_*.json"))
+        # Create a sample ANATEL backhaul CSV (comma-separated)
+        csv_path = manual_dir / "Anatel_Backhaul_Test.csv"
+        csv_content = (
+            "id,municipio,uf,operadora,latitude,longitude,frequencia,capacidade_mbps\n"
+            "BH001,São Paulo,SP,Claro,-23.5505,-46.6333,2.4 GHz,100\n"
+            "BH002,Rio de Janeiro,RJ,Vivo,-22.9068,-43.1729,5 GHz,200\n"
+        )
+        csv_path.write_text(csv_content, encoding="utf-8")
+
+        connector = ANATELStaticConnector(manual_dir=manual_dir, output_dir=output_dir)
+        result = connector.process_file(csv_path)
+
+        assert result["status"] == "success"
+        assert "stats" in result
+        assert result["stats"]["arquivo_origem"] == csv_path.name
+        assert result["stats"]["dataset_tipo"] == "backhaul"
+        assert result["stats"]["registros_processados"] == 2
+
+        # Check output parquet file was created
+        output_files = list(output_dir.glob("*.parquet"))
         assert len(output_files) == 1
-        
-        # Verify output content
-        with open(output_files[0], 'r', encoding='utf-8') as f:
-            data = json.load(f)
-        
-        assert 'metadata' in data
-        assert 'data' in data
-        assert len(data['data']) == 2
-        assert data['metadata']['total_rows'] == 2
-        assert data['metadata']['columns'] == ['Nome', 'Idade', 'Cidade']
     
     def test_run_with_multiple_files(self, temp_dirs):
         """Test running connector with multiple CSV files."""
         manual_dir, output_dir = temp_dirs
         
-        # Create multiple CSV files
-        csv1 = manual_dir / "file1.csv"
-        csv1.write_text("A;B\n1;2\n3;4", encoding='utf-8')
-        
-        csv2 = manual_dir / "file2.csv"
-        csv2.write_text("X;Y\n5;6", encoding='utf-8')
-        
-        connector = AnatelStaticConnector(manual_dir, output_dir)
+        # Create multiple valid ANATEL CSV files
+        csv1 = manual_dir / "Anatel_Backhaul_File1.csv"
+        csv1.write_text(
+            "id,municipio,uf,operadora,latitude,longitude,frequencia,capacidade_mbps\n"
+            "BH001,São Paulo,SP,Claro,-23.5505,-46.6333,2.4 GHz,100\n",
+            encoding="utf-8",
+        )
+
+        csv2 = manual_dir / "Anatel_Estacao_File2.csv"
+        csv2.write_text(
+            "id,municipio,uf,operadora,tecnologia,latitude,longitude\n"
+            "EST001,Rio de Janeiro,RJ,Vivo,4G,-22.9068,-43.1729\n",
+            encoding="utf-8",
+        )
+
+        connector = ANATELStaticConnector(manual_dir=manual_dir, output_dir=output_dir)
         results = connector.run()
-        
+
         assert len(results) == 2
-        assert all(r['status'] == 'success' for r in results)
-        
-        # Check output files
-        output_files = list(output_dir.glob("*.json"))
-        assert len(output_files) == 2
+        assert all(r.get("status") == "success" for r in results)
+
+        # Two parquet outputs + one JSON processing report
+        output_parquets = list(output_dir.glob("*.parquet"))
+        assert len(output_parquets) == 2
+
+        report_files = list(output_dir.glob("relatorio_processamento_*.json"))
+        assert len(report_files) == 1
 
 
 class TestAnatelSmartConnector:
