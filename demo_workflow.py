@@ -3,20 +3,18 @@
 
 import logging
 import sys
-from pathlib import Path
 
 from src.models import ConnectivityPoint, SpeedTest
 from src.utils import (
-    load_data, save_data, generate_report, simulate_router_impact,
-
-    generate_map, analyze_temporal_evolution, generate_ml_report
-
-
-    generate_map, analyze_temporal_evolution, validate_csv_row
-
-    generate_map, analyze_temporal_evolution, compare_providers
-
-
+    analyze_temporal_evolution,
+    compare_providers,
+    generate_map,
+    generate_ml_report,
+    generate_report,
+    load_data,
+    save_data,
+    simulate_router_impact,
+    validate_csv_row,
 )
 
 
@@ -51,10 +49,9 @@ def main():
         points = []
         skipped_count = 0
         
-        with open(csv_path, 'r', encoding='utf-8') as f:
+        with open(csv_path, encoding='utf-8') as f:
             reader = csv.DictReader(f)
 
-            
             for row_num, row in enumerate(reader, start=2):  # start=2 because row 1 is header
                 # Validate row
                 is_valid, error_msg = validate_csv_row(row, row_num)
@@ -63,44 +60,25 @@ def main():
                     skipped_count += 1
                     continue
 
-            for row in reader:
-                speed_test = SpeedTest(
-                    download=float(row['download']),
-                    upload=float(row['upload']),
-                    latency=float(row['latency']),
-                    jitter=float(row.get('jitter', 0)),
-                    packet_loss=float(row.get('packet_loss', 0)),
-                    obstruction=float(row.get('obstruction', 0))
-                )
-                
-                point = ConnectivityPoint(
-                    latitude=float(row['latitude']),
-                    longitude=float(row['longitude']),
-                    provider=row['provider'],
-                    speed_test=speed_test,
-                    timestamp=row.get('timestamp', datetime.now().isoformat()),
-                    point_id=row.get('id')
-                )
-
-                
                 try:
                     speed_test = SpeedTest(
                         download=float(row['download']),
                         upload=float(row['upload']),
                         latency=float(row['latency']),
                         jitter=float(row.get('jitter', 0)),
-                        packet_loss=float(row.get('packet_loss', 0))
+                        packet_loss=float(row.get('packet_loss', 0)),
+                        obstruction=float(row.get('obstruction', 0)),
                     )
-                    
+
                     point = ConnectivityPoint(
                         latitude=float(row['latitude']),
                         longitude=float(row['longitude']),
                         provider=row['provider'],
                         speed_test=speed_test,
                         timestamp=row.get('timestamp', datetime.now().isoformat()),
-                        point_id=row.get('id')
+                        point_id=row.get('id'),
                     )
-                    
+
                     points.append(point.to_dict())
                 except (ValueError, TypeError) as e:
                     logger.warning(f"Row {row_num}: Error creating point - {e}")
@@ -180,7 +158,7 @@ def main():
         
         # Display ROI Analysis
         roi = ml_report['roi_analysis']
-        print(f"\n💰 Starlink ROI Analysis:")
+        print("\n💰 Starlink ROI Analysis:")
         print(f"  • Rural Coverage: {roi['rural_percentage']:.1f}% of points")
         print(f"  • Starlink Suitability Score: {roi['starlink_suitability_score']:.1f}/100")
         print(f"  • High Priority Areas: {roi['high_priority_points']} zones")
@@ -260,7 +238,7 @@ def main():
         
         # Step 9: Generate map with Starlink coverage overlay
         logger.info("Step 8: Generating map with Starlink coverage overlay...")
-        coverage_map_path = generate_map(improved_data, 'demo_connectivity_map_with_coverage.html', show_starlink_coverage=True)
+        coverage_map_path = generate_map(improved_data, 'demo_connectivity_map_with_coverage.html', include_starlink_coverage=True)
         print(f"✓ Generated map with Starlink coverage: {coverage_map_path}")
         
         # Final summary

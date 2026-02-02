@@ -2,29 +2,27 @@
 """Main CLI application for Rural Connectivity Mapper 2026."""
 
 import argparse
+import csv
 import logging
 import sys
-from pathlib import Path
-import csv
 from datetime import datetime
 
-from src.models import ConnectivityPoint, SpeedTest, QualityScore
+from src.models import ConnectivityPoint, SpeedTest
 from src.utils import (
-    load_data, save_data, generate_report, simulate_router_impact,
-    generate_map, analyze_temporal_evolution, validate_coordinates,
-
-    generate_ml_report
-
-
-    validate_csv_row
-
-
-    list_available_countries, get_default_country
-
-    export_for_hybrid_simulator, export_for_agrix_boost, export_ecosystem_bundle
-
-
-
+    analyze_temporal_evolution,
+    export_ecosystem_bundle,
+    export_for_agrix_boost,
+    export_for_hybrid_simulator,
+    generate_map,
+    generate_ml_report,
+    generate_report,
+    get_default_country,
+    list_available_countries,
+    load_data,
+    save_data,
+    simulate_router_impact,
+    validate_coordinates,
+    validate_csv_row,
 )
 
 
@@ -62,7 +60,7 @@ def import_csv(csv_path: str, output_path: str = 'src/data/pontos.json', country
         errors = []
         skipped_count = 0
         
-        with open(csv_path, 'r', encoding='utf-8') as f:
+        with open(csv_path, encoding='utf-8') as f:
             reader = csv.DictReader(f)
             
             # Validate CSV has required columns
@@ -96,6 +94,7 @@ def import_csv(csv_path: str, output_path: str = 'src/data/pontos.json', country
                     latency = float(row['latency'])
                     jitter = float(row.get('jitter', 0))
                     packet_loss = float(row.get('packet_loss', 0))
+                    obstruction = float(row.get('obstruction', 0))
                     
                     # Additional validation for coordinates
                     if not validate_coordinates(lat, lon):
@@ -109,7 +108,8 @@ def import_csv(csv_path: str, output_path: str = 'src/data/pontos.json', country
                         upload=upload,
                         latency=latency,
                         jitter=jitter,
-                        packet_loss=packet_loss
+                        packet_loss=packet_loss,
+                        obstruction=obstruction,
                     )
                     
                     # Create ConnectivityPoint
@@ -119,7 +119,8 @@ def import_csv(csv_path: str, output_path: str = 'src/data/pontos.json', country
                         provider=row['provider'],
                         speed_test=speed_test,
                         timestamp=row.get('timestamp', datetime.now().isoformat()),
-                        point_id=row.get('id')
+                        point_id=row.get('id'),
+                        country=row.get('country', country_code),
                     )
                     
                     points.append(point.to_dict())
@@ -137,30 +138,6 @@ def import_csv(csv_path: str, output_path: str = 'src/data/pontos.json', country
                     errors.append(error_msg)
                     skipped_count += 1
                     continue
-
-                # Create SpeedTest
-                speed_test = SpeedTest(
-                    download=float(row['download']),
-                    upload=float(row['upload']),
-                    latency=float(row['latency']),
-                    jitter=float(row.get('jitter', 0)),
-                    packet_loss=float(row.get('packet_loss', 0)),
-                    obstruction=float(row.get('obstruction', 0))
-                )
-                
-                # Create ConnectivityPoint
-                point = ConnectivityPoint(
-                    latitude=lat,
-                    longitude=lon,
-                    provider=row['provider'],
-                    speed_test=speed_test,
-                    timestamp=row.get('timestamp', datetime.now().isoformat()),
-                    point_id=row.get('id'),
-                    country=row.get('country', country_code)
-                )
-                
-                points.append(point.to_dict())
-                logger.debug(f"Imported point: {point}")
 
         
         # Save to JSON
@@ -246,15 +223,15 @@ Examples:
     )
     
     parser.add_argument(
-
         '--starlink-coverage',
         action='store_true',
         help='Add Starlink coverage overlay to the map (requires --map)'
+    )
 
+    parser.add_argument(
         '--no-starlink-coverage',
         action='store_true',
         help='Disable Starlink coverage overlay on the map'
-
     )
     
     parser.add_argument(
@@ -264,23 +241,23 @@ Examples:
     )
     
     parser.add_argument(
-
         '--ml-analyze',
         action='store_true',
         help='Perform ML-enhanced geospatial analysis for rural connectivity and Starlink expansion'
+    )
 
-
+    parser.add_argument(
         '--language',
         '--lang',
         choices=['en', 'pt'],
         default='en',
         help='Language for reports and analysis output (en=English, pt=Portuguese)'
+    )
 
+    parser.add_argument(
         '--export',
         choices=['hybrid', 'agrix', 'ecosystem'],
         help='Export data for ecosystem integration (hybrid=Hybrid Architecture Simulator, agrix=AgriX-Boost, ecosystem=Full bundle)'
-
-
     )
     
     args = parser.parse_args()
@@ -317,10 +294,20 @@ Examples:
     
     # Check if any action was specified
 
-    if not any([args.importar, args.relatorio, args.simulate, args.map, args.analyze, args.ml_analyze]):
+    if args.starlink_coverage and args.no_starlink_coverage:
+        logger.error("Cannot use both --starlink-coverage and --no-starlink-coverage")
+        print("Error: choose either --starlink-coverage or --no-starlink-coverage (not both).")
+        sys.exit(2)
 
-    if not any([args.importar, args.relatorio, args.simulate, args.map, args.analyze, args.export]):
-
+    if not any([
+        args.importar,
+        args.relatorio,
+        args.simulate,
+        args.map,
+        args.analyze,
+        args.ml_analyze,
+        args.export,
+    ]):
         parser.print_help()
         sys.exit(0)
     
@@ -355,11 +342,11 @@ Examples:
         print("=" * 80)
         print(f"\nTotal Points: {analysis['total_points']}")
         print(f"Date Range: {analysis['date_range'].get('start', 'N/A')} to {analysis['date_range'].get('end', 'N/A')}")
-        print(f"\nOverall Trends:")
+        print("\nOverall Trends:")
         print(f"  Average Quality Score: {analysis['trends']['avg_quality_score']}/100")
         print(f"  Average Download: {analysis['trends']['avg_download']} Mbps")
         print(f"  Average Latency: {analysis['trends']['avg_latency']} ms")
-        print(f"\nInsights:")
+        print("\nInsights:")
         for insight in analysis['insights']:
             print(f"  • {insight}")
         print("=" * 80 + "\n")
@@ -372,25 +359,25 @@ Examples:
         print("\n" + "=" * 80)
         print("ML-ENHANCED GEOSPATIAL ANALYSIS FOR RURAL CONNECTIVITY")
         print("=" * 80)
-        print(f"\n📊 SUMMARY")
+        print("\n📊 SUMMARY")
         print(f"  Total Points Analyzed: {ml_report['summary']['total_points_analyzed']}")
         print(f"  ML Model Version: {ml_report['summary']['ml_model_version']}")
         
-        print(f"\n💰 STARLINK ROI ANALYSIS")
+        print("\n💰 STARLINK ROI ANALYSIS")
         roi = ml_report['roi_analysis']
         print(f"  Rural Coverage: {roi['rural_percentage']:.1f}% ({roi['rural_points']}/{roi['total_points']} points)")
         print(f"  High Priority Areas: {roi['high_priority_points']} points need immediate attention")
         print(f"  Current Avg Quality: {roi['avg_current_quality']:.1f}/100")
         print(f"  Starlink Suitability Score: {roi['starlink_suitability_score']:.1f}/100")
-        print(f"\n  Recommendations:")
+        print("\n  Recommendations:")
         for rec in roi['recommendations']:
             print(f"    • {rec}")
         
-        print(f"\n🗺️  EXPANSION ZONES")
+        print("\n🗺️  EXPANSION ZONES")
         zones = ml_report['expansion_zones']
         print(f"  Identified {zones['total_zones']} optimal expansion zones")
         print(f"  Top Priority: {zones['top_priority_zone']}")
-        print(f"\n  Zone Details:")
+        print("\n  Zone Details:")
         for zone_id, zone_data in zones['zones'].items():
             print(f"\n  {zone_id.upper()}:")
             print(f"    Location: ({zone_data['center']['latitude']:.4f}, {zone_data['center']['longitude']:.4f})")
@@ -401,7 +388,7 @@ Examples:
             print(f"    Priority Score: {zone_data['priority_score']:.1f}")
             print(f"    → {zone_data['recommendation']}")
         
-        print(f"\n🎯 TOP 5 PRIORITY AREAS FOR IMPROVEMENT")
+        print("\n🎯 TOP 5 PRIORITY AREAS FOR IMPROVEMENT")
         for i, area in enumerate(ml_report['top_priority_areas'], 1):
             print(f"\n  #{i} - {area['provider']}")
             print(f"    Location: ({area['latitude']:.4f}, {area['longitude']:.4f})")
@@ -431,16 +418,15 @@ Examples:
     if args.map:
         logger.info("Generating interactive map...")
 
-        map_path = generate_map(data, show_starlink_coverage=args.starlink_coverage)
+        include_coverage = args.starlink_coverage or not args.no_starlink_coverage
+        map_path = generate_map(
+            data,
+            include_starlink_coverage=include_coverage,
+            country_code=country_code,
+        )
 
-
-        map_path = generate_map(data, country_code=country_code)
-
-        include_coverage = not args.no_starlink_coverage
         if include_coverage:
             logger.info("Including Starlink coverage overlay layer")
-        map_path = generate_map(data, include_starlink_coverage=include_coverage)
-
 
         logger.info(f"Map generated: {map_path}")
         if args.starlink_coverage:
