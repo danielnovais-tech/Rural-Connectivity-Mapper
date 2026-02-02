@@ -1,192 +1,168 @@
-# ANATEL Static Connector
+# Data Pipeline - ANATEL Static Connector
+
+This directory contains the data pipeline infrastructure for processing telecommunication data from various sources.
 
 ## Overview
 
-The ANATEL Static Connector is a data pipeline component that processes CSV files containing ANATEL (Brazilian National Telecommunications Agency) connectivity data and converts them to the more efficient Parquet format for storage and analysis.
-
-## Features
-
-- ✅ Reads CSV files from the manual data directory
-- ✅ Validates data structure and required fields
-- ✅ Converts to Parquet format for efficient storage
-- ✅ Generates detailed JSON processing reports
-- ✅ Handles multiple CSV files in batch
-- ✅ Provides clear error reporting and validation
+The ANATEL Static Connector is designed to process CSV files manually downloaded from the Brazilian telecommunications regulatory agency (ANATEL).
 
 ## Directory Structure
 
 ```
 data_pipeline/
-└── connectors/
-    └── anatel_static_connector.py    # Main connector script
+├── connectors/
+│   ├── anatel_static_connector.py  # Main connector for processing ANATEL CSVs
+│   ├── data_schemas.py            # Data schema definitions
+│   └── __init__.py
+└── __init__.py
 
 data/
-├── manual/                            # Input directory (CSV files)
-│   └── anatel_backhaul.csv           # Sample ANATEL data
-└── bronze/
-    └── anatel/                        # Output directory
-        ├── *.parquet                  # Converted data files
-        └── anatel_processing_report_*.json  # Processing reports
+├── manual/                         # Place downloaded CSV files here
+│   └── processados/               # Processed files are moved here
+├── bronze/anatel/                 # Processed data in Parquet format
+├── silver/                        # (Future) Unified and cleaned data
+└── gold/                          # (Future) Final indicators
 ```
 
 ## Usage
 
-### Basic Usage
+### 1. Download CSV Files from ANATEL
+
+Follow the instructions in: `scripts/fetch_anatel_instructions.md`
+
+Key steps:
+1. Visit: https://dadosabertos.anatel.gov.br/
+2. Search for:
+   - "Backhaul" (transport infrastructure)
+   - "Estações de Telecomunicações" (telecom stations)
+   - "Acessos Fixos" (fixed broadband access)
+3. Download CSV files
+4. Place them in `data/manual/` directory
+
+### 2. Run the Connector
 
 ```bash
-# Place CSV files in data/manual/
-# Run the connector
+# From the repository root
 python data_pipeline/connectors/anatel_static_connector.py
 ```
 
-### Expected Output
+Or import and use programmatically:
 
-```
-======================================================================
-🚀 ANATEL Static Connector - Starting Processing
-======================================================================
-📁 Found 1 CSV file(s) in data/manual
+```python
+from data_pipeline.connectors import AnatelStaticConnector
 
-📄 Processing: anatel_backhaul.csv
-   ✓ Read 20 records
-   ✓ Columns: ['id', 'uf', 'municipio', 'latitude', 'longitude', ...]
-   ✓ Validation passed
-   ✓ Saved to: data/bronze/anatel/anatel_backhaul_20260124_175248.parquet
+# Create connector instance
+connector = AnatelStaticConnector()
 
-======================================================================
-📊 Processing Summary
-======================================================================
-Total files: 1
-Successful: 1
-Failed: 0
-Total records processed: 20
+# Process all CSV files in data/manual/
+results = connector.run()
 
-📋 Report saved to: data/bronze/anatel/anatel_processing_report_20260124_175248.json
-======================================================================
-
-✅ All files processed successfully!
+# Check results
+for result in results:
+    if result['status'] == 'success':
+        print(f"✅ Processed: {result['stats']['arquivo_origem']}")
+        print(f"   Type: {result['stats']['dataset_tipo']}")
+        print(f"   Records: {result['stats']['registros_processados']}")
+    else:
+        print(f"❌ Error: {result['file']} - {result['error']}")
 ```
 
-## Input Data Format
+### 3. Access Processed Data
 
-CSV files should contain ANATEL connectivity data with at minimum:
+Processed data is saved in Parquet format in `data/bronze/anatel/`:
 
-**Required fields:**
-- `latitude` - Location latitude (decimal degrees)
-- `longitude` - Location longitude (decimal degrees)
+```python
+import pandas as pd
+from pathlib import Path
 
-**Recommended fields:**
-- `id` - Unique identifier
-- `uf` - Brazilian state code (e.g., "SP", "RJ")
-- `municipio` - Municipality name
-- `technology` - Connection technology type
-- `capacity_mbps` - Connection capacity in Mbps
-- `provider` - Service provider name
-- `timestamp_utc` - Data timestamp in UTC
-- `source` - Data source identifier
+# List processed files
+bronze_dir = Path("data/bronze/anatel")
+parquet_files = list(bronze_dir.glob("*.parquet"))
 
-## Output Files
-
-### Parquet Files
-- Compressed binary format for efficient storage
-- Preserves all data types and schema
-- Optimized for analytical queries
-- Filename pattern: `{csv_name}_{timestamp}.parquet`
-
-### Processing Reports
-JSON files containing:
-- Execution timestamp
-- Files processed with status
-- Statistics (record counts, columns)
-- Validation errors (if any)
-- Sample record from each file
-
-Example report structure:
-```json
-{
-  "connector": "ANATEL Static Connector",
-  "execution_timestamp": "2026-01-24T17:52:48.123456Z",
-  "files_processed": [
-    {
-      "filename": "anatel_backhaul.csv",
-      "status": "success",
-      "records_processed": 20,
-      "output_file": "data/bronze/anatel/anatel_backhaul_20260124_175248.parquet",
-      "statistics": {
-        "total_records": 20,
-        "columns": ["id", "uf", "municipio", ...],
-        "sample_record": {...}
-      }
-    }
-  ],
-  "summary": {
-    "total_files": 1,
-    "successful": 1,
-    "failed": 0,
-    "total_records": 20
-  }
-}
+# Read a file
+df = pd.read_parquet(parquet_files[0])
+print(df.head())
 ```
 
-## Validation
+## Supported Dataset Types
 
-The connector performs the following validations:
+The connector automatically identifies and processes three types of ANATEL datasets:
 
-1. **File existence check** - Ensures input directory exists
-2. **DataFrame validation** - Checks for empty DataFrames
-3. **Required fields check** - Validates presence of `latitude` and `longitude`
-4. **Null value detection** - Identifies missing values in critical fields
+### 1. Backhaul Infrastructure
+- **Expected columns**: id, municipio, uf, operadora, latitude, longitude, frequencia, capacidade_mbps
+- **Description**: Transport infrastructure data
 
-Failed validations are logged in the processing report.
+### 2. Telecom Stations (Estações)
+- **Expected columns**: id, municipio, uf, operadora, tecnologia, latitude, longitude
+- **Description**: Telecommunications station data
+
+### 3. Fixed Access (Acesso Fixo)
+- **Expected columns**: municipio, uf, quantidade, velocidade, tecnologia
+- **Description**: Fixed broadband access data
+
+## Features
+
+### Automatic Processing
+- **Encoding Detection**: Tries UTF-8, Latin-1, and CP1252
+- **Type Inference**: Identifies dataset type by filename and columns
+- **Data Validation**: Validates geographic coordinates (Brazil bounds)
+- **Data Cleaning**: Normalizes strings, converts types, removes invalid records
+
+### Metadata Addition
+Each processed record includes:
+- `_processamento_data`: Processing timestamp
+- `_dataset_tipo`: Dataset type
+- `_confidence_score`: Data quality score (0.9 for official data)
+
+### File Organization
+- Original CSV files are moved to `data/manual/processados/`
+- Processed data saved as Parquet in `data/bronze/anatel/`
+- Processing report generated as JSON
 
 ## Dependencies
 
-- `pandas>=2.0.0` - Data manipulation
-- `pyarrow>=11.0.0` - Parquet file format support
+Required Python packages:
+- pandas >= 2.0.0
+- pyarrow >= 10.0.0
+- geohash2 >= 1.1 (optional, for geographic hashing)
 
 Install with:
 ```bash
-pip install pandas pyarrow
+pip install pandas pyarrow geohash2
 ```
 
-## Integration with Existing Pipeline
+## Testing
 
-This connector produces data in the **Bronze Layer** format, which is the first stage of the data pipeline:
+Run the test suite:
 
+```bash
+pytest tests/test_anatel_static_connector.py -v
 ```
-Sources (CSV files)
-    ↓
-Bronze Layer (Raw Parquet - this connector)
-    ↓
-Silver Layer (Normalized, Validated)
-    ↓
-Gold Layer (Aggregated, Analysis-Ready)
-```
-
-## Sample Data
-
-A sample ANATEL backhaul dataset is included at `data/manual/anatel_backhaul.csv` for testing and demonstration purposes. This dataset contains 20 records from major Brazilian cities with backhaul infrastructure information.
 
 ## Troubleshooting
 
-**No CSV files found:**
-- Ensure CSV files are placed in the `data/manual/` directory
-- Check file extensions (must be `.csv`)
+### "No files found"
+- Ensure CSV files are in `data/manual/` directory
+- Check file extension is `.csv` or `.CSV`
 
-**Validation errors:**
-- Verify CSV contains `latitude` and `longitude` columns
-- Check for proper CSV formatting
-- Review the processing report for specific error details
+### "Unable to decode file"
+- File may be corrupted
+- Try opening in a text editor to verify content
 
-**Import errors:**
-- Install required dependencies: `pip install pandas pyarrow`
-- Verify Python version compatibility (3.8+)
+### "Unknown dataset type"
+- File doesn't match known schemas
+- Verify column names match expected schemas
 
-## Future Enhancements
+## Next Steps
 
-- [ ] Support for direct API integration with ANATEL
-- [ ] Data schema validation against canonical schemas
-- [ ] Automatic data quality scoring
-- [ ] Integration with Silver layer processing
-- [ ] Support for incremental updates
-- [ ] Compression options for Parquet files
+After processing ANATEL data:
+1. Run the fusion engine to combine with other data sources
+2. Generate unified views in `data/silver/`
+3. Create final indicators in `data/gold/`
+
+## Support
+
+For issues or questions:
+- Check the user guide: `scripts/fetch_anatel_instructions.md`
+- Review test examples: `tests/test_anatel_static_connector.py`
+- Open an issue on the project repository

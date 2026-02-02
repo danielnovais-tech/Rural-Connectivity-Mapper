@@ -8,13 +8,14 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
 from src.pipeline import PipelineOrchestrator
-from src.sources import MockCrowdsourceSource, MockSpeedtestSource
+from src.sources import MockCrowdsourceSource, MockSpeedtestSource, ManualCSVSource
 
 
 def main():
-    """Run the data pipeline with mock sources."""
+    """Run the data pipeline with all available sources."""
     # Initialize sources
     sources = [
+        ManualCSVSource(),  # Process manually downloaded CSVs (e.g., ANATEL)
         MockCrowdsourceSource(num_samples=50),
         MockSpeedtestSource(num_samples=30),
     ]
