@@ -236,6 +236,16 @@
         "cwd": "${workspaceFolder}"
       },
       "problemMatcher": []
+    },
+    {
+      "label": "Docs: Generate blueprint",
+      "type": "process",
+      "command": "${command:python.interpreterPath}",
+      "args": ["scripts/generate_blueprint.py"],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "problemMatcher": []
     }
   ]
 }
