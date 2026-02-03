@@ -4,6 +4,11 @@ A comprehensive platform for mapping, analyzing, and improving rural connectivit
 
 ## 🚀 Quick Start
 
+### Prerequisites
+
+- Python 3.12+
+- pip package manager
+
 ### Data Pipeline (Pilar 1: Source of Truth)
 
 The data pipeline processes connectivity measurements through a robust bronze/silver/gold architecture with quality scoring.
@@ -89,6 +94,8 @@ Gold Layer (Aggregated, Analysis-Ready)
 - **Data Contracts**: Pydantic schemas ensure data quality
 
 ## 🛠️ Development
+
+This project targets Python 3.12+ (CI runs 3.12–3.13).
 
 ### Available Commands
 

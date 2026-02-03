@@ -1,7 +1,7 @@
 # Rural Connectivity Mapper 2026 - Dockerfile
 # Optimized for rural servers, Raspberry Pi, and farm deployments
 
-FROM python:3.8-slim
+FROM python:3.12-slim
 
 # Set working directory
 WORKDIR /app

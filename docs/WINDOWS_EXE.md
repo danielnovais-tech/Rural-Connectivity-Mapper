@@ -23,7 +23,7 @@ This path is controlled via the environment variable `RURAL_MAPPER_DATA_DIR`.
 
 ## Build prerequisites
 
-PyInstaller may not support the newest Python versions immediately. If building fails, use Python 3.11 or 3.12.
+PyInstaller may not support the newest Python versions immediately. If building fails, use Python 3.12.
 
 Recommended build steps:
 

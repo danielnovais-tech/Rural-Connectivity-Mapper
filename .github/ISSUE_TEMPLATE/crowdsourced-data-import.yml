@@ -86,7 +86,7 @@ body:
         
         ### Technical Requirements
         
-        - **Python 3.8+** compatibility
+        - **Python 3.12+** compatibility
         - Follow **PEP 8** style guide
         - Add **Google-style docstrings**
         - Include **pytest** unit tests
