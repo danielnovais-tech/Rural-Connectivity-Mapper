@@ -248,6 +248,20 @@
       "problemMatcher": []
     },
     {
+      "label": "Docs: Generate blueprint (AppData)",
+      "type": "process",
+      "command": ".\\.venv\\Scripts\\python.exe",
+      "args": [
+        "scripts/generate_blueprint.py",
+        "--output",
+        "${env:LOCALAPPDATA}\\RuralMapper\\BLUEPRINT.md"
+      ],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "problemMatcher": []
+    },
+    {
       "label": "Build: Windows EXE (PyInstaller)",
       "type": "process",
       "command": "${command:python.interpreterPath}",
