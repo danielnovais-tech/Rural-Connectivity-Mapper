@@ -88,6 +88,12 @@ MANIFEST
 !build/
 !build/*.spec
 
+# Ignore PyInstaller build outputs (while keeping the spec tracked)
+build/rural_mapper/
+
+# Local build venv used for PyInstaller builds
+.venv-build/
+
 # Installer logs
 pip-log.txt
 pip-delete-this-directory.txt

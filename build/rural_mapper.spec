@@ -9,7 +9,9 @@ from PyInstaller.utils.hooks import collect_all, collect_data_files, collect_sub
 
 block_cipher = None
 
-repo_root = Path(__file__).resolve().parent.parent
+# PyInstaller sets SPECPATH to the directory containing this spec file.
+# Using it avoids relying on __file__, which is not guaranteed to be defined here.
+repo_root = Path(SPECPATH).resolve().parent
 entry = repo_root / "scripts" / "rural_mapper_launcher.py"
 
 # Bundle important non-code assets
@@ -19,6 +21,11 @@ _datas += collect_data_files("streamlit")
 # Keep relative layout so Flask finds templates/ and config_utils finds config/countries.json
 _datas.append((str(repo_root / "templates"), "templates"))
 _datas.append((str(repo_root / "config"), "config"))
+
+# The launcher executes these scripts via runpy.run_path, so they must exist as files in the bundle.
+_datas.append((str(repo_root / "scripts"), "scripts"))
+for _file in ["app.py", "main.py", "dashboard.py", "crowdsource_server.py", "upload_csv.py"]:
+    _datas.append((str(repo_root / _file), "."))
 
 # Streamlit + heavy deps often use dynamic imports
 _hiddenimports = []
