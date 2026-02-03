@@ -2,19 +2,30 @@
   "version": "2.0.0",
   "tasks": [
     {
+      "label": "Bootstrap: Create .venv (system python)",
+      "type": "shell",
+      "command": "python",
+      "args": ["-m", "venv", ".venv"],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "Setup: Install deps + quick checks",
+      "type": "shell",
+      "command": "& \"${command:python.interpreterPath}\"",
+      "args": ["scripts/setup_environment.py"],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "problemMatcher": []
+    },
+    {
       "label": "Pytest (repo)",
       "type": "shell",
-      "command": "${command:python.interpreterPath}",
-      "args": [
-        "-m",
-        "pytest",
-        "-q",
-        "tests",
-        "--rootdir",
-        "${workspaceFolder}",
-        "-c",
-        "${workspaceFolder}/pytest.ini"
-      ],
+      "command": "& \"${command:python.interpreterPath}\"",
+      "args": ["-m", "pytest", "-q", "tests", "--rootdir", "${workspaceFolder}", "-c", "${workspaceFolder}/pytest.ini"],
       "options": {
         "cwd": "${workspaceFolder}"
       },
@@ -28,7 +39,7 @@
     {
       "label": "Pytest (repo, no capture)",
       "type": "shell",
-      "command": "${command:python.interpreterPath}",
+      "command": "& \"${command:python.interpreterPath}\"",
       "args": [
         "-m",
         "pytest",
@@ -49,6 +60,182 @@
         "panel": "shared",
         "clear": true
       }
+    },
+    {
+      "label": "Pytest (coverage)",
+      "type": "shell",
+      "command": "& \"${command:python.interpreterPath}\"",
+      "args": [
+        "-m",
+        "pytest",
+        "-q",
+        "tests",
+        "--rootdir",
+        "${workspaceFolder}",
+        "-c",
+        "${workspaceFolder}/pytest.ini",
+        "--cov",
+        "--cov-report=term-missing",
+        "--cov-report=html"
+      ],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "group": "test",
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared",
+        "clear": true
+      }
+    },
+    {
+      "label": "Coverage (open html)",
+      "type": "shell",
+      "dependsOn": ["Pytest (coverage)"],
+      "dependsOrder": "sequence",
+      "command": "cmd",
+      "args": ["/d", "/c", "start", "\"\"", "${workspaceFolder}\\htmlcov\\index.html"],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared",
+        "clear": true
+      }
+    },
+    {
+      "label": "Ruff (check)",
+      "type": "shell",
+      "command": "& \"${command:python.interpreterPath}\"",
+      "args": ["-m", "ruff", "check", "."],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared",
+        "clear": true
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "Ruff (format)",
+      "type": "shell",
+      "command": "& \"${command:python.interpreterPath}\"",
+      "args": ["-m", "ruff", "format", "."],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared",
+        "clear": true
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "Lint+Types: Ruff + mypy",
+      "type": "shell",
+      "command": "& \"${command:python.interpreterPath}\"",
+      "args": ["scripts/run_linting.py", "--best-effort"],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "Lint+Types (strict): Ruff + mypy",
+      "type": "shell",
+      "command": "& \"${command:python.interpreterPath}\"",
+      "args": ["scripts/run_linting.py"],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "Pipeline: Run (default)",
+      "type": "shell",
+      "command": "& \"${command:python.interpreterPath}\"",
+      "args": ["scripts/run_pipeline.py"],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "Pipeline: Run (include ANATEL parquet)",
+      "type": "shell",
+      "command": "& \"${command:python.interpreterPath}\"",
+      "args": [
+        "scripts/run_pipeline.py",
+        "--include-anatel-parquet",
+        "--anatel-parquet-dir",
+        "data/manual",
+        "--anatel-parquet-mode",
+        "best-effort"
+      ],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "ANATEL: Show priority",
+      "type": "shell",
+      "command": "& \"${command:python.interpreterPath}\"",
+      "args": ["-m", "data_pipeline.connectors.anatel_smart_connector", "--show-priority"],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "ANATEL: Generate download guide",
+      "type": "shell",
+      "command": "& \"${command:python.interpreterPath}\"",
+      "args": ["-m", "data_pipeline.connectors.anatel_smart_connector", "--generate-guide"],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "ANATEL: Process manual CSVs",
+      "type": "shell",
+      "command": "& \"${command:python.interpreterPath}\"",
+      "args": ["-m", "data_pipeline.connectors.anatel_smart_connector", "--process"],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "ANATEL: Export acesso_fixo",
+      "type": "shell",
+      "command": "& \"${command:python.interpreterPath}\"",
+      "args": [
+        "scripts/anatel_acesso_fixo_export.py",
+        "--anatel-parquet-dir",
+        "data/manual",
+        "--output-dir",
+        "data/bronze/anatel_acesso_fixo"
+      ],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "Clean: manual data artifacts",
+      "type": "shell",
+      "command": "& \"${command:python.interpreterPath}\"",
+      "args": ["scripts/clean_manual_data.py"],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "problemMatcher": []
     }
   ]
 }

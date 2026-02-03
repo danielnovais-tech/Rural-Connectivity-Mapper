@@ -42,6 +42,21 @@ data/bronze/
 data/silver/
 data/gold/
 
+# Manual datasets (keep documentation/templates, ignore downloaded/generated artifacts)
+data/manual/raw_downloads/
+data/manual/processed/
+data/manual/outputs/
+data/manual/processados/
+data/manual/*.csv
+data/manual/*.parquet
+data/manual/*.json
+data/manual/*.xlsx
+data/manual/*.pdf
+
+!data/manual/GUIA_DOWNLOAD_ANATEL.md
+!data/manual/templates/
+!data/manual/templates/**
+
 
 # Distribution / packaging
 .Python

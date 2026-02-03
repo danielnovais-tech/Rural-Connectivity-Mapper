@@ -64,6 +64,7 @@ Higher scores = more reliable data for decision-making.
 - **[API Documentation](docs/API.md)** - API reference
 - **[Multi-Country Support](docs/MULTI_COUNTRY.md)** - International deployment
 - **[Crowdsourcing Guide](docs/CROWDSOURCING.md)** - Community data collection
+- **[Developer Setup (Windows-first)](docs/DEV_SETUP.md)** - VS Code tasks, environment setup, and daily workflow
 
 ## 🏗️ Architecture Overview
 
@@ -99,6 +100,17 @@ make test           # Run all tests
 make test-quality   # Run quality/confidence tests only
 make clean          # Clean generated data files
 ```
+
+### VS Code Tasks (Windows-friendly)
+
+If you’re developing on Windows (or prefer one-click workflows), use the VS Code tasks in [.vscode/tasks.json](.vscode/tasks.json).
+
+- Setup: **Setup: Install deps + quick checks**
+- Lint/Types: **Lint+Types: Ruff + mypy**
+- Tests: **Pytest (repo)**
+- Pipeline: **Pipeline: Run (default)** / **Pipeline: Run (include ANATEL parquet)**
+
+See [docs/DEV_SETUP.md](docs/DEV_SETUP.md) for the full workflow.
 
 ### Project Structure
 

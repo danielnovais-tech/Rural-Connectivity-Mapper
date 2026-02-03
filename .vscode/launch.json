@@ -1,0 +1,72 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Pipeline: run_pipeline.py (default)",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "${workspaceFolder}/scripts/run_pipeline.py",
+      "console": "integratedTerminal",
+      "cwd": "${workspaceFolder}",
+      "justMyCode": true
+    },
+    {
+      "name": "Pipeline: run_pipeline.py (include ANATEL parquet)",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "${workspaceFolder}/scripts/run_pipeline.py",
+      "console": "integratedTerminal",
+      "cwd": "${workspaceFolder}",
+      "justMyCode": true,
+      "args": [
+        "--include-anatel-parquet",
+        "--anatel-parquet-dir",
+        "data/manual",
+        "--anatel-parquet-mode",
+        "best-effort"
+      ]
+    },
+    {
+      "name": "ANATEL: acesso_fixo export",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "${workspaceFolder}/scripts/anatel_acesso_fixo_export.py",
+      "console": "integratedTerminal",
+      "cwd": "${workspaceFolder}",
+      "justMyCode": true,
+      "args": [
+        "--anatel-parquet-dir",
+        "data/manual",
+        "--output-dir",
+        "data/bronze/anatel_acesso_fixo"
+      ]
+    },
+    {
+      "name": "Web: app.py",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "${workspaceFolder}/app.py",
+      "console": "integratedTerminal",
+      "cwd": "${workspaceFolder}",
+      "justMyCode": true
+    },
+    {
+      "name": "Web: dashboard.py",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "${workspaceFolder}/dashboard.py",
+      "console": "integratedTerminal",
+      "cwd": "${workspaceFolder}",
+      "justMyCode": true
+    },
+    {
+      "name": "Server: crowdsource_server.py",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "${workspaceFolder}/crowdsource_server.py",
+      "console": "integratedTerminal",
+      "cwd": "${workspaceFolder}",
+      "justMyCode": true
+    }
+  ]
+}
