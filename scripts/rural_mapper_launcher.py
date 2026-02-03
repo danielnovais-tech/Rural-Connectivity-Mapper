@@ -22,6 +22,13 @@ def _ensure_runtime_data_dir() -> Path:
     return data_dir
 
 
+def _bundle_root() -> Path:
+    meipass = getattr(sys, "_MEIPASS", None)
+    if meipass:
+        return Path(meipass)
+    return Path(__file__).resolve().parent.parent
+
+
 def _run_script(path: Path, argv: list[str]) -> int:
     old_argv = sys.argv
     try:
@@ -82,7 +89,7 @@ def main(argv: list[str] | None = None) -> int:
     p_blue.add_argument("args", nargs=argparse.REMAINDER)
 
     args_ns = parser.parse_args(argv)
-    repo_root = Path(__file__).resolve().parent.parent
+    repo_root = _bundle_root()
 
     if args_ns.cmd == "cli":
         return _run_script(repo_root / "main.py", list(args_ns.args))
