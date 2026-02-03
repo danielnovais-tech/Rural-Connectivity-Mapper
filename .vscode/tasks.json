@@ -246,6 +246,16 @@
         "cwd": "${workspaceFolder}"
       },
       "problemMatcher": []
+    },
+    {
+      "label": "Build: Windows EXE (PyInstaller)",
+      "type": "process",
+      "command": "${command:python.interpreterPath}",
+      "args": ["-m", "PyInstaller", "--noconfirm", "build/rural_mapper.spec"],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "problemMatcher": []
     }
   ]
 }
