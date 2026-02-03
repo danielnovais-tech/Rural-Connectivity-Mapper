@@ -13,8 +13,8 @@
     },
     {
       "label": "Setup: Install deps + quick checks",
-      "type": "shell",
-      "command": "& \"${command:python.interpreterPath}\"",
+      "type": "process",
+      "command": "${command:python.interpreterPath}",
       "args": ["scripts/setup_environment.py"],
       "options": {
         "cwd": "${workspaceFolder}"
@@ -23,8 +23,8 @@
     },
     {
       "label": "Pytest (repo)",
-      "type": "shell",
-      "command": "& \"${command:python.interpreterPath}\"",
+      "type": "process",
+      "command": "${command:python.interpreterPath}",
       "args": ["-m", "pytest", "-q", "tests", "--rootdir", "${workspaceFolder}", "-c", "${workspaceFolder}/pytest.ini"],
       "options": {
         "cwd": "${workspaceFolder}"
@@ -38,8 +38,8 @@
     },
     {
       "label": "Pytest (repo, no capture)",
-      "type": "shell",
-      "command": "& \"${command:python.interpreterPath}\"",
+      "type": "process",
+      "command": "${command:python.interpreterPath}",
       "args": [
         "-m",
         "pytest",
@@ -63,8 +63,8 @@
     },
     {
       "label": "Pytest (coverage)",
-      "type": "shell",
-      "command": "& \"${command:python.interpreterPath}\"",
+      "type": "process",
+      "command": "${command:python.interpreterPath}",
       "args": [
         "-m",
         "pytest",
@@ -106,8 +106,8 @@
     },
     {
       "label": "Ruff (check)",
-      "type": "shell",
-      "command": "& \"${command:python.interpreterPath}\"",
+      "type": "process",
+      "command": "${command:python.interpreterPath}",
       "args": ["-m", "ruff", "check", "."],
       "options": {
         "cwd": "${workspaceFolder}"
@@ -121,8 +121,8 @@
     },
     {
       "label": "Ruff (format)",
-      "type": "shell",
-      "command": "& \"${command:python.interpreterPath}\"",
+      "type": "process",
+      "command": "${command:python.interpreterPath}",
       "args": ["-m", "ruff", "format", "."],
       "options": {
         "cwd": "${workspaceFolder}"
@@ -136,8 +136,8 @@
     },
     {
       "label": "Lint+Types: Ruff + mypy",
-      "type": "shell",
-      "command": "& \"${command:python.interpreterPath}\"",
+      "type": "process",
+      "command": "${command:python.interpreterPath}",
       "args": ["scripts/run_linting.py", "--best-effort"],
       "options": {
         "cwd": "${workspaceFolder}"
@@ -146,8 +146,8 @@
     },
     {
       "label": "Lint+Types (strict): Ruff + mypy",
-      "type": "shell",
-      "command": "& \"${command:python.interpreterPath}\"",
+      "type": "process",
+      "command": "${command:python.interpreterPath}",
       "args": ["scripts/run_linting.py"],
       "options": {
         "cwd": "${workspaceFolder}"
@@ -156,8 +156,8 @@
     },
     {
       "label": "Pipeline: Run (default)",
-      "type": "shell",
-      "command": "& \"${command:python.interpreterPath}\"",
+      "type": "process",
+      "command": "${command:python.interpreterPath}",
       "args": ["scripts/run_pipeline.py"],
       "options": {
         "cwd": "${workspaceFolder}"
@@ -166,8 +166,8 @@
     },
     {
       "label": "Pipeline: Run (include ANATEL parquet)",
-      "type": "shell",
-      "command": "& \"${command:python.interpreterPath}\"",
+      "type": "process",
+      "command": "${command:python.interpreterPath}",
       "args": [
         "scripts/run_pipeline.py",
         "--include-anatel-parquet",
@@ -183,8 +183,8 @@
     },
     {
       "label": "ANATEL: Show priority",
-      "type": "shell",
-      "command": "& \"${command:python.interpreterPath}\"",
+      "type": "process",
+      "command": "${command:python.interpreterPath}",
       "args": ["-m", "data_pipeline.connectors.anatel_smart_connector", "--show-priority"],
       "options": {
         "cwd": "${workspaceFolder}"
@@ -193,8 +193,8 @@
     },
     {
       "label": "ANATEL: Generate download guide",
-      "type": "shell",
-      "command": "& \"${command:python.interpreterPath}\"",
+      "type": "process",
+      "command": "${command:python.interpreterPath}",
       "args": ["-m", "data_pipeline.connectors.anatel_smart_connector", "--generate-guide"],
       "options": {
         "cwd": "${workspaceFolder}"
@@ -203,8 +203,8 @@
     },
     {
       "label": "ANATEL: Process manual CSVs",
-      "type": "shell",
-      "command": "& \"${command:python.interpreterPath}\"",
+      "type": "process",
+      "command": "${command:python.interpreterPath}",
       "args": ["-m", "data_pipeline.connectors.anatel_smart_connector", "--process"],
       "options": {
         "cwd": "${workspaceFolder}"
@@ -213,8 +213,8 @@
     },
     {
       "label": "ANATEL: Export acesso_fixo",
-      "type": "shell",
-      "command": "& \"${command:python.interpreterPath}\"",
+      "type": "process",
+      "command": "${command:python.interpreterPath}",
       "args": [
         "scripts/anatel_acesso_fixo_export.py",
         "--anatel-parquet-dir",
@@ -229,8 +229,8 @@
     },
     {
       "label": "Clean: manual data artifacts",
-      "type": "shell",
-      "command": "& \"${command:python.interpreterPath}\"",
+      "type": "process",
+      "command": "${command:python.interpreterPath}",
       "args": ["scripts/clean_manual_data.py"],
       "options": {
         "cwd": "${workspaceFolder}"
