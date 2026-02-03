@@ -1,5 +1,5 @@
 # Architecture Blueprint / Blueprint de Arquitetura
-AUTO-GENERATED FILE — do not edit manually.\nArquivo AUTO-GERADO — não edite manualmente.\n\nGenerated at / Gerado em: 2026-02-03T02:50:38.200384+00:00\nRegenerate / Regenerar: `python scripts/generate_blueprint.py`
+AUTO-GENERATED FILE — do not edit manually.\nArquivo AUTO-GERADO — não edite manualmente.\n\nGenerated at / Gerado em: 2026-02-03T18:08:53.555714+00:00\nRegenerate / Regenerar: `python scripts/generate_blueprint.py`
 
 ## Executive Summary / Resumo Executivo
 This repository implements a rural connectivity mapping platform: ingestion from multiple sources, a medallion-style pipeline (Bronze→Silver→Gold), analytics/fusion scoring, and web/dashboard surfaces.\nEste repositório implementa uma plataforma de mapeamento de conectividade rural: ingestão de múltiplas fontes, um pipeline estilo medallion (Bronze→Silver→Gold), score/fusão analítica e interfaces web/dashboard.
@@ -62,8 +62,10 @@ data_pipeline/
 - ANATEL: Process manual CSVs
 - ANATEL: Show priority
 - Bootstrap: Create .venv (system python)
+- Build: Windows EXE (PyInstaller)
 - Clean: manual data artifacts
 - Coverage (open html)
+- Docs: Generate blueprint
 - Lint+Types (strict): Ruff + mypy
 - Lint+Types: Ruff + mypy
 - Pipeline: Run (default)

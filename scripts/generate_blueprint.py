@@ -1,5 +1,7 @@
 from __future__ import annotations  # noqa: I001
+import argparse
 import json
+import os
 import re
 from dataclasses import dataclass
 from datetime import UTC, datetime
@@ -9,6 +11,17 @@ from typing import Any
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
 DEFAULT_OUTPUT = REPO_ROOT / "docs" / "BLUEPRINT.md"
+
+
+def _resolve_output_path(cli_output: str | None) -> Path:
+    if cli_output:
+        return Path(cli_output).expanduser()
+
+    data_dir = os.environ.get("RURAL_MAPPER_DATA_DIR")
+    if data_dir and data_dir.strip():
+        return Path(data_dir) / "BLUEPRINT.md"
+
+    return DEFAULT_OUTPUT
 
 
 @dataclass(frozen=True)
@@ -288,7 +301,17 @@ def _render() -> str:
 
 
 def main() -> None:
-    output_path = DEFAULT_OUTPUT
+    parser = argparse.ArgumentParser(description="Generate the repository architecture blueprint")
+    parser.add_argument(
+        "--output",
+        help=(
+            "Output file path. If omitted and RURAL_MAPPER_DATA_DIR is set, writes to "
+            "<RURAL_MAPPER_DATA_DIR>/BLUEPRINT.md; otherwise writes to docs/BLUEPRINT.md"
+        ),
+    )
+    args = parser.parse_args()
+
+    output_path = _resolve_output_path(args.output)
     output_path.parent.mkdir(parents=True, exist_ok=True)
     output_path.write_text(_render(), encoding="utf-8")
     print(f"Wrote {output_path}")

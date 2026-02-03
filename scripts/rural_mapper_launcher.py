@@ -85,7 +85,10 @@ def main(argv: list[str] | None = None) -> int:
     p_dash = sub.add_parser("dashboard", help="Run Streamlit dashboard (dashboard.py)")
     p_dash.add_argument("args", nargs=argparse.REMAINDER)
 
-    p_blue = sub.add_parser("blueprint", help="Generate docs/BLUEPRINT.md")
+    p_blue = sub.add_parser(
+        "blueprint",
+        help="Generate BLUEPRINT.md in the user data dir (RURAL_MAPPER_DATA_DIR / LOCALAPPDATA\\RuralMapper)",
+    )
     p_blue.add_argument("args", nargs=argparse.REMAINDER)
 
     args_ns = parser.parse_args(argv)

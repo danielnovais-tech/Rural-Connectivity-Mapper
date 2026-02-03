@@ -11,7 +11,7 @@ The EXE is a launcher with subcommands:
 - `rural-mapper.exe web ...` → runs `app.py` (Flask)
 - `rural-mapper.exe crowdsource ...` → runs `crowdsource_server.py` (Flask)
 - `rural-mapper.exe dashboard ...` → runs `dashboard.py` via Streamlit
-- `rural-mapper.exe blueprint` → regenerates `docs/BLUEPRINT.md`
+- `rural-mapper.exe blueprint` → writes `%LOCALAPPDATA%\RuralMapper\BLUEPRINT.md`
 
 ## Output directory (AppData)
 
@@ -20,6 +20,10 @@ When running from the EXE, outputs are written to a user-writable folder:
 - `%LOCALAPPDATA%\\RuralMapper`
 
 This path is controlled via the environment variable `RURAL_MAPPER_DATA_DIR`.
+
+Note: you can override the blueprint output path with:
+
+- `rural-mapper.exe blueprint -- --output <path>`
 
 ## Build prerequisites
 
