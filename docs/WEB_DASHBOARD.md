@@ -10,7 +10,7 @@
   git clone https://github.com/yourusername/Rural-Connectivity-Mapper-2026.git
   ```
 
-- Python 3.8+
+- Python 3.12+
 - pip package manager
 - All dependencies installed (`pip install -r requirements.txt`)
 

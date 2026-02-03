@@ -11,7 +11,7 @@ This document summarizes the comprehensive CI/CD implementation for the Rural Co
 #### CI Workflow (`.github/workflows/ci.yml`)
 
 - **Triggers:** Push to main/develop branches, Pull Requests
-- **Python Versions:** 3.8, 3.9, 3.10, 3.11, 3.12
+- **Python Versions:** 3.12, 3.13
 - **Features:**
   - Automated testing across multiple Python versions
   - Code coverage reporting (83%+ coverage)
@@ -119,7 +119,7 @@ mypy>=1.0.0
 ### For Developers
 
 1. **Automated Testing:** Tests run automatically on every push and PR
-2. **Multi-Version Support:** Ensures compatibility with Python 3.8-3.12
+2. **Multi-Version Support:** Ensures compatibility with Python 3.12-3.13
 3. **Code Quality:** Automated linting catches issues early
 4. **Fast Feedback:** Quick CI results help iterate faster
 

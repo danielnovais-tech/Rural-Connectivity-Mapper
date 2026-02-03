@@ -132,7 +132,7 @@ body:
       description: Information about your environment
       value: |
         - OS: [e.g., Ubuntu 22.04, macOS 13.0, Windows 11]
-        - Python Version: [e.g., 3.8, 3.9, 3.10]
+        - Python Version: [e.g., 3.12, 3.13]
         - Project Version: [e.g., 1.0.0]
       render: markdown
     validations:
@@ -162,7 +162,7 @@ body:
     attributes:
       label: Python Version
       description: What version of Python are you using?
-      placeholder: ex. 3.8.10
+      placeholder: ex. 3.12.0
     validations:
       required: false
 

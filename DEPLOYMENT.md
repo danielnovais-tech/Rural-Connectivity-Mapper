@@ -31,7 +31,7 @@ This document provides comprehensive deployment instructions, configuration deta
 ### System Requirements
 
 - **Operating System:** Linux, macOS, or Windows (with Python support)
-- **Python Version:** 3.8 or higher (3.9+ recommended)
+- **Python Version:** 3.12+
 - **Memory:** Minimum 512 MB RAM (1 GB+ recommended for large datasets)
 - **Disk Space:** Minimum 100 MB free space
 - **Internet Connection:** Required for:
@@ -557,7 +557,7 @@ python main.py --debug --importar src/data/sample_data.csv
 
 ```bash
 # Check Python version
-python --version  # Should be 3.8+
+python --version  # Should be 3.12+
 
 # Check installed packages
 pip list
@@ -793,7 +793,7 @@ python main.py --debug [your command] 2>&1 | tee deployment_error.log
 
 Use this checklist for new deployments:
 
-- [ ] System meets prerequisites (Python 3.8+, network access)
+- [ ] System meets prerequisites (Python 3.12+, network access)
 - [ ] Virtual environment created and activated
 - [ ] Dependencies installed from requirements.txt
 - [ ] Import successful with sample data

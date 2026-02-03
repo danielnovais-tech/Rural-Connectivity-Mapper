@@ -271,7 +271,7 @@ gcloud run deploy rural-connectivity-mapper \
 **Option 3: Deploy to AWS Elastic Beanstalk**
 
 ```bash
-eb init -p python-3.8 rural-connectivity-mapper
+eb init -p python-3.12 rural-connectivity-mapper
 eb create rural-connectivity-env
 eb deploy
 ```

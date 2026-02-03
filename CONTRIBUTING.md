@@ -6,7 +6,7 @@ Obrigado por contribuir! Este guia é **Windows-first** e orientado a **VS Code 
 
 ### Pré-requisitos
 
-- Python **3.11+** (recomendado). Observação: o CI ainda valida versões mais antigas; evite usar features incompatíveis sem necessidade.
+- Python **3.12+** (mínimo). Observação: o CI valida Python 3.12–3.13.
 - Git
 - VS Code (recomendado) + extensões sugeridas em [.vscode/extensions.json](.vscode/extensions.json)
 
