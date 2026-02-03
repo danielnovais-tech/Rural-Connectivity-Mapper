@@ -49,9 +49,14 @@ class AnatelSmartConnector:
 
     def __init__(self, inventory_path: Path | None = None):
         self.inventory_path = inventory_path or Path("data/manual/Inventario_de_Bases_de_Dados.csv")
-        self.manual_dir = Path("data/manual")
+
+        # Anchor dirs to the inventory file location.
+        # This keeps tests hermetic (tmp dirs) and avoids writing to repo paths by default.
+        self.manual_dir = self.inventory_path.parent
         self.manual_dir.mkdir(parents=True, exist_ok=True)
-        self.output_dir = Path("data/bronze/anatel")
+
+        # Match ANATELStaticConnector default output layout: <manual_dir_parent>/bronze/anatel
+        self.output_dir = self.manual_dir.parent / "bronze" / "anatel"
         self.output_dir.mkdir(parents=True, exist_ok=True)
 
         # Carregar inventário se existir
@@ -80,9 +85,14 @@ class AnatelSmartConnector:
             logger.error(f"Erro ao carregar inventário: {e}")
             self.inventory = None
 
-    def _classify_dataset(self, description: str) -> str:
+    def _classify_dataset(self, description: object) -> str:
         """Classifica um dataset com base na descrição."""
-        desc_lower = description.lower()
+        if not isinstance(description, str):
+            return 'outros'
+
+        desc_lower = description.strip().lower()
+        if not desc_lower:
+            return 'outros'
 
         for category, config in self.DATASET_CATEGORIES.items():
             if category == 'outros':
@@ -123,6 +133,12 @@ class AnatelSmartConnector:
 
         high_priority = self.inventory[self.inventory['categoria'] == 'infraestrutura_alta']
 
+        # Prefer a repo-relative display path (portable across machines).
+        try:
+            manual_dir_display = self.manual_dir.resolve().relative_to(Path.cwd().resolve()).as_posix().rstrip('/') + '/'
+        except Exception:
+            manual_dir_display = "data/manual/"
+
         guide_path = self.manual_dir / "GUIA_DOWNLOAD_ANATEL.md"
         with open(guide_path, 'w', encoding='utf-8') as f:
             f.write("# Guia para Download de Datasets Prioritários da ANATEL\n\n")
@@ -148,11 +164,11 @@ class AnatelSmartConnector:
 
                 dataset_name = row['Nome da Base de Dados'].replace(' ', '_').replace('/', '_')
                 f.write(f"- **Salve como:** `{dataset_name}_{{DATA}}.csv`\n")
-                f.write(f"- **Coloque em:** `{self.manual_dir.absolute()}/`\n\n")
+                f.write(f"- **Coloque em:** `{manual_dir_display}`\n\n")
 
             f.write("## 📁 Estrutura de Pastas Recomendada\n")
             f.write("```\n")
-            f.write(f"{self.manual_dir.absolute()}/\n")
+            f.write(f"{manual_dir_display}\n")
             f.write("├── Inventario_de_Bases_de_Dados.csv  (este arquivo)\n")
             f.write("├── GUIA_DOWNLOAD_ANATEL.md          (este guia)\n")
             f.write("├── Cobertura_Telefonia_Movel.csv    (exemplo de dataset baixado)\n")
@@ -163,7 +179,7 @@ class AnatelSmartConnector:
             f.write("## 🚀 Próximos Passos\n")
             f.write("1. Baixe pelo menos 2-3 datasets da lista acima\n")
             f.write("2. Coloque os arquivos CSV na pasta `data/manual/`\n")
-            f.write("3. Execute: `python data_pipeline/connectors/anatel_smart_connector.py --process`\n")
+            f.write("3. Execute: `python -m data_pipeline.connectors.anatel_smart_connector --process`\n")
 
         logger.info(f"Guia de download gerado: {guide_path}")
         return guide_path
@@ -213,7 +229,7 @@ class AnatelSmartConnector:
         # Import here to avoid circular dependency issues
         from data_pipeline.connectors.anatel_static_connector import ANATELStaticConnector
 
-        static_connector = ANATELStaticConnector(self.manual_dir)
+        static_connector = ANATELStaticConnector(self.manual_dir, output_dir=self.output_dir)
         results = static_connector.run()
 
         # Gerar relatório consolidado

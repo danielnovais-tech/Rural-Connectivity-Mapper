@@ -1,5 +1,10 @@
 {
     "recommendations": [
+        "ms-python.python",
+        "ms-python.vscode-pylance",
+        "charliermarsh.ruff",
+        "ms-toolsai.jupyter",
+        "editorconfig.editorconfig",
         "ms-vscode.remote-server"
     ]
 }

@@ -17,8 +17,9 @@ data/manual/                          # Arquivos manuais e inventário
   ├── GUIA_DOWNLOAD_ANATEL.md
   └── *.csv                           # Datasets baixados
 
-data/bronze/anatel/                   # Dados processados (formato JSON)
-  ├── *_YYYYMMDD_HHMMSS.json
+data/bronze/anatel/                   # Dados processados (formato Parquet) + relatórios
+  ├── anatel_{tipo}_YYYYMMDD_HHMMSS_{hash}.parquet
+  ├── relatorio_processamento_*.json
   ├── relatorio_consolidado_*.json
   └── resumo_processamento_*.txt
 ```
@@ -105,7 +106,9 @@ Tenta fazer download automático de um dataset pelo ID do inventário.
 
 ## Formato de Saída (Bronze)
 
-Cada arquivo CSV processado gera um arquivo JSON com a seguinte estrutura:
+Cada arquivo CSV processado gera um arquivo **Parquet** em `data/bronze/anatel/`.
+
+Além disso, são gerados relatórios em JSON/TXT com estatísticas do processamento.
 
 ```json
 {

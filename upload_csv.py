@@ -35,8 +35,8 @@ from datetime import datetime
 
 
 # Schema validation constants
-REQUIRED_FIELDS = ['timestamp', 'latitude', 'longitude', 'download', 'upload']
-OPTIONAL_FIELDS = ['id', 'city', 'provider', 'latency', 'jitter', 'packet_loss']
+REQUIRED_FIELDS = ["timestamp", "latitude", "longitude", "download", "upload"]
+OPTIONAL_FIELDS = ["id", "city", "provider", "latency", "jitter", "packet_loss"]
 ALL_FIELDS = REQUIRED_FIELDS + OPTIONAL_FIELDS
 
 # Coordinate validation ranges
@@ -62,13 +62,10 @@ def validate_timestamp(timestamp_str: str) -> tuple[bool, str]:
     try:
         # Try parsing ISO format
         # Note: replace('Z', '+00:00') handles UTC timezone indicator 'Z' for ISO 8601 compatibility
-        datetime.fromisoformat(timestamp_str.replace('Z', '+00:00'))
+        datetime.fromisoformat(timestamp_str.replace("Z", "+00:00"))
         return True, ""
     except (ValueError, AttributeError):
-        return False, (
-            f"Invalid timestamp format: '{timestamp_str}'. "
-            "Expected ISO format (e.g., 2026-01-15T10:30:00)"
-        )
+        return False, (f"Invalid timestamp format: '{timestamp_str}'. Expected ISO format (e.g., 2026-01-15T10:30:00)")
 
 
 def validate_coordinate(value: str, coord_type: str) -> tuple[bool, str]:
@@ -84,10 +81,10 @@ def validate_coordinate(value: str, coord_type: str) -> tuple[bool, str]:
     try:
         coord = float(value)
 
-        if coord_type == 'latitude':
+        if coord_type == "latitude":
             if coord < LATITUDE_MIN or coord > LATITUDE_MAX:
                 return False, f"Latitude must be between {LATITUDE_MIN} and {LATITUDE_MAX}, got {coord}"
-        elif coord_type == 'longitude':
+        elif coord_type == "longitude":
             if coord < LONGITUDE_MIN or coord > LONGITUDE_MAX:
                 return False, f"Longitude must be between {LONGITUDE_MIN} and {LONGITUDE_MAX}, got {coord}"
 
@@ -124,7 +121,7 @@ def validate_optional_numeric(value: str, field_name: str) -> tuple[bool, str]:
     Returns:
         Tuple of (is_valid, error_message)
     """
-    if not value or value.strip() == '':
+    if not value or value.strip() == "":
         return True, ""  # Optional field can be empty
 
     try:
@@ -149,34 +146,34 @@ def validate_fields(row: dict[str, str], row_num: int) -> list[str]:
     errors: list[str] = []
 
     # Validate timestamp
-    is_valid, error = validate_timestamp(row['timestamp'])
+    is_valid, error = validate_timestamp(row["timestamp"])
     if not is_valid:
         errors.append(f"Row {row_num}: {error}")
 
     # Validate latitude
-    is_valid, error = validate_coordinate(row['latitude'], 'latitude')
+    is_valid, error = validate_coordinate(row["latitude"], "latitude")
     if not is_valid:
         errors.append(f"Row {row_num}: {error}")
 
     # Validate longitude
-    is_valid, error = validate_coordinate(row['longitude'], 'longitude')
+    is_valid, error = validate_coordinate(row["longitude"], "longitude")
     if not is_valid:
         errors.append(f"Row {row_num}: {error}")
 
     # Validate download speed
-    is_valid, error = validate_speed(row['download'], 'download')
+    is_valid, error = validate_speed(row["download"], "download")
     if not is_valid:
         errors.append(f"Row {row_num}: {error}")
 
     # Validate upload speed
-    is_valid, error = validate_speed(row['upload'], 'upload')
+    is_valid, error = validate_speed(row["upload"], "upload")
     if not is_valid:
         errors.append(f"Row {row_num}: {error}")
 
     # Validate optional numeric fields
-    for field in ['latency', 'jitter', 'packet_loss']:
+    for field in ["latency", "jitter", "packet_loss"]:
         if field in row:
-            is_valid, error = validate_optional_numeric(row.get(field, ''), field)
+            is_valid, error = validate_optional_numeric(row.get(field, ""), field)
             if not is_valid:
                 errors.append(f"Row {row_num}: {error}")
 
@@ -209,8 +206,13 @@ def validate_row(row: dict[str, str], row_num: int) -> tuple[bool, list[str]]:
     return len(errors) == 0, errors
 
 
-def process_csv_row(row: dict[str, str], row_num: int, stats: dict[str, int | dict[str, int]], 
-                    valid_rows: list[dict[str, str]], all_errors: list[str]) -> None:
+def process_csv_row(
+    row: dict[str, str],
+    row_num: int,
+    stats: dict[str, int | dict[str, int]],
+    valid_rows: list[dict[str, str]],
+    all_errors: list[str],
+) -> None:
     """Process a single CSV row and update statistics.
 
     Args:
@@ -220,25 +222,24 @@ def process_csv_row(row: dict[str, str], row_num: int, stats: dict[str, int | di
         valid_rows: List to append valid rows to
         all_errors: List to append errors to
     """
-    assert isinstance(stats['total_rows'], int)
-    stats['total_rows'] += 1
+    assert isinstance(stats["total_rows"], int)
+    stats["total_rows"] += 1
     is_valid, errors = validate_row(row, row_num)
 
     if is_valid:
         # Track missing optional fields
         for field in OPTIONAL_FIELDS:
             if field not in row or not row[field]:
-                assert isinstance(stats['missing_optional_fields'], dict)
-                stats['missing_optional_fields'][field] = \
-                    stats['missing_optional_fields'].get(field, 0) + 1
+                assert isinstance(stats["missing_optional_fields"], dict)
+                stats["missing_optional_fields"][field] = stats["missing_optional_fields"].get(field, 0) + 1
 
         valid_rows.append(row)
-        assert isinstance(stats['valid_rows'], int)
-        stats['valid_rows'] += 1
+        assert isinstance(stats["valid_rows"], int)
+        stats["valid_rows"] += 1
     else:
         all_errors.extend(errors)
-        assert isinstance(stats['invalid_rows'], int)
-        stats['invalid_rows'] += 1
+        assert isinstance(stats["invalid_rows"], int)
+        stats["invalid_rows"] += 1
 
 
 def load_and_validate_csv(csv_path: str) -> tuple[list[dict[str, str]], list[str], dict[str, int | dict[str, int]]]:
@@ -253,19 +254,19 @@ def load_and_validate_csv(csv_path: str) -> tuple[list[dict[str, str]], list[str
     valid_rows: list[dict[str, str]] = []
     all_errors: list[str] = []
     stats: dict[str, int | dict[str, int]] = {
-        'total_rows': 0,
-        'valid_rows': 0,
-        'invalid_rows': 0,
-        'missing_optional_fields': {}
+        "total_rows": 0,
+        "valid_rows": 0,
+        "invalid_rows": 0,
+        "missing_optional_fields": {},
     }
     # Type assertions for stats counters
-    assert isinstance(stats['total_rows'], int)
-    assert isinstance(stats['valid_rows'], int)
-    assert isinstance(stats['invalid_rows'], int)
-    assert isinstance(stats['missing_optional_fields'], dict)
+    assert isinstance(stats["total_rows"], int)
+    assert isinstance(stats["valid_rows"], int)
+    assert isinstance(stats["invalid_rows"], int)
+    assert isinstance(stats["missing_optional_fields"], dict)
 
     try:
-        with open(csv_path, 'r', encoding='utf-8') as f:  # noqa: UP015
+        with open(csv_path, "r", encoding="utf-8") as f:  # noqa: UP015
             reader = csv.DictReader(f)
 
             # Check if required fields are in header
@@ -301,26 +302,26 @@ def convert_to_json(rows: list[dict[str, str]]) -> list[dict[str, str | float]]:
 
     for row in rows:
         entry: dict[str, str | float] = {
-            'timestamp': row['timestamp'],
-            'latitude': float(row['latitude']),
-            'longitude': float(row['longitude']),
-            'download': float(row['download']),
-            'upload': float(row['upload'])
+            "timestamp": row["timestamp"],
+            "latitude": float(row["latitude"]),
+            "longitude": float(row["longitude"]),
+            "download": float(row["download"]),
+            "upload": float(row["upload"]),
         }
 
         # Add optional fields if present
-        if row.get('id'):
-            entry['id'] = row['id']
-        if row.get('city'):
-            entry['city'] = row['city']
-        if row.get('provider'):
-            entry['provider'] = row['provider']
-        if row.get('latency'):
-            entry['latency'] = float(row['latency'])
-        if row.get('jitter'):
-            entry['jitter'] = float(row['jitter'])
-        if row.get('packet_loss'):
-            entry['packet_loss'] = float(row['packet_loss'])
+        if row.get("id"):
+            entry["id"] = row["id"]
+        if row.get("city"):
+            entry["city"] = row["city"]
+        if row.get("provider"):
+            entry["provider"] = row["provider"]
+        if row.get("latency"):
+            entry["latency"] = float(row["latency"])
+        if row.get("jitter"):
+            entry["jitter"] = float(row["jitter"])
+        if row.get("packet_loss"):
+            entry["packet_loss"] = float(row["packet_loss"])
 
         json_data.append(entry)
 
@@ -337,7 +338,7 @@ def save_json(data: list[dict[str, str | float]], output_path: str) -> None:
     # Create directory if it doesn't exist
     Path(output_path).parent.mkdir(parents=True, exist_ok=True)
 
-    with open(output_path, 'w', encoding='utf-8') as f:
+    with open(output_path, "w", encoding="utf-8") as f:
         json.dump(data, f, indent=2, ensure_ascii=False)
 
 
@@ -356,7 +357,7 @@ def print_validation_report(stats: dict[str, int | dict[str, int]], errors: list
     print(f"Valid rows: {stats['valid_rows']}")
     print(f"Invalid rows: {stats['invalid_rows']}")
 
-    missing_fields = stats['missing_optional_fields']
+    missing_fields = stats["missing_optional_fields"]
     if missing_fields and isinstance(missing_fields, dict):
         print("\nOptional fields summary:")
         for field, count in missing_fields.items():
@@ -378,7 +379,7 @@ def print_validation_report(stats: dict[str, int | dict[str, int]], errors: list
 def main():
     """Main entry point for CSV upload script."""
     parser = argparse.ArgumentParser(
-        description='CSV Upload Script for Rural Connectivity Mapper 2026',
+        description="CSV Upload Script for Rural Connectivity Mapper 2026",
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""
 Examples:
@@ -391,31 +392,18 @@ Required CSV columns:
 
 Optional CSV columns:
   id, city, provider, latency, jitter, packet_loss
-        """
+        """,
     )
 
-    parser.add_argument(
-        'csv_file',
-        help='Path to CSV file to upload'
-    )
+    parser.add_argument("csv_file", help="Path to CSV file to upload")
 
     parser.add_argument(
-        '--output', '-o',
-        default='speedtest_data.json',
-        help='Output JSON file path (default: speedtest_data.json)'
+        "--output", "-o", default="speedtest_data.json", help="Output JSON file path (default: speedtest_data.json)"
     )
 
-    parser.add_argument(
-        '--verbose', '-v',
-        action='store_true',
-        help='Show detailed validation error messages'
-    )
+    parser.add_argument("--verbose", "-v", action="store_true", help="Show detailed validation error messages")
 
-    parser.add_argument(
-        '--dry-run',
-        action='store_true',
-        help='Validate CSV without saving output file'
-    )
+    parser.add_argument("--dry-run", action="store_true", help="Validate CSV without saving output file")
 
     args = parser.parse_args()
 
@@ -439,7 +427,7 @@ Optional CSV columns:
         print("[ERROR] Validation failed. Please fix the errors above and try again.\n")
         sys.exit(1)
 
-    if stats['valid_rows'] == 0:
+    if stats["valid_rows"] == 0:
         print("[ERROR] No valid rows found in CSV file.\n")
         sys.exit(1)
 
@@ -457,5 +445,5 @@ Optional CSV columns:
     print("\n*** CSV upload completed successfully! ***\n")
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

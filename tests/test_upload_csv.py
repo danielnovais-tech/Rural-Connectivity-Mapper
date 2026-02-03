@@ -1,17 +1,17 @@
 """Tests for CSV upload script."""
 
-import pytest
-import json
 import csv
-from pathlib import Path
+
+import pytest
+
 from upload_csv import (
-    validate_timestamp,
+    convert_to_json,
+    load_and_validate_csv,
     validate_coordinate,
-    validate_speed,
     validate_optional_numeric,
     validate_row,
-    load_and_validate_csv,
-    convert_to_json
+    validate_speed,
+    validate_timestamp,
 )
 
 
@@ -89,12 +89,12 @@ def test_validate_optional_numeric_invalid():
 def test_validate_row_valid():
     """Test validation of a valid row."""
     row = {
-        'timestamp': '2026-01-15T10:30:00',
-        'latitude': '-23.5505',
-        'longitude': '-46.6333',
-        'download': '85.2',
-        'upload': '12.5',
-        'latency': '45.3'
+        "timestamp": "2026-01-15T10:30:00",
+        "latitude": "-23.5505",
+        "longitude": "-46.6333",
+        "download": "85.2",
+        "upload": "12.5",
+        "latency": "45.3",
     }
     is_valid, errors = validate_row(row, 2)
     assert is_valid is True
@@ -104,26 +104,26 @@ def test_validate_row_valid():
 def test_validate_row_missing_required_field():
     """Test validation of row with missing required field."""
     row = {
-        'timestamp': '2026-01-15T10:30:00',
-        'latitude': '-23.5505',
-        'longitude': '-46.6333',
-        'download': '85.2'
+        "timestamp": "2026-01-15T10:30:00",
+        "latitude": "-23.5505",
+        "longitude": "-46.6333",
+        "download": "85.2",
         # Missing 'upload'
     }
     is_valid, errors = validate_row(row, 2)
     assert is_valid is False
     assert len(errors) > 0
-    assert any('upload' in error.lower() for error in errors)
+    assert any("upload" in error.lower() for error in errors)
 
 
 def test_validate_row_invalid_values():
     """Test validation of row with invalid values."""
     row = {
-        'timestamp': 'invalid-date',
-        'latitude': '95',  # Out of range
-        'longitude': '-46.6333',
-        'download': '-10',  # Negative
-        'upload': '12.5'
+        "timestamp": "invalid-date",
+        "latitude": "95",  # Out of range
+        "longitude": "-46.6333",
+        "download": "-10",  # Negative
+        "upload": "12.5",
     }
     is_valid, errors = validate_row(row, 2)
     assert is_valid is False
@@ -134,127 +134,121 @@ def test_convert_to_json():
     """Test conversion of CSV rows to JSON format."""
     rows = [
         {
-            'timestamp': '2026-01-15T10:30:00',
-            'latitude': '-23.5505',
-            'longitude': '-46.6333',
-            'download': '85.2',
-            'upload': '12.5',
-            'id': '1',
-            'city': 'São Paulo',
-            'provider': 'Various',
-            'latency': '45.3'
+            "timestamp": "2026-01-15T10:30:00",
+            "latitude": "-23.5505",
+            "longitude": "-46.6333",
+            "download": "85.2",
+            "upload": "12.5",
+            "id": "1",
+            "city": "São Paulo",
+            "provider": "Various",
+            "latency": "45.3",
         }
     ]
-    
+
     json_data = convert_to_json(rows)
-    
+
     assert len(json_data) == 1
-    assert json_data[0]['timestamp'] == '2026-01-15T10:30:00'
-    assert json_data[0]['latitude'] == pytest.approx(-23.5505)
-    assert json_data[0]['longitude'] == pytest.approx(-46.6333)
-    assert json_data[0]['download'] == pytest.approx(85.2)
-    assert json_data[0]['upload'] == pytest.approx(12.5)
-    assert json_data[0]['id'] == '1'
-    assert json_data[0]['city'] == 'São Paulo'
-    assert json_data[0]['latency'] == pytest.approx(45.3)
+    assert json_data[0]["timestamp"] == "2026-01-15T10:30:00"
+    assert json_data[0]["latitude"] == pytest.approx(-23.5505)
+    assert json_data[0]["longitude"] == pytest.approx(-46.6333)
+    assert json_data[0]["download"] == pytest.approx(85.2)
+    assert json_data[0]["upload"] == pytest.approx(12.5)
+    assert json_data[0]["id"] == "1"
+    assert json_data[0]["city"] == "São Paulo"
+    assert json_data[0]["latency"] == pytest.approx(45.3)
 
 
 def test_convert_to_json_minimal():
     """Test conversion with only required fields."""
     rows = [
         {
-            'timestamp': '2026-01-15T10:30:00',
-            'latitude': '-23.5505',
-            'longitude': '-46.6333',
-            'download': '85.2',
-            'upload': '12.5'
+            "timestamp": "2026-01-15T10:30:00",
+            "latitude": "-23.5505",
+            "longitude": "-46.6333",
+            "download": "85.2",
+            "upload": "12.5",
         }
     ]
-    
+
     json_data = convert_to_json(rows)
-    
+
     assert len(json_data) == 1
-    assert 'timestamp' in json_data[0]
-    assert 'latitude' in json_data[0]
-    assert 'longitude' in json_data[0]
-    assert 'download' in json_data[0]
-    assert 'upload' in json_data[0]
-    assert 'id' not in json_data[0]
-    assert 'city' not in json_data[0]
+    assert "timestamp" in json_data[0]
+    assert "latitude" in json_data[0]
+    assert "longitude" in json_data[0]
+    assert "download" in json_data[0]
+    assert "upload" in json_data[0]
+    assert "id" not in json_data[0]
+    assert "city" not in json_data[0]
 
 
 def test_load_and_validate_csv(tmp_path):
     """Test loading and validating a CSV file."""
     # Create a valid CSV file
     csv_file = tmp_path / "test.csv"
-    with open(csv_file, 'w', newline='', encoding='utf-8') as f:
-        writer = csv.DictWriter(f, fieldnames=['timestamp', 'latitude', 'longitude', 'download', 'upload'])
+    with open(csv_file, "w", newline="", encoding="utf-8") as f:
+        writer = csv.DictWriter(f, fieldnames=["timestamp", "latitude", "longitude", "download", "upload"])
         writer.writeheader()
-        writer.writerow({
-            'timestamp': '2026-01-15T10:30:00',
-            'latitude': '-23.5505',
-            'longitude': '-46.6333',
-            'download': '85.2',
-            'upload': '12.5'
-        })
-    
+        writer.writerow(
+            {
+                "timestamp": "2026-01-15T10:30:00",
+                "latitude": "-23.5505",
+                "longitude": "-46.6333",
+                "download": "85.2",
+                "upload": "12.5",
+            }
+        )
+
     valid_rows, errors, stats = load_and_validate_csv(str(csv_file))
-    
+
     assert len(valid_rows) == 1
     assert len(errors) == 0
-    assert stats['total_rows'] == 1
-    assert stats['valid_rows'] == 1
-    assert stats['invalid_rows'] == 0
+    assert stats["total_rows"] == 1
+    assert stats["valid_rows"] == 1
+    assert stats["invalid_rows"] == 0
 
 
 def test_load_and_validate_csv_with_errors(tmp_path):
     """Test loading and validating a CSV file with errors."""
     # Create a CSV file with errors
     csv_file = tmp_path / "test_errors.csv"
-    with open(csv_file, 'w', newline='', encoding='utf-8') as f:
-        writer = csv.DictWriter(f, fieldnames=['timestamp', 'latitude', 'longitude', 'download', 'upload'])
+    with open(csv_file, "w", newline="", encoding="utf-8") as f:
+        writer = csv.DictWriter(f, fieldnames=["timestamp", "latitude", "longitude", "download", "upload"])
         writer.writeheader()
-        writer.writerow({
-            'timestamp': 'invalid',
-            'latitude': '95',
-            'longitude': '-46.6333',
-            'download': '-10',
-            'upload': '12.5'
-        })
-    
+        writer.writerow(
+            {"timestamp": "invalid", "latitude": "95", "longitude": "-46.6333", "download": "-10", "upload": "12.5"}
+        )
+
     valid_rows, errors, stats = load_and_validate_csv(str(csv_file))
-    
+
     assert len(valid_rows) == 0
     assert len(errors) > 0
-    assert stats['total_rows'] == 1
-    assert stats['valid_rows'] == 0
-    assert stats['invalid_rows'] == 1
+    assert stats["total_rows"] == 1
+    assert stats["valid_rows"] == 0
+    assert stats["invalid_rows"] == 1
 
 
 def test_load_and_validate_csv_missing_required_columns(tmp_path):
     """Test loading CSV with missing required columns."""
     # Create a CSV file with missing required columns
     csv_file = tmp_path / "test_missing.csv"
-    with open(csv_file, 'w', newline='', encoding='utf-8') as f:
-        writer = csv.DictWriter(f, fieldnames=['timestamp', 'latitude', 'longitude'])
+    with open(csv_file, "w", newline="", encoding="utf-8") as f:
+        writer = csv.DictWriter(f, fieldnames=["timestamp", "latitude", "longitude"])
         writer.writeheader()
-        writer.writerow({
-            'timestamp': '2026-01-15T10:30:00',
-            'latitude': '-23.5505',
-            'longitude': '-46.6333'
-        })
-    
+        writer.writerow({"timestamp": "2026-01-15T10:30:00", "latitude": "-23.5505", "longitude": "-46.6333"})
+
     valid_rows, errors, _ = load_and_validate_csv(str(csv_file))
-    
+
     assert len(valid_rows) == 0
     assert len(errors) > 0
-    assert any('download' in error.lower() or 'upload' in error.lower() for error in errors)
+    assert any("download" in error.lower() or "upload" in error.lower() for error in errors)
 
 
 def test_load_and_validate_csv_file_not_found():
     """Test loading a non-existent CSV file."""
-    valid_rows, errors, _ = load_and_validate_csv('/nonexistent/file.csv')
-    
+    valid_rows, errors, _ = load_and_validate_csv("/nonexistent/file.csv")
+
     assert len(valid_rows) == 0
     assert len(errors) > 0
-    assert any('not found' in error.lower() for error in errors)
+    assert any("not found" in error.lower() for error in errors)

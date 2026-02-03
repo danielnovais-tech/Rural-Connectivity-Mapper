@@ -2,6 +2,7 @@
 # https://docs.astral.sh/ruff/configuration/
 
 line-length = 120
+target-version = "py311"
 
 [lint]
 select = [
@@ -14,5 +15,12 @@ select = [
     "B",   # flake8-bugbear
 ]
 
+ignore = [
+    "E501", # line-length handled by formatter; flake8 already ignores this
+    "W291", # trailing whitespace (often in embedded HTML/docstrings)
+    "W293", # blank line contains whitespace (often in embedded HTML/docstrings)
+]
+
 [lint.per-file-ignores]
 "__init__.py" = ["F401"]
+"src/models/*.py" = ["N999"]

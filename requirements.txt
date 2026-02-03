@@ -1,42 +1,45 @@
-speedtest-cli>=2.1.3
-geopy>=2.3.0
-pytest>=7.4.0
-pytest-cov>=4.1.0
-colorama>=0.4.6
-pandas>=2.0.0
+## Core
 requests>=2.31.0
+python-dateutil>=2.8.0
+
+## Data / Geo
+pandas>=2.0.0
+pyarrow>=14.0.0
+geopy>=2.3.0
+h3>=3.7.0
+geohash2>=1.1
+
+# Heavier geospatial stack (may require native wheels on some platforms)
+geopandas>=0.14.0
+
+## Visualization / Dashboard
 folium>=0.14.0
 matplotlib>=3.7.0
-
-streamlit>=1.28.0
-
-
+plotly>=5.17.0
 streamlit>=1.28.0
 streamlit-folium>=0.15.0
-plotly>=5.17.0
 
-
+## Web / API
 Flask>=3.0.0
 Flask-CORS>=4.0.0
 
-
+## ML / numeric (kept conditional to avoid unsupported wheels on some Python versions)
+numpy>=1.24.0; python_version < "3.14"
 scikit-learn>=1.3.0; python_version < "3.14"
 
-
-scikit-learn>=1.3.0; python_version < "3.14"
-numpy>=1.21.0; python_version < "3.14"
-
-
+## Utilities
+speedtest-cli>=2.1.3
+colorama>=0.4.6
 babel>=2.14.0
 
-flask>=3.0.0
+## Testing / quality
+pytest>=7.4.0
+pytest-cov>=4.1.0
+ruff>=0.1.0
+mypy>=1.0.0
 
-
-# Data pipeline dependencies
+## Data pipeline dependencies
 pydantic>=2.0.0
-h3>=3.7.0
-pyarrow>=10.0.0
-geohash2>=1.1
 
 
 

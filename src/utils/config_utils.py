@@ -3,6 +3,7 @@
 import json
 import logging
 from pathlib import Path
+import sys
 from typing import Dict, List, Optional
 
 logger = logging.getLogger(__name__)
@@ -28,8 +29,9 @@ def load_country_config(config_path: Optional[str] = None) -> Dict:
     
     if config_path is None:
         # Use default config path
-        current_dir = Path(__file__).parent.parent.parent
-        config_path = current_dir / "config" / "countries.json"
+        # When frozen by PyInstaller, sys._MEIPASS points to the extracted bundle root.
+        base_dir = Path(getattr(sys, "_MEIPASS", Path(__file__).parent.parent.parent))
+        config_path = base_dir / "config" / "countries.json"
     
     try:
         with open(config_path, 'r', encoding='utf-8') as f:

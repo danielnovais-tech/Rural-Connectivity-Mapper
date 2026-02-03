@@ -211,7 +211,7 @@ class ANATELStaticConnector:
             logger.exception("Failed to process %s", filepath.name)
             return {"status": "error", "file": filepath.name, "error": str(e)}
 
-    def run(self) -> List[Dict]:
+    def run(self) -> list[dict]:
         """Run processing for all new CSV files."""
         files = self.discover_new_files()
         if not files:
