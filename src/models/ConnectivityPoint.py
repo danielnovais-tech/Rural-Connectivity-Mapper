@@ -9,7 +9,7 @@ from .SpeedTest import SpeedTest
 
 class ConnectivityPoint:
     """Represents a connectivity measurement point with location and quality data.
-
+    
     Attributes:
         latitude (float): Latitude coordinate
         longitude (float): Longitude coordinate
@@ -20,7 +20,7 @@ class ConnectivityPoint:
         id (str): Unique identifier for the point
         country (str): ISO 3166-1 alpha-2 country code (e.g., 'BR', 'US')
     """
-
+    
     def __init__(
         self,
         latitude: float,
@@ -30,10 +30,10 @@ class ConnectivityPoint:
         quality_score: QualityScore | None = None,
         timestamp: str | None = None,
         point_id: str | None = None,
-        country: str = "BR",
+        country: str = "BR"
     ):
         """Initialize ConnectivityPoint instance.
-
+        
         Args:
             latitude: Latitude coordinate
             longitude: Longitude coordinate
@@ -52,61 +52,61 @@ class ConnectivityPoint:
         self.timestamp = timestamp if timestamp else datetime.now().isoformat()
         self.id = point_id if point_id else str(uuid.uuid4())
         self.country = country.upper() if country else "BR"
-
+    
     def to_dict(self) -> dict:
         """Convert ConnectivityPoint to dictionary representation.
-
+        
         Returns:
             Dict: Dictionary containing all connectivity point data
         """
         return {
-            "id": self.id,
-            "latitude": self.latitude,
-            "longitude": self.longitude,
-            "provider": self.provider,
-            "speed_test": self.speed_test.to_dict(),
-            "quality_score": self.quality_score.to_dict(),
-            "timestamp": self.timestamp,
-            "country": self.country,
+            'id': self.id,
+            'latitude': self.latitude,
+            'longitude': self.longitude,
+            'provider': self.provider,
+            'speed_test': self.speed_test.to_dict(),
+            'quality_score': self.quality_score.to_dict(),
+            'timestamp': self.timestamp,
+            'country': self.country
         }
-
+    
     @classmethod
-    def from_dict(cls, data: dict) -> "ConnectivityPoint":
+    def from_dict(cls, data: dict) -> 'ConnectivityPoint':
         """Create ConnectivityPoint instance from dictionary.
-
+        
         Args:
             data: Dictionary containing connectivity point data
-
+            
         Returns:
             ConnectivityPoint: New ConnectivityPoint instance
         """
-        speed_test = SpeedTest.from_dict(data.get("speed_test", {}))
-
+        speed_test = SpeedTest.from_dict(data.get('speed_test', {}))
+        
         # If quality_score exists in dict, use it; otherwise it will be auto-calculated
         quality_score = None
-        if "quality_score" in data:
-            qs_data = data["quality_score"]
+        if 'quality_score' in data:
+            qs_data = data['quality_score']
             quality_score = QualityScore(
-                overall_score=qs_data.get("overall_score", 0.0),
-                speed_score=qs_data.get("speed_score", 0.0),
-                latency_score=qs_data.get("latency_score", 0.0),
-                stability_score=qs_data.get("stability_score", 0.0),
+                overall_score=qs_data.get('overall_score', 0.0),
+                speed_score=qs_data.get('speed_score', 0.0),
+                latency_score=qs_data.get('latency_score', 0.0),
+                stability_score=qs_data.get('stability_score', 0.0)
             )
-
+        
         return cls(
-            latitude=data.get("latitude", 0.0),
-            longitude=data.get("longitude", 0.0),
-            provider=data.get("provider", "Unknown"),
+            latitude=data.get('latitude', 0.0),
+            longitude=data.get('longitude', 0.0),
+            provider=data.get('provider', 'Unknown'),
             speed_test=speed_test,
             quality_score=quality_score,
-            timestamp=data.get("timestamp"),
-            point_id=data.get("id"),
-            country=data.get("country", "BR"),
+            timestamp=data.get('timestamp'),
+            point_id=data.get('id'),
+            country=data.get('country', 'BR')
         )
-
+    
     def __repr__(self) -> str:
         """String representation of ConnectivityPoint.
-
+        
         Returns:
             str: Formatted string representation
         """

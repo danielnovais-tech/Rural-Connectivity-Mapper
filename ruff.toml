@@ -24,3 +24,13 @@ ignore = [
 [lint.per-file-ignores]
 "__init__.py" = ["F401"]
 "src/models/*.py" = ["N999"]
+# Dashboard.py needs sys.path manipulation before imports
+"dashboard.py" = ["E402"]
+# Demo and script files need sys.path manipulation
+"demo_*.py" = ["E402"]
+"scripts/**/*.py" = ["E402"]
+# ML/Data Science conventions use X, X_scaled variable names
+"src/utils/analysis_utils.py" = ["N806"]
+"src/utils/ml_utils.py" = ["N806"]
+# Report utils uses intentional camelCase for compatibility
+"src/utils/report_utils.py" = ["N802"]

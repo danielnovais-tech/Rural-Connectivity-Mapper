@@ -1,5 +1,9 @@
 """Validation utilities for data integrity checks."""
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> origin/main
 import logging
 from typing import Any
 

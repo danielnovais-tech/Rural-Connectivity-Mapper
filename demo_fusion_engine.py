@@ -20,19 +20,19 @@ from src.sources import MockCrowdsourceSource, MockSpeedtestSource
 
 def main():
     """Demonstrate fusion engine functionality."""
-
+    
     print("=" * 70)
     print("🔄 FUSION ENGINE DEMONSTRATION")
     print("=" * 70)
-
+    
     # Setup
     data_dir = Path(__file__).parent.parent / "data"
     bronze_dir = data_dir / "bronze"
-
+    
     # Step 1: Generate some sample data if bronze layer is empty
     print("\n📥 Step 1: Preparing Bronze layer data...")
     bronze = BronzeLayer(bronze_dir)
-
+    
     # Check if we have data
     existing_data = bronze.read_all()
     if not existing_data:
@@ -45,74 +45,73 @@ def main():
             bronze.ingest(source)
     else:
         print(f"  Found {len(existing_data)} existing measurements in Bronze layer")
-
+    
     # Step 2: Initialize Fusion Engine
     print("\n🔧 Step 2: Initializing Fusion Engine...")
     fusion = FusionEngine(bronze_dir)
     print("  ✓ Fusion Engine initialized")
-
+    
     # Step 3: Read Bronze layer data
     print("\n📖 Step 3: Reading Bronze layer data...")
     measurements = fusion.read_bronze_data(format="auto")
     print(f"  ✓ Loaded {len(measurements)} measurements")
-
+    
     # Show source distribution
     from collections import Counter
-
     source_counts = Counter(m.source.value for m in measurements)
     print("\n  Source distribution:")
     for source, count in sorted(source_counts.items()):
         print(f"    - {source}: {count} measurements")
-
+    
     # Step 4: Unify sources
     print("\n🔀 Step 4: Unifying data from multiple sources...")
     unified = fusion.unify_sources(measurements)
     print(f"  ✓ Unified {len(unified)} measurements")
-
+    
     # Step 5: Calculate ICR
     print("\n📊 Step 5: Calculating Rural Connectivity Index (ICR)...")
     enriched = fusion.calculate_icr(unified)
     print(f"  ✓ Calculated ICR for {len(enriched)} measurements")
-
+    
     # Step 6: Analyze ICR results
     print("\n📈 Step 6: Analyzing ICR results...")
-
+    
     # ICR classification distribution
-    classifications = Counter(m.metadata["icr_classification"] for m in enriched)
+    classifications = Counter(m.metadata['icr_classification'] for m in enriched)
     print("\n  ICR Classification Distribution:")
     for classification, count in sorted(classifications.items()):
         percentage = (count / len(enriched)) * 100
         print(f"    - {classification.capitalize()}: {count} ({percentage:.1f}%)")
-
+    
     # ICR statistics
-    icr_values = [m.metadata["icr"] for m in enriched]
+    icr_values = [m.metadata['icr'] for m in enriched]
     avg_icr = sum(icr_values) / len(icr_values)
     min_icr = min(icr_values)
     max_icr = max(icr_values)
-
+    
     print("\n  ICR Statistics:")
     print(f"    - Average: {avg_icr:.2f}")
     print(f"    - Minimum: {min_icr:.2f}")
     print(f"    - Maximum: {max_icr:.2f}")
-
+    
     # Show sample measurements with ICR
     print("\n📋 Sample Measurements with ICR:")
     print("-" * 70)
-
+    
     # Show best, average, and worst connectivity
-    sorted_by_icr = sorted(enriched, key=lambda m: m.metadata["icr"], reverse=True)
-
+    sorted_by_icr = sorted(enriched, key=lambda m: m.metadata['icr'], reverse=True)
+    
     samples = [
         ("Best", sorted_by_icr[0]),
         ("Median", sorted_by_icr[len(sorted_by_icr) // 2]),
         ("Worst", sorted_by_icr[-1]),
     ]
-
+    
     for label, measurement in samples:
-        icr = measurement.metadata["icr"]
-        classification = measurement.metadata["icr_classification"]
-        components = measurement.metadata["icr_components"]
-
+        icr = measurement.metadata['icr']
+        classification = measurement.metadata['icr_classification']
+        components = measurement.metadata['icr_components']
+        
         print(f"\n{label} Connectivity (ICR: {icr:.2f} - {classification.upper()}):")
         print(f"  Location: ({measurement.lat:.4f}, {measurement.lon:.4f})")
         print(f"  Source: {measurement.source.value}")
@@ -125,7 +124,7 @@ def main():
         print(f"    - Upload Score: {components['upload_score']:.2f}")
         print(f"    - Latency Score: {components['latency_score']:.2f}")
         print(f"    - Availability Score: {components['availability_score']:.2f}")
-
+    
     print("\n" + "=" * 70)
     print("✅ FUSION ENGINE DEMONSTRATION COMPLETE")
     print("=" * 70)

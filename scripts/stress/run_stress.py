@@ -31,12 +31,12 @@ if str(_REPO_ROOT) not in sys.path:
     sys.path.insert(0, str(_REPO_ROOT))
 os.chdir(_REPO_ROOT)
 
-from geopy.exc import GeocoderQuotaExceeded, GeocoderTimedOut, GeocoderUnavailable  # noqa: E402
+from geopy.exc import GeocoderQuotaExceeded, GeocoderTimedOut, GeocoderUnavailable
 
-from src.utils.analysis_utils import analyze_temporal_evolution  # noqa: E402
-from src.utils.export_utils import export_ecosystem_bundle  # noqa: E402
-from src.utils.geocoding_utils import geocode_address, geocode_coordinates  # noqa: E402
-from src.utils.report_utils import generate_report  # noqa: E402
+from src.utils.analysis_utils import analyze_temporal_evolution
+from src.utils.export_utils import export_ecosystem_bundle
+from src.utils.geocoding_utils import geocode_address, geocode_coordinates
+from src.utils.report_utils import generate_report
 
 
 @dataclass
@@ -101,13 +101,7 @@ def generate_synthetic_points(
                 },
                 "quality_score": {
                     "overall_score": overall,
-                    "rating": "Excellent"
-                    if overall >= 80
-                    else "Good"
-                    if overall >= 65
-                    else "Fair"
-                    if overall >= 50
-                    else "Poor",
+                    "rating": "Excellent" if overall >= 80 else "Good" if overall >= 65 else "Fair" if overall >= 50 else "Poor",
                 },
             }
         )
@@ -234,9 +228,9 @@ def stress_geocoding(
     }
 
     # Avoid the built-in 1 req/sec limiter during stress runs.
-    with patch("src.utils.geocoding_utils._wait_for_rate_limit", lambda: None):
-        with patch("src.utils.geocoding_utils.geolocator.reverse", side_effect=flaky.reverse):
-            with patch("src.utils.geocoding_utils.geolocator.geocode", side_effect=flaky.geocode):
+    with patch('src.utils.geocoding_utils._wait_for_rate_limit', lambda: None):
+        with patch('src.utils.geocoding_utils.geolocator.reverse', side_effect=flaky.reverse):
+            with patch('src.utils.geocoding_utils.geolocator.geocode', side_effect=flaky.geocode):
                 start = time.perf_counter()
                 for i in range(geocode_samples):
                     # Alternate reverse + forward
