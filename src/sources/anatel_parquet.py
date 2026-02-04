@@ -237,8 +237,11 @@ class AnatelParquetSource(DataSource):
             technology=technology,
             source=SourceType.ANATEL,
             provider=provider_str,
+            confidence_score=None,
+            confidence_breakdown=None,
             country=self.config.country,
             region=str(row.get("uf")).strip() if row.get("uf") is not None and not pd.isna(row.get("uf")) else None,
+            h3_index=None,
             metadata=metadata,
         )
 
@@ -290,8 +293,11 @@ class AnatelParquetSource(DataSource):
             technology=technology,
             source=SourceType.ANATEL,
             provider=provider_str,
+            confidence_score=None,
+            confidence_breakdown=None,
             country=self.config.country,
             region=str(row.get("uf")).strip() if row.get("uf") is not None and not pd.isna(row.get("uf")) else None,
+            h3_index=None,
             metadata=metadata,
         )
 

@@ -65,6 +65,10 @@ class MockSpeedtestSource(DataSource):
                 ]
             )
 
+            download: float = 0.0
+            upload: float | None = 0.0
+            latency: float | None = 0.0
+
             # Speed ranges based on technology (generally better than crowdsource)
             if tech_choice == TechnologyType.FIBER:
                 download = random.uniform(100.0, 1000.0)
@@ -113,13 +117,16 @@ class MockSpeedtestSource(DataSource):
                 lon=round(lon, 6),
                 timestamp_utc=timestamp,
                 download_mbps=round(download, 2),
-                upload_mbps=round(upload, 2) if upload else None,
-                latency_ms=round(latency, 2) if latency else None,
+                upload_mbps=round(upload, 2) if upload is not None else None,
+                latency_ms=round(latency, 2) if latency is not None else None,
                 technology=tech_choice,
                 source=SourceType.SPEEDTEST,
                 provider=provider,
+                confidence_score=None,
+                confidence_breakdown=None,
                 country="US",
                 region=region,
+                h3_index=None,
                 metadata={
                     "server_id": f"server_{random.randint(1000, 9999)}",
                     "test_id": f"test_{uuid.uuid4().hex[:16]}",

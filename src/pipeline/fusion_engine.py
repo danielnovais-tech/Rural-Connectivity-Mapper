@@ -150,9 +150,8 @@ class FusionEngine:
         Returns:
             Unified list of measurements ready for Silver layer processing
         """
-        unified = []
-        source_counts = {}
-
+        unified: list[MeasurementSchema] = []
+        source_counts: dict[str, int] = {}
         for measurement in measurements:
             # Track source counts
             source = measurement.source.value

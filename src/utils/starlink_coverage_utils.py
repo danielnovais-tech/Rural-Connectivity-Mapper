@@ -6,7 +6,7 @@ Ready to be replaced with official API when available.
 """
 
 import logging
-from typing import Any
+from typing import Any, cast
 
 logger = logging.getLogger(__name__)
 
@@ -101,7 +101,7 @@ def get_starlink_coverage_zones() -> list[dict[str, Any]]:
     ]
 
     for zone in coverage_zones:
-        zone["center"] = _compute_center(zone["coordinates"])
+        zone["center"] = _compute_center(cast(list[list[float]], zone["coordinates"]))
 
     logger.info(f"Generated {len(coverage_zones)} Starlink coverage zones for Brazil")
     return coverage_zones

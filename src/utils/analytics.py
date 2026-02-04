@@ -218,7 +218,7 @@ def compute_analytics_summary() -> dict[str, Any]:
 
     # Basic counts
     unique_sessions = len(set(e["session_id"] for e in events))
-    event_counts = {}
+    event_counts: dict[str, int] = {}
     for event in events:
         event_name = event["event_name"]
         event_counts[event_name] = event_counts.get(event_name, 0) + 1

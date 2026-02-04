@@ -11,7 +11,7 @@ logger = logging.getLogger(__name__)
 _config_cache: dict | None = None
 
 
-def load_country_config(config_path: str | None = None) -> dict:
+def load_country_config(config_path: str | Path | None = None) -> dict:
     """Load country configuration from JSON file.
 
     Args:
@@ -22,8 +22,10 @@ def load_country_config(config_path: str | None = None) -> dict:
     """
     global _config_cache
 
+    original_config_path = config_path
+
     # Return cached config if available
-    if _config_cache is not None and config_path is None:
+    if _config_cache is not None and original_config_path is None:
         return _config_cache
 
     if config_path is None:
@@ -32,19 +34,21 @@ def load_country_config(config_path: str | None = None) -> dict:
         base_dir = Path(getattr(sys, "_MEIPASS", Path(__file__).parent.parent.parent))
         config_path = base_dir / "config" / "countries.json"
 
+    config_file = config_path if isinstance(config_path, Path) else Path(config_path)
+
     try:
-        with open(config_path, encoding="utf-8") as f:
+        with open(config_file, encoding="utf-8") as f:
             config = json.load(f)
 
         # Cache the config
-        if config_path is None or str(config_path).endswith("countries.json"):
+        if original_config_path is None or str(config_file).endswith("countries.json"):
             _config_cache = config
 
-        logger.debug(f"Loaded country configuration from {config_path}")
+        logger.debug(f"Loaded country configuration from {config_file}")
         return config
 
     except FileNotFoundError:
-        logger.error(f"Country configuration file not found: {config_path}")
+        logger.error(f"Country configuration file not found: {config_file}")
         # Return minimal default config
         return {
             "countries": {
@@ -62,7 +66,6 @@ def load_country_config(config_path: str | None = None) -> dict:
     except json.JSONDecodeError as e:
         logger.error(f"Error parsing country configuration: {e}")
         raise
-
 
 def get_country_info(country_code: str, config: dict | None = None) -> dict:
     """Get configuration for a specific country.

@@ -247,6 +247,10 @@ class ManualCSVSource(DataSource):
                 source=self.source_type,
                 provider=provider,
                 country=row_lower.get("country", "BR"),  # Default to Brazil
+                confidence_score=None,
+                confidence_breakdown=None,
+                region=None,
+                h3_index=None,
                 metadata=metadata,
             )
 

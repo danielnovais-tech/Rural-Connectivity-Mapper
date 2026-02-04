@@ -61,6 +61,10 @@ class MockCrowdsourceSource(DataSource):
                 ]
             )
 
+            download: float | None = 0.0
+            upload: float | None = 0.0
+            latency: float | None = 0.0
+
             # Speed ranges based on technology
             if tech_choice == TechnologyType.SATELLITE:
                 download = random.uniform(10.0, 150.0)
@@ -97,13 +101,17 @@ class MockCrowdsourceSource(DataSource):
                 lat=round(lat, 6),
                 lon=round(lon, 6),
                 timestamp_utc=timestamp,
-                download_mbps=round(download, 2) if download else None,
-                upload_mbps=round(upload, 2) if upload else None,
-                latency_ms=round(latency, 2) if latency else None,
+                download_mbps=round(download, 2) if download is not None else None,
+                upload_mbps=round(upload, 2) if upload is not None else None,
+                latency_ms=round(latency, 2) if latency is not None else None,
                 technology=tech_choice,
                 source=SourceType.CROWDSOURCE,
                 provider=provider,
+                confidence_score=None,
+                confidence_breakdown=None,
                 country="BR",
+                region="BR",
+                h3_index=None,
                 metadata={
                     "device_type": random.choice(["android", "ios", "web"]),
                     "app_version": "1.0.0",
