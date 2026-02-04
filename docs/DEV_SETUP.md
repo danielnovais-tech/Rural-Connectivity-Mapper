@@ -29,3 +29,8 @@ Manual artifacts are ignored by git (raw downloads / processed outputs), but the
 ## 5) Debugging
 
 Use the **Run and Debug** sidebar. Launch configs are in `.vscode/launch.json`.
+
+## Notes on GitHub Actions status
+
+- Old commits can stay red forever (they ran on the old code). Always check the latest run attached to the current `main` commit.
+- The Actions workflow **Lint** runs `ruff` and `flake8`. The VS Code task **Lint+Types: Ruff + mypy** also runs `mypy` locally, which is not part of the default Actions lint workflow.
