@@ -176,7 +176,7 @@ def test_provider_stats(sample_data):
     assert 'Viasat' in provider_stats
     
     # Each provider should have count and avg_score
-    for provider, stats in provider_stats.items():
+    for _provider, stats in provider_stats.items():
         assert 'count' in stats
         assert 'avg_score' in stats
         assert stats['count'] > 0
@@ -239,7 +239,7 @@ def test_cluster_stats(sample_data):
     assert len(cluster_stats) == 2
     
     # Each cluster should have required fields
-    for cluster_id, stats in cluster_stats.items():
+    for _cluster_id, stats in cluster_stats.items():
         assert 'count' in stats
         assert 'centroid' in stats
         assert 'avg_metrics' in stats

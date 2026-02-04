@@ -42,7 +42,7 @@ class MockSpeedtestSource(DataSource):
         lat_range = (30.0, 48.0)   # Southern to Northern US (excluding Alaska)
         lon_range = (-120.0, -75.0)  # Western to Eastern US
         
-        for i in range(self.num_samples):
+        for _i in range(self.num_samples):
             # Generate random location
             lat = random.uniform(*lat_range)
             lon = random.uniform(*lon_range)

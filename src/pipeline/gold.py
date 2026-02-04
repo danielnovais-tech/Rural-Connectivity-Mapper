@@ -164,7 +164,7 @@ class GoldLayer:
                 agg['confidence_sum'] += m.confidence_score
         
         # Calculate averages
-        for source, agg in source_aggregates.items():
+        for _source, agg in source_aggregates.items():
             agg['avg_confidence'] = round(
                 agg['confidence_sum'] / agg['count'], 2
             ) if agg['count'] > 0 else 0.0

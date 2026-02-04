@@ -1,13 +1,13 @@
 """Canonical schema for connectivity measurements."""
 
 from datetime import datetime
-from enum import Enum
+from enum import StrEnum
 from typing import Any
 
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 
 
-class SourceType(str, Enum):
+class SourceType(StrEnum):
     """Enumeration of data source types."""
     
     CROWDSOURCE = "crowdsource"
@@ -19,7 +19,7 @@ class SourceType(str, Enum):
     OTHER = "other"
 
 
-class TechnologyType(str, Enum):
+class TechnologyType(StrEnum):
     """Enumeration of connectivity technology types."""
     
     FIBER = "fiber"

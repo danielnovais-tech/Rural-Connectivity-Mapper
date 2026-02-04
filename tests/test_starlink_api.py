@@ -330,7 +330,7 @@ class TestEdgeCases:
         assert "recommendation" in result
 
         # Each provider should have consistent fields
-        for provider_name, provider_data in result["providers"].items():
+        for _provider_name, provider_data in result["providers"].items():
             assert "available" in provider_data
             assert "download_mbps" in provider_data
             assert "upload_mbps" in provider_data
