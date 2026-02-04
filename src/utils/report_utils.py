@@ -8,7 +8,7 @@ from datetime import datetime
 from pathlib import Path
 
 try:
-    from colorama import Fore, Style, init
+    from colorama import Fore, init
     init(autoreset=True)
     COLORAMA_AVAILABLE = True
 except ImportError:
@@ -253,16 +253,6 @@ def _generate_txt_report(data: list[dict], output_path: str | None = None, langu
                 lines.append(f"  {get_translation('upload', language)}: {st.get('upload', 'N/A')} {get_translation('mbps', language)}")
                 lines.append(f"  {get_translation('latency', language)}: {st.get('latency', 'N/A')} {get_translation('ms', language)}")
                 lines.append(f"  {get_translation('stability', language)}: {st.get('stability', 'N/A')}/100")
-                lines.append("\nSpeed Test:")
-                lines.append(f"  Download: {st.get('download', 'N/A')} Mbps")
-                lines.append(f"  Upload: {st.get('upload', 'N/A')} Mbps")
-                lines.append(f"  Latency: {st.get('latency', 'N/A')} ms")
-                lines.append(f"  Jitter: {st.get('jitter', 'N/A')} ms")
-                lines.append(f"  Packet Loss: {st.get('packet_loss', 'N/A')}%")
-                obstruction = st.get('obstruction', 0.0)
-                if obstruction > 0:
-                    lines.append(f"  Obstruction: {obstruction}% (satellite)")
-                lines.append(f"  Stability: {st.get('stability', 'N/A')}/100")
 
             
             if 'quality_score' in point:

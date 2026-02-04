@@ -56,7 +56,6 @@ from src.utils.anatel_utils import (
     get_anatel_provider_stats,
 )
 from src.utils.country_config import get_country_config, get_latam_summary, get_supported_countries
-from src.utils.data_utils import load_data, save_data
 from src.utils.ibge_utils import (
     get_ibge_statistics_summary,
     get_rural_areas_needing_connectivity,
