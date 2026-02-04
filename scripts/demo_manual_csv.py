@@ -7,9 +7,9 @@ This script demonstrates the manual CSV pipeline workflow:
 3. Integrate into the bronze/silver/gold pipeline
 """
 
+import shutil
 import sys
 from pathlib import Path
-import shutil
 
 # Add src to path
 sys.path.insert(0, str(Path(__file__).parent.parent))
@@ -26,14 +26,14 @@ def main():
     print()
     print("This demo shows how to process manually downloaded CSV files.")
     print()
-    
+
     # Set up paths
     manual_dir = Path("data/bronze/manual")
     sample_csv = Path("examples/anatel_sample_manual.csv")
-    
+
     # Ensure manual directory exists
     manual_dir.mkdir(parents=True, exist_ok=True)
-    
+
     # Check if sample CSV exists and copy it to manual directory if not already there
     target_csv = manual_dir / "anatel_sample_manual.csv"
     if sample_csv.exists():
@@ -43,32 +43,29 @@ def main():
             print(f"   ✓ {target_csv.name} ready for processing")
         else:
             print(f"📂 Sample CSV already in {manual_dir}/")
-            print(f"   Note: File has been processed before (will be skipped)")
+            print("   Note: File has been processed before (will be skipped)")
     else:
         print(f"⚠️  Sample CSV not found: {sample_csv}")
         print(f"   Please place CSV files in {manual_dir}/ manually")
-    
+
     print()
     print("-" * 70)
     print()
-    
+
     # Initialize manual CSV source
     print("🔍 Initializing Manual CSV Source...")
-    manual_source = ManualCSVSource(
-        watch_dir=manual_dir,
-        source_name="anatel_manual"
-    )
+    manual_source = ManualCSVSource(watch_dir=manual_dir, source_name="anatel_manual")
     print(f"   ✓ Watching directory: {manual_dir}")
     print()
-    
+
     # Initialize pipeline
     print("🚀 Running pipeline with Manual CSV source...")
     pipeline = PipelineOrchestrator()
-    
+
     # Run pipeline with manual source
     sources = [manual_source]
     pipeline.run(sources)
-    
+
     print()
     print("=" * 70)
     print("✅ DEMO COMPLETE")

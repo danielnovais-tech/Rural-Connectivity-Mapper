@@ -23,21 +23,20 @@ import time
 from dataclasses import dataclass
 from datetime import datetime, timedelta
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Tuple, TypedDict
-
+from typing import Any, TypedDict
 from unittest.mock import Mock, patch
-
 
 _REPO_ROOT = Path(__file__).resolve().parents[2]
 if str(_REPO_ROOT) not in sys.path:
     sys.path.insert(0, str(_REPO_ROOT))
 os.chdir(_REPO_ROOT)
 
-from src.utils.analysis_utils import analyze_temporal_evolution
-from src.utils.export_utils import export_ecosystem_bundle
-from src.utils.report_utils import generate_report
-from src.utils.geocoding_utils import geocode_coordinates, geocode_address
-from geopy.exc import GeocoderTimedOut, GeocoderQuotaExceeded, GeocoderUnavailable
+from geopy.exc import GeocoderQuotaExceeded, GeocoderTimedOut, GeocoderUnavailable  # noqa: E402
+
+from src.utils.analysis_utils import analyze_temporal_evolution  # noqa: E402
+from src.utils.export_utils import export_ecosystem_bundle  # noqa: E402
+from src.utils.geocoding_utils import geocode_address, geocode_coordinates  # noqa: E402
+from src.utils.report_utils import generate_report  # noqa: E402
 
 
 @dataclass
@@ -54,14 +53,14 @@ def generate_synthetic_points(
     *,
     count: int,
     seed: int,
-    providers: List[str],
-    country_center: Tuple[float, float] = (-15.78, -47.93),
-) -> List[Dict[str, Any]]:
+    providers: list[str],
+    country_center: tuple[float, float] = (-15.78, -47.93),
+) -> list[dict[str, Any]]:
     rng = random.Random(seed)
     base_time = datetime(2026, 1, 1, 0, 0, 0)
 
     center_lat, center_lon = country_center
-    points: List[Dict[str, Any]] = []
+    points: list[dict[str, Any]] = []
 
     for i in range(count):
         provider = providers[i % len(providers)]
@@ -102,7 +101,13 @@ def generate_synthetic_points(
                 },
                 "quality_score": {
                     "overall_score": overall,
-                    "rating": "Excellent" if overall >= 80 else "Good" if overall >= 65 else "Fair" if overall >= 50 else "Poor",
+                    "rating": "Excellent"
+                    if overall >= 80
+                    else "Good"
+                    if overall >= 65
+                    else "Fair"
+                    if overall >= 50
+                    else "Poor",
                 },
             }
         )
@@ -229,9 +234,9 @@ def stress_geocoding(
     }
 
     # Avoid the built-in 1 req/sec limiter during stress runs.
-    with patch('src.utils.geocoding_utils._wait_for_rate_limit', lambda: None):
-        with patch('src.utils.geocoding_utils.geolocator.reverse', side_effect=flaky.reverse):
-            with patch('src.utils.geocoding_utils.geolocator.geocode', side_effect=flaky.geocode):
+    with patch("src.utils.geocoding_utils._wait_for_rate_limit", lambda: None):
+        with patch("src.utils.geocoding_utils.geolocator.reverse", side_effect=flaky.reverse):
+            with patch("src.utils.geocoding_utils.geolocator.geocode", side_effect=flaky.geocode):
                 start = time.perf_counter()
                 for i in range(geocode_samples):
                     # Alternate reverse + forward
@@ -277,7 +282,7 @@ def main() -> int:
 
     providers = ["Starlink", "Claro", "Viasat", "HughesNet"]
 
-    timings: List[Timing] = []
+    timings: list[Timing] = []
 
     data, t = _timed(
         "generate_data",

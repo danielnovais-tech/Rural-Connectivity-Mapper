@@ -263,7 +263,9 @@ def _render() -> str:
             sections.append(f"- {label}\n")
         sections.append("\n")
     else:
-        sections.append(f"- Could not parse tasks.json / Não foi possível ler tasks.json: {_link(REPO_ROOT / '.vscode' / 'tasks.json')}\n")
+        sections.append(
+            f"- Could not parse tasks.json / Não foi possível ler tasks.json: {_link(REPO_ROOT / '.vscode' / 'tasks.json')}\n"
+        )
 
     if launch_json and isinstance(launch_json.get("configurations"), list):
         names = [c.get("name") for c in launch_json["configurations"] if isinstance(c, dict)]

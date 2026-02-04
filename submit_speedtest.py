@@ -19,6 +19,7 @@ from src.utils import load_data, save_data, validate_coordinates
 # Try to import optional speedtest module
 try:
     import speedtest
+
     SPEEDTEST_AVAILABLE = True
 except ImportError:
     SPEEDTEST_AVAILABLE = False
@@ -29,10 +30,11 @@ def get_location():
     """Try to get user's location using IP geolocation."""
     try:
         import requests
-        response = requests.get('http://ip-api.com/json/', timeout=30, verify=False)
+
+        response = requests.get("http://ip-api.com/json/", timeout=30, verify=False)
         if response.ok:
             data = response.json()
-            return data.get('lat'), data.get('lon'), data.get('city', 'Unknown')
+            return data.get("lat"), data.get("lon"), data.get("city", "Unknown")
     except Exception:
         pass
     return None, None, None
@@ -57,13 +59,9 @@ def run_speedtest() -> dict[str, float] | None:
         upload: float = float(st.upload()) / 1_000_000  # type: ignore[reportUnknownMemberType]  # Convert to Mbps
 
         print("📡 Measuring latency...")
-        latency: float = float(getattr(st.results, 'ping', 0))  # type: ignore[reportUnknownMemberType]
+        latency: float = float(getattr(st.results, "ping", 0))  # type: ignore[reportUnknownMemberType]
 
-        return {
-            'download': round(download, 2),
-            'upload': round(upload, 2),
-            'latency': round(latency, 2)
-        }
+        return {"download": round(download, 2), "upload": round(upload, 2), "latency": round(latency, 2)}
     except (speedtest.SpeedtestException, OSError, ValueError) as e:  # type: ignore[union-attr]
         print(f"❌ Error running speedtest: {e}")
         return None
@@ -78,7 +76,7 @@ def get_interactive_location() -> tuple[float, float]:
         print(f"   Latitude: {auto_lat}, Longitude: {auto_lon}")
         use_auto = input("\nUse this location? (y/n) [y]: ").strip().lower()
 
-        if use_auto in ('', 'y', 'yes'):
+        if use_auto in ("", "y", "yes"):
             return auto_lat, auto_lon
 
     print("Enter your location (use Google Maps to find coordinates):")
@@ -90,7 +88,7 @@ def get_interactive_location() -> tuple[float, float]:
 def get_interactive_provider() -> str:
     """Get provider selection from user."""
     print("\nInternet Provider Options:")
-    providers = ['Starlink', 'Viasat', 'HughesNet', 'Claro', 'Vivo', 'TIM', 'Oi', 'Other']
+    providers = ["Starlink", "Viasat", "HughesNet", "Claro", "Vivo", "TIM", "Oi", "Other"]
     for i, p in enumerate(providers, 1):
         print(f"  {i}. {p}")
 
@@ -98,7 +96,7 @@ def get_interactive_provider() -> str:
 
     if provider_choice.isdigit() and 1 <= int(provider_choice) <= len(providers):
         return providers[int(provider_choice) - 1]
-    return provider_choice if provider_choice else 'Unknown'
+    return provider_choice if provider_choice else "Unknown"
 
 
 def get_manual_speedtest_data() -> tuple[float, float, float, float, float]:
@@ -125,18 +123,25 @@ def get_interactive_speedtest_data() -> tuple[float, float, float, float, float]
 
     choice = input("\nChoice (1/2) [2]: ").strip()
 
-    if choice == '1' and SPEEDTEST_AVAILABLE:
+    if choice == "1" and SPEEDTEST_AVAILABLE:
         results = run_speedtest()
         if results:
-            return results['download'], results['upload'], results['latency'], 0.0, 0.0
+            return results["download"], results["upload"], results["latency"], 0.0, 0.0
         print("Falling back to manual entry...")
 
     return get_manual_speedtest_data()
 
 
-def confirm_submission(latitude: float, longitude: float, provider: str,
-                      download: float, upload: float, latency: float,
-                      jitter: float, packet_loss: float) -> bool:
+def confirm_submission(
+    latitude: float,
+    longitude: float,
+    provider: str,
+    download: float,
+    upload: float,
+    latency: float,
+    jitter: float,
+    packet_loss: float,
+) -> bool:
     """Display submission details and get user confirmation."""
     print("\n" + "=" * 70)
     print("📋 Review Your Submission:")
@@ -151,27 +156,28 @@ def confirm_submission(latitude: float, longitude: float, provider: str,
     print("=" * 70 + "\n")
 
     confirm = input("Submit this data? (y/n) [y]: ").strip().lower()
-    return confirm in ('', 'y', 'yes')
+    return confirm in ("", "y", "yes")
 
 
-def save_connectivity_point(latitude: float, longitude: float, provider: str,
-                            download: float, upload: float, latency: float,
-                            jitter: float, packet_loss: float) -> ConnectivityPoint:
+def save_connectivity_point(
+    latitude: float,
+    longitude: float,
+    provider: str,
+    download: float,
+    upload: float,
+    latency: float,
+    jitter: float,
+    packet_loss: float,
+) -> ConnectivityPoint:
     """Create and save a connectivity point to the data file."""
-    speed_test = SpeedTest(
-        download=download,
-        upload=upload,
-        latency=latency,
-        jitter=jitter,
-        packet_loss=packet_loss
-    )
+    speed_test = SpeedTest(download=download, upload=upload, latency=latency, jitter=jitter, packet_loss=packet_loss)
 
     point = ConnectivityPoint(
         latitude=latitude,
         longitude=longitude,
         provider=provider,
         speed_test=speed_test,
-        timestamp=datetime.now().isoformat()
+        timestamp=datetime.now().isoformat(),
     )
 
     existing_data = cast(list[dict[str, object]], load_data(DATA_FILE_PATH))
@@ -232,12 +238,12 @@ def handle_speedtest_data(args: argparse.Namespace) -> tuple[float, float, float
             sys.exit(1)
 
         return (
-            results['download'],
-            results['upload'],
-            results['latency'],
+            results["download"],
+            results["upload"],
+            results["latency"],
             float(args.jitter) if args.jitter is not None else 0.0,
             float(args.packet_loss) if args.packet_loss is not None else 0.0,
-            str(args.provider) if args.provider else 'Unknown'
+            str(args.provider) if args.provider else "Unknown",
         )
 
     return (
@@ -246,14 +252,14 @@ def handle_speedtest_data(args: argparse.Namespace) -> tuple[float, float, float
         float(args.latency),
         float(args.jitter) if args.jitter is not None else 0.0,
         float(args.packet_loss) if args.packet_loss is not None else 0.0,
-        str(args.provider) if args.provider else 'Unknown'
+        str(args.provider) if args.provider else "Unknown",
     )
 
 
 def main():
     """Main entry point for the submission script."""
     parser = argparse.ArgumentParser(
-        description='Submit speedtest data to Rural Connectivity Mapper',
+        description="Submit speedtest data to Rural Connectivity Mapper",
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""
 Examples:
@@ -266,62 +272,27 @@ Examples:
 
   # Run actual speedtest
   python submit_speedtest.py --auto-speedtest -p Starlink
-        """
+        """,
     )
 
-    parser.add_argument(
-        '-lat', '--latitude',
-        type=float,
-        help='Latitude coordinate'
-    )
+    parser.add_argument("-lat", "--latitude", type=float, help="Latitude coordinate")
+
+    parser.add_argument("-lon", "--longitude", type=float, help="Longitude coordinate")
+
+    parser.add_argument("-p", "--provider", help="Internet service provider name")
+
+    parser.add_argument("-d", "--download", type=float, help="Download speed in Mbps")
+
+    parser.add_argument("-u", "--upload", type=float, help="Upload speed in Mbps")
+
+    parser.add_argument("-l", "--latency", type=float, help="Latency in milliseconds")
+
+    parser.add_argument("-j", "--jitter", type=float, default=0.0, help="Jitter in milliseconds (default: 0)")
+
+    parser.add_argument("--packet-loss", type=float, default=0.0, help="Packet loss percentage (default: 0)")
 
     parser.add_argument(
-        '-lon', '--longitude',
-        type=float,
-        help='Longitude coordinate'
-    )
-
-    parser.add_argument(
-        '-p', '--provider',
-        help='Internet service provider name'
-    )
-
-    parser.add_argument(
-        '-d', '--download',
-        type=float,
-        help='Download speed in Mbps'
-    )
-
-    parser.add_argument(
-        '-u', '--upload',
-        type=float,
-        help='Upload speed in Mbps'
-    )
-
-    parser.add_argument(
-        '-l', '--latency',
-        type=float,
-        help='Latency in milliseconds'
-    )
-
-    parser.add_argument(
-        '-j', '--jitter',
-        type=float,
-        default=0.0,
-        help='Jitter in milliseconds (default: 0)'
-    )
-
-    parser.add_argument(
-        '--packet-loss',
-        type=float,
-        default=0.0,
-        help='Packet loss percentage (default: 0)'
-    )
-
-    parser.add_argument(
-        '--auto-speedtest',
-        action='store_true',
-        help='Run automatic speedtest (requires speedtest-cli)'
+        "--auto-speedtest", action="store_true", help="Run automatic speedtest (requires speedtest-cli)"
     )
 
     args = parser.parse_args()
@@ -333,7 +304,7 @@ Examples:
 
     # Validate required arguments if not using auto speedtest
     if not args.auto_speedtest:
-        required = ['latitude', 'longitude', 'provider', 'download', 'upload', 'latency']
+        required = ["latitude", "longitude", "provider", "download", "upload", "latency"]
         missing = [r for r in required if getattr(args, r) is None]
 
         if missing:
@@ -352,20 +323,14 @@ Examples:
     download, upload, latency, jitter, packet_loss, provider = handle_speedtest_data(args)
 
     # Create and save point
-    speed_test = SpeedTest(
-        download=download,
-        upload=upload,
-        latency=latency,
-        jitter=jitter,
-        packet_loss=packet_loss
-    )
+    speed_test = SpeedTest(download=download, upload=upload, latency=latency, jitter=jitter, packet_loss=packet_loss)
 
     point = ConnectivityPoint(
         latitude=latitude,
         longitude=longitude,
         provider=provider,
         speed_test=speed_test,
-        timestamp=datetime.now().isoformat()
+        timestamp=datetime.now().isoformat(),
     )
 
     # Save to data file
@@ -378,5 +343,5 @@ Examples:
     print(f"   Quality Score: {point.quality_score.overall_score:.1f}/100 ({point.quality_score.rating})\n")
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

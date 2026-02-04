@@ -67,7 +67,9 @@ def main(argv: list[str] | None = None) -> int:
 
     _ensure_runtime_data_dir()
 
-    parser = argparse.ArgumentParser(prog="rural-mapper", description="Rural Connectivity Mapper (Windows EXE launcher)")
+    parser = argparse.ArgumentParser(
+        prog="rural-mapper", description="Rural Connectivity Mapper (Windows EXE launcher)"
+    )
     sub = parser.add_subparsers(dest="cmd", required=True)
 
     p_cli = sub.add_parser("cli", help="Run main CLI (main.py)")

@@ -5,7 +5,7 @@ from .SpeedTest import SpeedTest
 
 class QualityScore:
     """Represents the quality score of a connectivity point.
-    
+
     Attributes:
         overall_score (float): Overall quality score (0-100)
         speed_score (float): Speed component score (0-100)
@@ -21,16 +21,10 @@ class QualityScore:
 
     # Starlink 2026 target metrics
     TARGET_DOWNLOAD = 200.0  # Mbps
-    TARGET_UPLOAD = 20.0     # Mbps
-    TARGET_LATENCY = 20.0    # ms (lower is better)
+    TARGET_UPLOAD = 20.0  # Mbps
+    TARGET_LATENCY = 20.0  # ms (lower is better)
 
-    def __init__(
-        self,
-        overall_score: float,
-        speed_score: float,
-        latency_score: float,
-        stability_score: float
-    ):
+    def __init__(self, overall_score: float, speed_score: float, latency_score: float, stability_score: float):
         """Initialize QualityScore instance.
 
         Args:
@@ -46,7 +40,7 @@ class QualityScore:
         self.rating = self.get_rating()
 
     @classmethod
-    def calculate(cls, speed_test: SpeedTest) -> 'QualityScore':
+    def calculate(cls, speed_test: SpeedTest) -> "QualityScore":
         """Calculate quality score from speed test results.
 
         Args:
@@ -74,16 +68,14 @@ class QualityScore:
 
         # Calculate overall weighted score
         overall_score = (
-            speed_score * cls.SPEED_WEIGHT
-            + latency_score * cls.LATENCY_WEIGHT
-            + stability_score * cls.STABILITY_WEIGHT
+            speed_score * cls.SPEED_WEIGHT + latency_score * cls.LATENCY_WEIGHT + stability_score * cls.STABILITY_WEIGHT
         )
 
         return cls(
             overall_score=round(overall_score, 2),
             speed_score=round(speed_score, 2),
             latency_score=round(latency_score, 2),
-            stability_score=round(stability_score, 2)
+            stability_score=round(stability_score, 2),
         )
 
     def get_rating(self) -> str:
@@ -108,11 +100,11 @@ class QualityScore:
             Dict: Dictionary containing all quality metrics
         """
         return {
-            'overall_score': self.overall_score,
-            'speed_score': self.speed_score,
-            'latency_score': self.latency_score,
-            'stability_score': self.stability_score,
-            'rating': self.rating
+            "overall_score": self.overall_score,
+            "speed_score": self.speed_score,
+            "latency_score": self.latency_score,
+            "stability_score": self.stability_score,
+            "rating": self.rating,
         }
 
     def __repr__(self) -> str:
@@ -121,7 +113,4 @@ class QualityScore:
         Returns:
             str: Formatted string representation
         """
-        return (
-            f"QualityScore(overall={self.overall_score:.1f}, "
-            f"rating={self.rating})"
-        )
+        return f"QualityScore(overall={self.overall_score:.1f}, rating={self.rating})"

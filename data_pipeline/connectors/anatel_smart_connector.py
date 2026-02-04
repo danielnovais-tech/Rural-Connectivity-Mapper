@@ -2,6 +2,7 @@
 Conector Inteligente para Dados da ANATEL.
 Utiliza o inventário de bases de dados para identificar, priorizar e processar datasets.
 """
+
 import io
 import json
 import logging
@@ -16,7 +17,7 @@ import pandas as pd
 import requests
 
 # Adicionar diretório raiz ao path para importações
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '../..')))
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "../..")))
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -29,22 +30,27 @@ class AnatelSmartConnector:
 
     # Categorias e prioridades baseadas na análise do inventário
     DATASET_CATEGORIES = {
-        'infraestrutura_alta': {
-            'keywords': ['cobertura', 'backhaul', 'estações', 'estacoes', 'satélites',
-                        'satelites', 'escolas rurais', 'população coberta', 'rural'],
-            'priority': 1,
-            'description': 'Dados de infraestrutura física e cobertura geográfica'
+        "infraestrutura_alta": {
+            "keywords": [
+                "cobertura",
+                "backhaul",
+                "estações",
+                "estacoes",
+                "satélites",
+                "satelites",
+                "escolas rurais",
+                "população coberta",
+                "rural",
+            ],
+            "priority": 1,
+            "description": "Dados de infraestrutura física e cobertura geográfica",
         },
-        'infraestrutura_media': {
-            'keywords': ['acessos', 'velocidade', 'qualidade', 'município'],
-            'priority': 2,
-            'description': 'Dados de acessos e qualidade de serviço'
+        "infraestrutura_media": {
+            "keywords": ["acessos", "velocidade", "qualidade", "município"],
+            "priority": 2,
+            "description": "Dados de acessos e qualidade de serviço",
         },
-        'outros': {
-            'keywords': [],
-            'priority': 3,
-            'description': 'Outros datasets (arrecadação, reclamações, etc.)'
-        }
+        "outros": {"keywords": [], "priority": 3, "description": "Outros datasets (arrecadação, reclamações, etc.)"},
     }
 
     def __init__(self, inventory_path: Path | None = None):
@@ -68,18 +74,16 @@ class AnatelSmartConnector:
         """Carrega e analisa o inventário de bases de dados."""
         try:
             # O inventário usa ponto e vírgula como separador
-            self.inventory = pd.read_csv(self.inventory_path, sep=';', encoding='utf-8')
+            self.inventory = pd.read_csv(self.inventory_path, sep=";", encoding="utf-8")
             logger.info(f"Inventário carregado: {len(self.inventory)} datasets")
 
             # Classificar cada dataset por categoria
-            self.inventory['categoria'] = self.inventory['Descrição da Base de Dados'].apply(
-                self._classify_dataset
-            )
+            self.inventory["categoria"] = self.inventory["Descrição da Base de Dados"].apply(self._classify_dataset)
 
             # Ordenar por prioridade
-            category_priority = {cat: config['priority'] for cat, config in self.DATASET_CATEGORIES.items()}
-            self.inventory['prioridade'] = self.inventory['categoria'].map(category_priority)
-            self.inventory = self.inventory.sort_values('prioridade')
+            category_priority = {cat: config["priority"] for cat, config in self.DATASET_CATEGORIES.items()}
+            self.inventory["prioridade"] = self.inventory["categoria"].map(category_priority)
+            self.inventory = self.inventory.sort_values("prioridade")
 
         except Exception as e:
             logger.error(f"Erro ao carregar inventário: {e}")
@@ -88,20 +92,20 @@ class AnatelSmartConnector:
     def _classify_dataset(self, description: object) -> str:
         """Classifica um dataset com base na descrição."""
         if not isinstance(description, str):
-            return 'outros'
+            return "outros"
 
         desc_lower = description.strip().lower()
         if not desc_lower:
-            return 'outros'
+            return "outros"
 
         for category, config in self.DATASET_CATEGORIES.items():
-            if category == 'outros':
+            if category == "outros":
                 continue
-            for keyword in config['keywords']:
+            for keyword in config["keywords"]:
                 if keyword in desc_lower:
                     return category
 
-        return 'outros'
+        return "outros"
 
     def show_priority_datasets(self, limit: int = 15):
         """Exibe os datasets de maior prioridade para o usuário."""
@@ -109,38 +113,40 @@ class AnatelSmartConnector:
             logger.warning("Inventário não carregado.")
             return
 
-        print("\n" + "="*80)
+        print("\n" + "=" * 80)
         print("🎯 DATASETS DE ALTA PRIORIDADE PARA MAPEAMENTO DE CONECTIVIDADE RURAL")
-        print("="*80)
+        print("=" * 80)
 
-        high_priority = self.inventory[self.inventory['categoria'] == 'infraestrutura_alta']
+        high_priority = self.inventory[self.inventory["categoria"] == "infraestrutura_alta"]
 
         for _idx, row in high_priority.head(limit).iterrows():
             print(f"\n#{row['Item']} {row['Nome da Base de Dados']}")
             print(f"   Descrição: {row['Descrição da Base de Dados'][:100]}...")
-            link_display = row['Link dados.gov.br'] if pd.notna(row['Link dados.gov.br']) else 'N/A'
+            link_display = row["Link dados.gov.br"] if pd.notna(row["Link dados.gov.br"]) else "N/A"
             print(f"   Disponível em: {link_display}")
             print(f"   Periodicidade: {row['Periodicidade de Atualização']}")
             print(f"   Categoria: {row['categoria'].upper()}")
 
         print(f"\n📊 Total de datasets de infraestrutura (alta prioridade): {len(high_priority)}")
-        print("="*80)
+        print("=" * 80)
 
     def generate_download_guide(self):
         """Gera um guia passo a passo para download dos datasets prioritários."""
         if self.inventory is None:
             return
 
-        high_priority = self.inventory[self.inventory['categoria'] == 'infraestrutura_alta']
+        high_priority = self.inventory[self.inventory["categoria"] == "infraestrutura_alta"]
 
         # Prefer a repo-relative display path (portable across machines).
         try:
-            manual_dir_display = self.manual_dir.resolve().relative_to(Path.cwd().resolve()).as_posix().rstrip('/') + '/'
+            manual_dir_display = (
+                self.manual_dir.resolve().relative_to(Path.cwd().resolve()).as_posix().rstrip("/") + "/"
+            )
         except Exception:
             manual_dir_display = "data/manual/"
 
         guide_path = self.manual_dir / "GUIA_DOWNLOAD_ANATEL.md"
-        with open(guide_path, 'w', encoding='utf-8') as f:
+        with open(guide_path, "w", encoding="utf-8") as f:
             f.write("# Guia para Download de Datasets Prioritários da ANATEL\n\n")
             f.write("**Gerado automaticamente em:** " + datetime.now().strftime("%Y-%m-%d %H:%M:%S") + "\n\n")
             f.write("## 🎯 Datasets Mais Importantes para Conectividade Rural\n\n")
@@ -151,18 +157,24 @@ class AnatelSmartConnector:
                 f.write("- **Prioridade:** ALTA (Infraestrutura física)\n")
                 f.write(f"- **Atualização:** {row['Periodicidade de Atualização']}\n")
 
-                if pd.notna(row['Link dados.gov.br']):
+                if pd.notna(row["Link dados.gov.br"]):
                     f.write(f"- **Link direto:** [{row['Link dados.gov.br']}]({row['Link dados.gov.br']})\n")
-                    f.write("- **Instruções:** Acesse o link acima, procure pela opção de download "
-                            "(geralmente CSV ou ZIP)\n")
-                elif pd.notna(row['Link Painéis de Dados da Anatel']):
+                    f.write(
+                        "- **Instruções:** Acesse o link acima, procure pela opção de download "
+                        "(geralmente CSV ou ZIP)\n"
+                    )
+                elif pd.notna(row["Link Painéis de Dados da Anatel"]):
                     f.write(f"- **Painel da ANATEL:** {row['Link Painéis de Dados da Anatel']}\n")
-                    f.write("- **Instruções:** Acesse o painel acima, procure pela opção de download "
-                            "(geralmente CSV ou ZIP)\n")
+                    f.write(
+                        "- **Instruções:** Acesse o painel acima, procure pela opção de download "
+                        "(geralmente CSV ou ZIP)\n"
+                    )
                 else:
-                    f.write("- **Instruções:** Dataset sem link direto. Verifique o site da ANATEL ou use fontes alternativas.\n")
+                    f.write(
+                        "- **Instruções:** Dataset sem link direto. Verifique o site da ANATEL ou use fontes alternativas.\n"
+                    )
 
-                dataset_name = row['Nome da Base de Dados'].replace(' ', '_').replace('/', '_')
+                dataset_name = row["Nome da Base de Dados"].replace(" ", "_").replace("/", "_")
                 f.write(f"- **Salve como:** `{dataset_name}_{{DATA}}.csv`\n")
                 f.write(f"- **Coloque em:** `{manual_dir_display}`\n\n")
 
@@ -196,9 +208,9 @@ class AnatelSmartConnector:
             response.raise_for_status()
 
             # Determinar tipo de arquivo pela URL ou headers
-            content_type = response.headers.get('content-type', '')
+            content_type = response.headers.get("content-type", "")
             parsed_url = urlparse(dataset_url)
-            filename = parsed_url.path.split('/')[-1]
+            filename = parsed_url.path.split("/")[-1]
 
             if not filename:
                 filename = f"{dataset_name.replace(' ', '_')}_{datetime.now().strftime('%Y%m%d')}"
@@ -206,7 +218,7 @@ class AnatelSmartConnector:
             output_path = self.manual_dir / filename
 
             # Se for ZIP, extrair
-            if 'zip' in content_type or filename.endswith('.zip'):
+            if "zip" in content_type or filename.endswith(".zip"):
                 with zipfile.ZipFile(io.BytesIO(response.content)) as zip_ref:
                     # Extrair todos os arquivos
                     zip_ref.extractall(self.manual_dir)
@@ -215,7 +227,7 @@ class AnatelSmartConnector:
                     return self.manual_dir / extracted_files[0] if extracted_files else None
             else:
                 # Outros arquivos (CSV, JSON, etc.)
-                with open(output_path, 'wb') as f:
+                with open(output_path, "wb") as f:
                     f.write(response.content)
                 logger.info(f"Download concluído: {output_path}")
                 return output_path
@@ -239,55 +251,56 @@ class AnatelSmartConnector:
     def _generate_consolidated_report(self, processing_results: list[dict]):
         """Gera um relatório consolidado do processamento."""
         report = {
-            'metadata': {
-                'data_execucao': datetime.now().isoformat(),
-                'inventario_utilizado': self.inventory_path.name if self.inventory is not None else None,
-                'total_datasets_inventario': len(self.inventory) if self.inventory is not None else 0
+            "metadata": {
+                "data_execucao": datetime.now().isoformat(),
+                "inventario_utilizado": self.inventory_path.name if self.inventory is not None else None,
+                "total_datasets_inventario": len(self.inventory) if self.inventory is not None else 0,
             },
-            'processamento': {
-                'total_arquivos_processados': len(processing_results),
-                'sucessos': sum(1 for r in processing_results if r.get('status') == 'success'),
-                'erros': sum(1 for r in processing_results if r.get('status') == 'error')
+            "processamento": {
+                "total_arquivos_processados": len(processing_results),
+                "sucessos": sum(1 for r in processing_results if r.get("status") == "success"),
+                "erros": sum(1 for r in processing_results if r.get("status") == "error"),
             },
-            'datasets_prioritarios_disponiveis': []
+            "datasets_prioritarios_disponiveis": [],
         }
 
         # Listar datasets prioritários disponíveis no inventário
         if self.inventory is not None:
-            high_priority = self.inventory[self.inventory['categoria'] == 'infraestrutura_alta']
+            high_priority = self.inventory[self.inventory["categoria"] == "infraestrutura_alta"]
             # Convert to dict and replace NaN with None
-            datasets_dict = high_priority[['Item', 'Nome da Base de Dados', 'Link dados.gov.br']].to_dict('records')
+            datasets_dict = high_priority[["Item", "Nome da Base de Dados", "Link dados.gov.br"]].to_dict("records")
             # Replace NaN values with None
             for dataset in datasets_dict:
                 for key, value in dataset.items():
                     if pd.isna(value):
                         dataset[key] = None
-            report['datasets_prioritarios_disponiveis'] = datasets_dict
+            report["datasets_prioritarios_disponiveis"] = datasets_dict
 
         report_path = self.output_dir / f"relatorio_consolidado_{datetime.now().strftime('%Y%m%d_%H%M')}.json"
-        with open(report_path, 'w', encoding='utf-8') as f:
+        with open(report_path, "w", encoding="utf-8") as f:
             json.dump(report, f, ensure_ascii=False, indent=2)
 
         logger.info(f"📊 Relatório consolidado gerado: {report_path}")
 
         # Também gerar uma versão em texto simples para leitura rápida
         txt_report = self.output_dir / f"resumo_processamento_{datetime.now().strftime('%Y%m%d')}.txt"
-        with open(txt_report, 'w', encoding='utf-8') as f:
+        with open(txt_report, "w", encoding="utf-8") as f:
             f.write("RESUMO DO PROCESSAMENTO ANATEL\n")
-            f.write("="*50 + "\n")
+            f.write("=" * 50 + "\n")
             f.write(f"Data: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n")
             f.write(f"Arquivos processados: {report['processamento']['total_arquivos_processados']}\n")
             f.write(f"Sucessos: {report['processamento']['sucessos']}\n")
             f.write(f"Erros: {report['processamento']['erros']}\n\n")
 
-            if report['datasets_prioritarios_disponiveis']:
+            if report["datasets_prioritarios_disponiveis"]:
                 f.write("DATASETS PRIORITÁRIOS DISPONÍVEIS (não baixados):\n")
-                for ds in report['datasets_prioritarios_disponiveis'][:10]:  # Mostrar só os 10 primeiros
+                for ds in report["datasets_prioritarios_disponiveis"][:10]:  # Mostrar só os 10 primeiros
                     f.write(f"  #{ds['Item']} {ds['Nome da Base de Dados']}\n")
-                    if not pd.isna(ds['Link dados.gov.br']):
+                    if not pd.isna(ds["Link dados.gov.br"]):
                         f.write(f"     Link: {ds['Link dados.gov.br']}\n")
 
         return report_path
+
 
 # ----------------------------------------------------
 # INTERFACE DE LINHA DE COMANDO
@@ -295,17 +308,18 @@ class AnatelSmartConnector:
 def main():
     import argparse
 
-    parser = argparse.ArgumentParser(description='Conector Inteligente ANATEL')
-    parser.add_argument('--inventory', default='data/manual/Inventario_de_Bases_de_Dados.csv',
-                       help='Caminho para o arquivo de inventário')
-    parser.add_argument('--show-priority', action='store_true',
-                       help='Mostrar datasets de alta prioridade')
-    parser.add_argument('--generate-guide', action='store_true',
-                       help='Gerar guia de download em Markdown')
-    parser.add_argument('--process', action='store_true',
-                       help='Processar todos os arquivos na pasta manual')
-    parser.add_argument('--download', metavar='ITEM_ID',
-                       help='Tentar download automático de um dataset pelo ID do inventário')
+    parser = argparse.ArgumentParser(description="Conector Inteligente ANATEL")
+    parser.add_argument(
+        "--inventory",
+        default="data/manual/Inventario_de_Bases_de_Dados.csv",
+        help="Caminho para o arquivo de inventário",
+    )
+    parser.add_argument("--show-priority", action="store_true", help="Mostrar datasets de alta prioridade")
+    parser.add_argument("--generate-guide", action="store_true", help="Gerar guia de download em Markdown")
+    parser.add_argument("--process", action="store_true", help="Processar todos os arquivos na pasta manual")
+    parser.add_argument(
+        "--download", metavar="ITEM_ID", help="Tentar download automático de um dataset pelo ID do inventário"
+    )
 
     args = parser.parse_args()
 
@@ -322,10 +336,10 @@ def main():
     if args.download:
         # Buscar o dataset no inventário pelo ID
         if connector.inventory is not None:
-            dataset = connector.inventory[connector.inventory['Item'] == int(args.download)]
+            dataset = connector.inventory[connector.inventory["Item"] == int(args.download)]
             if not dataset.empty:
-                url = dataset.iloc[0]['Link dados.gov.br']
-                name = dataset.iloc[0]['Nome da Base de Dados']
+                url = dataset.iloc[0]["Link dados.gov.br"]
+                name = dataset.iloc[0]["Nome da Base de Dados"]
                 if pd.notna(url):
                     result = connector.auto_download_dataset(url, name)
                     if result:
@@ -338,13 +352,13 @@ def main():
                 print(f"❌ Dataset com ID #{args.download} não encontrado no inventário.")
 
     if args.process:
-        print("\n" + "="*50)
+        print("\n" + "=" * 50)
         print("Iniciando processamento de arquivos manuais...")
-        print("="*50)
+        print("=" * 50)
         results = connector.process_all_manual_files()
 
         if results:
-            success_count = sum(1 for r in results if r.get('status') == 'success')
+            success_count = sum(1 for r in results if r.get("status") == "success")
             print(f"\n🎯 Processamento concluído: {success_count}/{len(results)} arquivos processados!")
             print("   Os dados estão disponíveis em: data/bronze/anatel/")
             print("   Próximo passo: Execute o fusion_engine.py para unificar com outras fontes.")
@@ -352,6 +366,7 @@ def main():
             print("\n⚠️  Nenhum arquivo para processar.")
             print("   Use --generate-guide para criar um guia de download.")
             print("   Baixe os datasets e execute novamente com --process")
+
 
 if __name__ == "__main__":
     main()

@@ -29,11 +29,8 @@ def get_data_dir() -> Path:
 DATA_FILE_PATH = str(get_data_dir() / "pontos.json")
 
 # API Configuration
-DEFAULT_API_HOST = '0.0.0.0'
+DEFAULT_API_HOST = "0.0.0.0"
 DEFAULT_API_PORT = 5000
 
 # Known providers
-KNOWN_PROVIDERS = [
-    'Starlink', 'Viasat', 'HughesNet', 'Claro', 'Vivo', 
-    'TIM', 'Oi', 'Various', 'Unknown', 'Other'
-]
+KNOWN_PROVIDERS = ["Starlink", "Viasat", "HughesNet", "Claro", "Vivo", "TIM", "Oi", "Various", "Unknown", "Other"]
