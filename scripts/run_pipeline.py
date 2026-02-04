@@ -66,11 +66,11 @@ def main():
             MockSpeedtestSource(num_samples=30),
         ]
     )
-    
+
     # Initialize and run pipeline
     pipeline = PipelineOrchestrator()
     pipeline.run(sources)
-    
+
     print("✅ Pipeline execution completed successfully!")
     print("\nYou can now find the processed data in:")
     print("  - Bronze (raw): data/bronze/")

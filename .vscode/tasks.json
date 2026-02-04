@@ -14,7 +14,7 @@
     {
       "label": "Setup: Install deps + quick checks",
       "type": "process",
-      "command": "${command:python.interpreterPath}",
+      "command": ".\\.venv\\Scripts\\python.exe",
       "args": ["scripts/setup_environment.py"],
       "options": {
         "cwd": "${workspaceFolder}"
@@ -22,9 +22,9 @@
       "problemMatcher": []
     },
     {
-      "label": "Pytest (repo)",
+      "label": "Pytest (repo, quick)",
       "type": "process",
-      "command": "${command:python.interpreterPath}",
+      "command": ".\\.venv\\Scripts\\python.exe",
       "args": ["-m", "pytest", "-q", "tests", "--rootdir", "${workspaceFolder}", "-c", "${workspaceFolder}/pytest.ini"],
       "options": {
         "cwd": "${workspaceFolder}"
@@ -39,7 +39,7 @@
     {
       "label": "Pytest (repo, no capture)",
       "type": "process",
-      "command": "${command:python.interpreterPath}",
+      "command": ".\\.venv\\Scripts\\python.exe",
       "args": [
         "-m",
         "pytest",
@@ -64,7 +64,7 @@
     {
       "label": "Pytest (coverage)",
       "type": "process",
-      "command": "${command:python.interpreterPath}",
+      "command": ".\\.venv\\Scripts\\python.exe",
       "args": [
         "-m",
         "pytest",
@@ -107,7 +107,7 @@
     {
       "label": "Ruff (check)",
       "type": "process",
-      "command": "${command:python.interpreterPath}",
+      "command": ".\\.venv\\Scripts\\python.exe",
       "args": ["-m", "ruff", "check", "."],
       "options": {
         "cwd": "${workspaceFolder}"
@@ -122,7 +122,7 @@
     {
       "label": "Ruff (format)",
       "type": "process",
-      "command": "${command:python.interpreterPath}",
+      "command": ".\\.venv\\Scripts\\python.exe",
       "args": ["-m", "ruff", "format", "."],
       "options": {
         "cwd": "${workspaceFolder}"
@@ -137,7 +137,7 @@
     {
       "label": "Lint+Types: Ruff + mypy",
       "type": "process",
-      "command": "${command:python.interpreterPath}",
+      "command": ".\\.venv\\Scripts\\python.exe",
       "args": ["scripts/run_linting.py", "--best-effort"],
       "options": {
         "cwd": "${workspaceFolder}"
@@ -147,7 +147,7 @@
     {
       "label": "Lint+Types (strict): Ruff + mypy",
       "type": "process",
-      "command": "${command:python.interpreterPath}",
+      "command": ".\\.venv\\Scripts\\python.exe",
       "args": ["scripts/run_linting.py"],
       "options": {
         "cwd": "${workspaceFolder}"
@@ -157,7 +157,7 @@
     {
       "label": "Pipeline: Run (default)",
       "type": "process",
-      "command": "${command:python.interpreterPath}",
+      "command": ".\\.venv\\Scripts\\python.exe",
       "args": ["scripts/run_pipeline.py"],
       "options": {
         "cwd": "${workspaceFolder}"
@@ -167,7 +167,7 @@
     {
       "label": "Pipeline: Run (include ANATEL parquet)",
       "type": "process",
-      "command": "${command:python.interpreterPath}",
+      "command": ".\\.venv\\Scripts\\python.exe",
       "args": [
         "scripts/run_pipeline.py",
         "--include-anatel-parquet",
@@ -184,7 +184,7 @@
     {
       "label": "ANATEL: Show priority",
       "type": "process",
-      "command": "${command:python.interpreterPath}",
+      "command": ".\\.venv\\Scripts\\python.exe",
       "args": ["-m", "data_pipeline.connectors.anatel_smart_connector", "--show-priority"],
       "options": {
         "cwd": "${workspaceFolder}"
@@ -194,7 +194,7 @@
     {
       "label": "ANATEL: Generate download guide",
       "type": "process",
-      "command": "${command:python.interpreterPath}",
+      "command": ".\\.venv\\Scripts\\python.exe",
       "args": ["-m", "data_pipeline.connectors.anatel_smart_connector", "--generate-guide"],
       "options": {
         "cwd": "${workspaceFolder}"
@@ -204,7 +204,7 @@
     {
       "label": "ANATEL: Process manual CSVs",
       "type": "process",
-      "command": "${command:python.interpreterPath}",
+      "command": ".\\.venv\\Scripts\\python.exe",
       "args": ["-m", "data_pipeline.connectors.anatel_smart_connector", "--process"],
       "options": {
         "cwd": "${workspaceFolder}"
@@ -214,7 +214,7 @@
     {
       "label": "ANATEL: Export acesso_fixo",
       "type": "process",
-      "command": "${command:python.interpreterPath}",
+      "command": ".\\.venv\\Scripts\\python.exe",
       "args": [
         "scripts/anatel_acesso_fixo_export.py",
         "--anatel-parquet-dir",
@@ -230,7 +230,7 @@
     {
       "label": "Clean: manual data artifacts",
       "type": "process",
-      "command": "${command:python.interpreterPath}",
+      "command": ".\\.venv\\Scripts\\python.exe",
       "args": ["scripts/clean_manual_data.py"],
       "options": {
         "cwd": "${workspaceFolder}"
@@ -240,7 +240,7 @@
     {
       "label": "Docs: Generate blueprint",
       "type": "process",
-      "command": "${command:python.interpreterPath}",
+      "command": ".\\.venv\\Scripts\\python.exe",
       "args": ["scripts/generate_blueprint.py"],
       "options": {
         "cwd": "${workspaceFolder}"
@@ -264,7 +264,7 @@
     {
       "label": "Build: Windows EXE (PyInstaller)",
       "type": "process",
-      "command": "${command:python.interpreterPath}",
+      "command": ".\\.venv\\Scripts\\python.exe",
       "args": ["-m", "PyInstaller", "--noconfirm", "build/rural_mapper.spec"],
       "options": {
         "cwd": "${workspaceFolder}"

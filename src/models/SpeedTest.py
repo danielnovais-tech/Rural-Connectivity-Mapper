@@ -22,7 +22,7 @@ class SpeedTest:
         jitter: float = 0.0,
         packet_loss: float = 0.0,
         obstruction: float = 0.0,
-        stability: float | None = None
+        stability: float | None = None,
     ):
         """Initialize SpeedTest instance.
 
@@ -77,17 +77,17 @@ class SpeedTest:
             dict: Dictionary containing all speed test metrics
         """
         return {
-            'download': self.download,
-            'upload': self.upload,
-            'latency': self.latency,
-            'jitter': self.jitter,
-            'packet_loss': self.packet_loss,
-            'obstruction': self.obstruction,
-            'stability': self.stability
+            "download": self.download,
+            "upload": self.upload,
+            "latency": self.latency,
+            "jitter": self.jitter,
+            "packet_loss": self.packet_loss,
+            "obstruction": self.obstruction,
+            "stability": self.stability,
         }
 
     @classmethod
-    def from_dict(cls, data: dict) -> 'SpeedTest':
+    def from_dict(cls, data: dict) -> "SpeedTest":
         """Create SpeedTest instance from dictionary.
 
         Args:
@@ -97,13 +97,13 @@ class SpeedTest:
             SpeedTest: New SpeedTest instance
         """
         return cls(
-            download=data.get('download', 0.0),
-            upload=data.get('upload', 0.0),
-            latency=data.get('latency', 0.0),
-            jitter=data.get('jitter', 0.0),
-            packet_loss=data.get('packet_loss', 0.0),
-            obstruction=data.get('obstruction', 0.0),
-            stability=data.get('stability')
+            download=data.get("download", 0.0),
+            upload=data.get("upload", 0.0),
+            latency=data.get("latency", 0.0),
+            jitter=data.get("jitter", 0.0),
+            packet_loss=data.get("packet_loss", 0.0),
+            obstruction=data.get("obstruction", 0.0),
+            stability=data.get("stability"),
         )
 
     def __repr__(self) -> str:

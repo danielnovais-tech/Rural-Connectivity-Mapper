@@ -55,17 +55,9 @@ def get_coverage_data(latitude: float, longitude: float) -> dict | None:
         logger.info(f"Fetching Starlink coverage data for ({latitude}, {longitude})")
 
         # Attempt to call Starlink API
-        params = {
-            'latitude': latitude,
-            'longitude': longitude
-        }
+        params = {"latitude": latitude, "longitude": longitude}
 
-        response = requests.get(
-            STARLINK_COVERAGE_API,
-            params=params,
-            timeout=REQUEST_TIMEOUT,
-            verify=False
-        )
+        response = requests.get(STARLINK_COVERAGE_API, params=params, timeout=REQUEST_TIMEOUT, verify=False)
 
         response.raise_for_status()
         data = response.json()
@@ -98,17 +90,9 @@ def get_performance_metrics(latitude: float, longitude: float) -> dict | None:
     try:
         logger.info(f"Fetching Starlink performance metrics for ({latitude}, {longitude})")
 
-        params = {
-            'latitude': latitude,
-            'longitude': longitude
-        }
+        params = {"latitude": latitude, "longitude": longitude}
 
-        response = requests.get(
-            STARLINK_PERFORMANCE_API,
-            params=params,
-            timeout=REQUEST_TIMEOUT,
-            verify=False
-        )
+        response = requests.get(STARLINK_PERFORMANCE_API, params=params, timeout=REQUEST_TIMEOUT, verify=False)
 
         response.raise_for_status()
         data = response.json()
@@ -141,17 +125,9 @@ def get_availability_status(latitude: float, longitude: float) -> dict | None:
     try:
         logger.info(f"Fetching Starlink availability for ({latitude}, {longitude})")
 
-        params = {
-            'latitude': latitude,
-            'longitude': longitude
-        }
+        params = {"latitude": latitude, "longitude": longitude}
 
-        response = requests.get(
-            STARLINK_AVAILABILITY_API,
-            params=params,
-            timeout=REQUEST_TIMEOUT,
-            verify=False
-        )
+        response = requests.get(STARLINK_AVAILABILITY_API, params=params, timeout=REQUEST_TIMEOUT, verify=False)
 
         response.raise_for_status()
         data = response.json()
@@ -190,34 +166,28 @@ def compare_with_competitors(latitude: float, longitude: float) -> dict:
 
         # Simulate competitor data (in production, these might be real APIs)
         comparison = {
-            'location': {
-                'latitude': latitude,
-                'longitude': longitude
-            },
-            'providers': {
-                'starlink': {
-                    'available': starlink_coverage.get('available', False) if starlink_coverage else False,
-                    'download_mbps': starlink_perf.get('download_mbps', 0) if starlink_perf else 0,
-                    'upload_mbps': starlink_perf.get('upload_mbps', 0) if starlink_perf else 0,
-                    'latency_ms': starlink_perf.get('latency_ms', 0) if starlink_perf else 0,
-                    'monthly_cost_usd': starlink_coverage.get('monthly_cost_usd', 120) if starlink_coverage else 120,
-                    'quality_score': _calculate_provider_score(starlink_perf or {})
+            "location": {"latitude": latitude, "longitude": longitude},
+            "providers": {
+                "starlink": {
+                    "available": starlink_coverage.get("available", False) if starlink_coverage else False,
+                    "download_mbps": starlink_perf.get("download_mbps", 0) if starlink_perf else 0,
+                    "upload_mbps": starlink_perf.get("upload_mbps", 0) if starlink_perf else 0,
+                    "latency_ms": starlink_perf.get("latency_ms", 0) if starlink_perf else 0,
+                    "monthly_cost_usd": starlink_coverage.get("monthly_cost_usd", 120) if starlink_coverage else 120,
+                    "quality_score": _calculate_provider_score(starlink_perf or {}),
                 },
-                'viasat': _get_viasat_data(),
-                'hughesnet': _get_hughesnet_data()
-            }
+                "viasat": _get_viasat_data(),
+                "hughesnet": _get_hughesnet_data(),
+            },
         }
 
         # Determine the best provider
-        best_provider = max(
-            comparison['providers'].items(),
-            key=lambda x: x[1].get('quality_score', 0)
-        )
+        best_provider = max(comparison["providers"].items(), key=lambda x: x[1].get("quality_score", 0))
 
-        comparison['recommendation'] = {
-            'best_provider': best_provider[0],
-            'score': best_provider[1].get('quality_score', 0),
-            'reason': _get_recommendation_reason(best_provider[0], best_provider[1])
+        comparison["recommendation"] = {
+            "best_provider": best_provider[0],
+            "score": best_provider[1].get("quality_score", 0),
+            "reason": _get_recommendation_reason(best_provider[0], best_provider[1]),
         }
 
         logger.info(f"Provider comparison complete. Best: {best_provider[0]}")
@@ -227,15 +197,16 @@ def compare_with_competitors(latitude: float, longitude: float) -> dict:
         logger.error(f"Error comparing providers: {e}")
         # Return minimal comparison on error
         return {
-            'location': {'latitude': latitude, 'longitude': longitude},
-            'providers': {},
-            'recommendation': {'best_provider': 'starlink', 'score': 0, 'reason': 'Error occurred'}
+            "location": {"latitude": latitude, "longitude": longitude},
+            "providers": {},
+            "recommendation": {"best_provider": "starlink", "score": 0, "reason": "Error occurred"},
         }
 
 
 # ============================================================================
 # PRIVATE HELPER FUNCTIONS - Simulated Data Fallbacks
 # ============================================================================
+
 
 def _get_simulated_coverage(latitude: float, longitude: float) -> dict:
     """Generate simulated Starlink coverage data.
@@ -248,19 +219,18 @@ def _get_simulated_coverage(latitude: float, longitude: float) -> dict:
         Dict: Simulated coverage information
     """
     # Brazil is within Starlink's coverage area as of 2026
-    in_brazil = (BRAZIL_LAT_MIN <= latitude <= BRAZIL_LAT_MAX and
-                 BRAZIL_LON_MIN <= longitude <= BRAZIL_LON_MAX)
+    in_brazil = BRAZIL_LAT_MIN <= latitude <= BRAZIL_LAT_MAX and BRAZIL_LON_MIN <= longitude <= BRAZIL_LON_MAX
 
     return {
-        'available': in_brazil,
-        'service_tier': 'residential' if in_brazil else 'unavailable',
-        'expected_download_mbps': 150.0 if in_brazil else 0,
-        'expected_upload_mbps': 20.0 if in_brazil else 0,
-        'expected_latency_ms': 30.0 if in_brazil else 0,
-        'monthly_cost_usd': 120 if in_brazil else None,
-        'installation_cost_usd': 599 if in_brazil else None,
-        'waitlist_months': 0 if in_brazil else 6,
-        'data_source': 'simulated'
+        "available": in_brazil,
+        "service_tier": "residential" if in_brazil else "unavailable",
+        "expected_download_mbps": 150.0 if in_brazil else 0,
+        "expected_upload_mbps": 20.0 if in_brazil else 0,
+        "expected_latency_ms": 30.0 if in_brazil else 0,
+        "monthly_cost_usd": 120 if in_brazil else None,
+        "installation_cost_usd": 599 if in_brazil else None,
+        "waitlist_months": 0 if in_brazil else 6,
+        "data_source": "simulated",
     }
 
 
@@ -281,13 +251,13 @@ def _get_simulated_performance(latitude: float, longitude: float) -> dict:
     download_variation = random.uniform(-20, 30)
 
     return {
-        'download_mbps': round(download_base + download_variation, 1),
-        'upload_mbps': round(20.0 + random.uniform(-2, 5), 1),
-        'latency_ms': round(30.0 + random.uniform(-5, 10), 1),
-        'jitter_ms': round(random.uniform(2, 8), 1),
-        'packet_loss_percent': round(random.uniform(0, 0.5), 2),
-        'uptime_percent': round(random.uniform(98.5, 99.9), 2),
-        'data_source': 'simulated'
+        "download_mbps": round(download_base + download_variation, 1),
+        "upload_mbps": round(20.0 + random.uniform(-2, 5), 1),
+        "latency_ms": round(30.0 + random.uniform(-5, 10), 1),
+        "jitter_ms": round(random.uniform(2, 8), 1),
+        "packet_loss_percent": round(random.uniform(0, 0.5), 2),
+        "uptime_percent": round(random.uniform(98.5, 99.9), 2),
+        "data_source": "simulated",
     }
 
 
@@ -301,16 +271,15 @@ def _get_simulated_availability(latitude: float, longitude: float) -> dict:
     Returns:
         Dict: Simulated availability information
     """
-    in_brazil = (BRAZIL_LAT_MIN <= latitude <= BRAZIL_LAT_MAX and
-                 BRAZIL_LON_MIN <= longitude <= BRAZIL_LON_MAX)
+    in_brazil = BRAZIL_LAT_MIN <= latitude <= BRAZIL_LAT_MAX and BRAZIL_LON_MIN <= longitude <= BRAZIL_LON_MAX
 
     return {
-        'service_available': in_brazil,
-        'status': 'active' if in_brazil else 'waitlist',
-        'estimated_wait_months': 0 if in_brazil else 6,
-        'can_order_now': in_brazil,
-        'capacity_status': 'available' if in_brazil else 'at_capacity',
-        'data_source': 'simulated'
+        "service_available": in_brazil,
+        "status": "active" if in_brazil else "waitlist",
+        "estimated_wait_months": 0 if in_brazil else 6,
+        "can_order_now": in_brazil,
+        "capacity_status": "available" if in_brazil else "at_capacity",
+        "data_source": "simulated",
     }
 
 
@@ -321,14 +290,14 @@ def _get_viasat_data() -> dict:
         Dict: Simulated Viasat performance and pricing
     """
     return {
-        'available': True,
-        'download_mbps': 75.0,
-        'upload_mbps': 10.0,
-        'latency_ms': 650.0,  # Geostationary satellite has high latency
-        'monthly_cost_usd': 70,
-        'quality_score': 50.0,
-        'data_cap_gb': 150,
-        'data_source': 'simulated'
+        "available": True,
+        "download_mbps": 75.0,
+        "upload_mbps": 10.0,
+        "latency_ms": 650.0,  # Geostationary satellite has high latency
+        "monthly_cost_usd": 70,
+        "quality_score": 50.0,
+        "data_cap_gb": 150,
+        "data_source": "simulated",
     }
 
 
@@ -339,14 +308,14 @@ def _get_hughesnet_data() -> dict:
         Dict: Simulated HughesNet performance and pricing
     """
     return {
-        'available': True,
-        'download_mbps': 25.0,
-        'upload_mbps': 3.0,
-        'latency_ms': 700.0,  # Geostationary satellite has high latency
-        'monthly_cost_usd': 65,
-        'quality_score': 35.0,
-        'data_cap_gb': 100,
-        'data_source': 'simulated'
+        "available": True,
+        "download_mbps": 25.0,
+        "upload_mbps": 3.0,
+        "latency_ms": 700.0,  # Geostationary satellite has high latency
+        "monthly_cost_usd": 65,
+        "quality_score": 35.0,
+        "data_cap_gb": 100,
+        "data_source": "simulated",
     }
 
 
@@ -367,11 +336,11 @@ def _calculate_provider_score(performance_data: dict) -> float:
         float: Quality score from 0-100
     """
     try:
-        download = performance_data.get('download_mbps', 0)
-        upload = performance_data.get('upload_mbps', 0)
-        latency = performance_data.get('latency_ms', 0)
-        packet_loss = performance_data.get('packet_loss_percent', 0)
-        jitter = performance_data.get('jitter_ms', 0)
+        download = performance_data.get("download_mbps", 0)
+        upload = performance_data.get("upload_mbps", 0)
+        latency = performance_data.get("latency_ms", 0)
+        packet_loss = performance_data.get("packet_loss_percent", 0)
+        jitter = performance_data.get("jitter_ms", 0)
 
         # Speed score (40%) - matches QualityScore.TARGET_DOWNLOAD/UPLOAD
         speed_score = ((download / 200.0) + (upload / 20.0)) / 2 * 100
@@ -405,16 +374,16 @@ def _get_recommendation_reason(provider: str, data: dict) -> str:
     Returns:
         str: Human-readable recommendation reason
     """
-    score = data.get('quality_score', 0)
+    score = data.get("quality_score", 0)
 
-    if provider == 'starlink':
+    if provider == "starlink":
         if score >= 90:
             return "Best speeds and lowest latency with Starlink's LEO satellite network"
         else:
             return "Good performance with Starlink despite some limitations"
-    elif provider == 'viasat':
+    elif provider == "viasat":
         return "Viasat offers acceptable speeds but higher latency"
-    elif provider == 'hughesnet':
+    elif provider == "hughesnet":
         return "HughesNet is available but has lower performance metrics"
     else:
         return f"{provider} recommended based on quality score"

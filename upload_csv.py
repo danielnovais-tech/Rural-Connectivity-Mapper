@@ -285,7 +285,7 @@ def load_and_validate_csv(csv_path: str) -> tuple[list[dict[str, str]], list[str
 
     except FileNotFoundError:
         return [], [f"File not found: {csv_path}"], stats
-    except (IOError, OSError, csv.Error, UnicodeDecodeError) as e:  # noqa: UP024
+    except (OSError, csv.Error, UnicodeDecodeError) as e:
         return [], [f"Error reading CSV file: {str(e)}"], stats
 
 

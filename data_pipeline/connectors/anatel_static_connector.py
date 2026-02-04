@@ -121,11 +121,7 @@ class ANATELStaticConnector:
         # Basic string cleanup
         string_cols = df_clean.select_dtypes(include=["object"]).columns
         for col in string_cols:
-            df_clean[col] = (
-                df_clean[col]
-                .astype(str)
-                .str.strip()
-            )
+            df_clean[col] = df_clean[col].astype(str).str.strip()
 
         # Dataset-specific checks
         if dataset_type in {"backhaul", "estacoes"}:
@@ -136,8 +132,7 @@ class ANATELStaticConnector:
 
                 # Filter roughly to Brazil bounds
                 df_clean = df_clean[
-                    (df_clean["latitude"].between(-33.75, 5.27))
-                    & (df_clean["longitude"].between(-73.99, -34.79))
+                    (df_clean["latitude"].between(-33.75, 5.27)) & (df_clean["longitude"].between(-73.99, -34.79))
                 ]
 
             if dataset_type == "backhaul" and "capacidade_mbps" in df_clean.columns:
