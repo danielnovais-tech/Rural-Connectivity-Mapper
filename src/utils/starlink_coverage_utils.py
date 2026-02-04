@@ -11,6 +11,19 @@ from typing import Any
 logger = logging.getLogger(__name__)
 
 
+def _compute_center(coordinates: list[list[float]]) -> list[float]:
+    # Coordinates are expected as [[lat, lon], ...]. Some polygons repeat the
+    # first point as the last point; avoid double-counting it.
+    points = coordinates
+    if len(points) >= 2 and points[0] == points[-1]:
+        points = points[:-1]
+    if not points:
+        return [0.0, 0.0]
+    avg_lat = sum(lat for lat, _lon in points) / len(points)
+    avg_lon = sum(lon for _lat, lon in points) / len(points)
+    return [avg_lat, avg_lon]
+
+
 def get_starlink_coverage_zones() -> list[dict[str, Any]]:
     """Get Starlink coverage zones for Brazil.
     
@@ -21,8 +34,9 @@ def get_starlink_coverage_zones() -> list[dict[str, Any]]:
     Returns:
         List[Dict]: List of coverage zone dictionaries containing:
             - name: Zone name
-            - coordinates: List of [lat, lon] boundary points
-            - signal_strength: Coverage strength ('excellent', 'good', 'fair')
+            - center: [lat, lon] center point
+            - radius: Approximate radius in meters
+            - coverage: Coverage strength ('excellent', 'good', 'moderate')
             - color: Display color for the zone
             - opacity: Zone opacity for visualization
             
@@ -43,7 +57,9 @@ def get_starlink_coverage_zones() -> list[dict[str, Any]]:
                 [-17.0, -50.0],
                 [-15.0, -50.0]
             ],
+            'coverage': 'excellent',
             'signal_strength': 'excellent',
+            'radius': 350_000,
             'color': '#00ff00',
             'opacity': 0.3,
             'description': 'Primary coverage zone including Brasília region with optimal satellite visibility'
@@ -57,7 +73,9 @@ def get_starlink_coverage_zones() -> list[dict[str, Any]]:
                 [-24.0, -48.0],
                 [-20.0, -48.0]
             ],
+            'coverage': 'excellent',
             'signal_strength': 'excellent',
+            'radius': 350_000,
             'color': '#00ff00',
             'opacity': 0.3,
             'description': 'São Paulo and Rio de Janeiro region with strong satellite coverage'
@@ -71,7 +89,9 @@ def get_starlink_coverage_zones() -> list[dict[str, Any]]:
                 [-30.0, -54.0],
                 [-24.0, -54.0]
             ],
+            'coverage': 'good',
             'signal_strength': 'good',
+            'radius': 300_000,
             'color': '#ffff00',
             'opacity': 0.25,
             'description': 'Southern states with reliable coverage (Paraná, Santa Catarina, Rio Grande do Sul)'
@@ -85,7 +105,9 @@ def get_starlink_coverage_zones() -> list[dict[str, Any]]:
                 [-13.0, -42.0],
                 [-3.0, -42.0]
             ],
+            'coverage': 'good',
             'signal_strength': 'good',
+            'radius': 320_000,
             'color': '#ffff00',
             'opacity': 0.25,
             'description': 'Northeast coastal region with expanding coverage (Fortaleza, Salvador areas)'
@@ -99,12 +121,17 @@ def get_starlink_coverage_zones() -> list[dict[str, Any]]:
                 [-8.0, -62.0],
                 [2.0, -62.0]
             ],
+            'coverage': 'moderate',
             'signal_strength': 'fair',
+            'radius': 450_000,
             'color': '#ffa500',
             'opacity': 0.2,
             'description': 'Amazon region - coverage expanding as part of 2026 rural connectivity initiative'
         }
     ]
+
+    for zone in coverage_zones:
+        zone['center'] = _compute_center(zone['coordinates'])
     
     logger.info(f"Generated {len(coverage_zones)} Starlink coverage zones for Brazil")
     return coverage_zones
