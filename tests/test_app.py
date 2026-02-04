@@ -7,8 +7,8 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
 import json
+
 import pytest
-from unittest.mock import patch, MagicMock
 
 from app import app
 from src.utils import save_data
@@ -388,7 +388,7 @@ def test_recommendation_endpoint_with_session_id(client, tmp_path, monkeypatch):
     # Verify session ID was used in analytics
     events_file = analytics_dir / "events.jsonl"
     if events_file.exists():
-        with open(events_file, 'r') as f:
+        with open(events_file) as f:
             events = [json.loads(line) for line in f if line.strip()]
             # At least one event should have our custom session ID
             session_ids = [e['session_id'] for e in events]
@@ -419,7 +419,7 @@ def test_recommendation_endpoint_tracks_analytics(client, tmp_path, monkeypatch)
     # Verify analytics events were tracked
     assert events_file.exists()
     
-    with open(events_file, 'r') as f:
+    with open(events_file) as f:
         events = [json.loads(line) for line in f if line.strip()]
     
     # Should have at least 2 events: api_called and api_succeeded

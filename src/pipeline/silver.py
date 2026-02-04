@@ -1,13 +1,13 @@
 """Silver layer: normalized, validated, and deduplicated data."""
 
 import json
+from datetime import UTC, datetime
 from pathlib import Path
-from typing import List, Set
-from datetime import datetime, timezone
+
 import h3
 
-from src.schemas import MeasurementSchema
 from src.quality import ConfidenceCalculator
+from src.schemas import MeasurementSchema
 
 
 class SilverLayer:
@@ -29,7 +29,7 @@ class SilverLayer:
         self.silver_dir = Path(silver_dir)
         self.silver_dir.mkdir(parents=True, exist_ok=True)
     
-    def process(self, bronze_measurements: List[MeasurementSchema]) -> List[MeasurementSchema]:
+    def process(self, bronze_measurements: list[MeasurementSchema]) -> list[MeasurementSchema]:
         """Process bronze data into silver layer.
         
         Args:
@@ -50,14 +50,14 @@ class SilverLayer:
         
         # Step 3: Enrich with confidence scores and H3 index
         enriched = self._enrich(validated)
-        print(f"  ✓ Enriched with confidence scores and H3 indexing")
+        print("  ✓ Enriched with confidence scores and H3 indexing")
         
         # Step 4: Save to silver
         self._save(enriched)
         
         return enriched
     
-    def _deduplicate(self, measurements: List[MeasurementSchema]) -> List[MeasurementSchema]:
+    def _deduplicate(self, measurements: list[MeasurementSchema]) -> list[MeasurementSchema]:
         """Remove duplicate measurements.
         
         Deduplication strategy:
@@ -65,7 +65,7 @@ class SilverLayer:
           and timestamp within same hour
         - Keep the one with most complete data
         """
-        seen: Set[str] = set()
+        seen: set[str] = set()
         deduplicated = []
         
         # Sort by completeness (measurements with more data first)
@@ -91,7 +91,7 @@ class SilverLayer:
         
         return deduplicated
     
-    def _validate(self, measurements: List[MeasurementSchema]) -> List[MeasurementSchema]:
+    def _validate(self, measurements: list[MeasurementSchema]) -> list[MeasurementSchema]:
         """Validate measurements and filter invalid ones.
         
         Validation rules:
@@ -117,7 +117,7 @@ class SilverLayer:
         
         return validated
     
-    def _enrich(self, measurements: List[MeasurementSchema]) -> List[MeasurementSchema]:
+    def _enrich(self, measurements: list[MeasurementSchema]) -> list[MeasurementSchema]:
         """Enrich measurements with confidence scores and H3 indexing.
         
         Args:
@@ -150,7 +150,7 @@ class SilverLayer:
         
         return enriched
     
-    def _save(self, measurements: List[MeasurementSchema]) -> Path:
+    def _save(self, measurements: list[MeasurementSchema]) -> Path:
         """Save enriched measurements to silver layer.
         
         Args:
@@ -159,12 +159,12 @@ class SilverLayer:
         Returns:
             Path to saved file
         """
-        timestamp = datetime.now(timezone.utc).strftime("%Y%m%d_%H%M%S")
+        timestamp = datetime.now(UTC).strftime("%Y%m%d_%H%M%S")
         filename = f"silver_{timestamp}.json"
         filepath = self.silver_dir / filename
         
         data = {
-            "processed_timestamp": datetime.now(timezone.utc).isoformat(),
+            "processed_timestamp": datetime.now(UTC).isoformat(),
             "count": len(measurements),
             "measurements": [m.to_dict() for m in measurements]
         }
@@ -176,7 +176,7 @@ class SilverLayer:
         
         return filepath
     
-    def read_latest(self) -> List[MeasurementSchema]:
+    def read_latest(self) -> list[MeasurementSchema]:
         """Read latest silver data.
         
         Returns:
@@ -186,7 +186,7 @@ class SilverLayer:
         if not files:
             return []
         
-        with open(files[0], 'r') as f:
+        with open(files[0]) as f:
             data = json.load(f)
         
         measurements = [

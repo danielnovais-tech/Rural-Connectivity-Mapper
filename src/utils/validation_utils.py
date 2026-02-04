@@ -1,12 +1,10 @@
 """Validation utilities for data integrity checks."""
 
 
-from typing import Any, Dict, Tuple
-
-from typing import Any, Optional
-
 import logging
-from .config_utils import get_providers, get_default_country
+from typing import Any
+
+from .config_utils import get_default_country, get_providers
 
 logger = logging.getLogger(__name__)
 
@@ -88,7 +86,7 @@ def _validate_speed_field(field: str, value: Any, check_bounds: bool) -> bool:
     return True
 
 
-def _get_speed_test_data(speed_test: Any) -> Dict[str, Any]:
+def _get_speed_test_data(speed_test: Any) -> dict[str, Any]:
     """Extract data from SpeedTest object or dict."""
     if hasattr(speed_test, 'to_dict'):
         return speed_test.to_dict()
@@ -130,7 +128,7 @@ def validate_speed_test(speed_test: Any, check_bounds: bool = True) -> bool:
         return False
 
 
-def validate_provider(provider: str, country_code: Optional[str] = None) -> bool:
+def validate_provider(provider: str, country_code: str | None = None) -> bool:
     """Validate internet service provider name.
     
     Args:
@@ -159,7 +157,7 @@ def validate_provider(provider: str, country_code: Optional[str] = None) -> bool
     return True
 
 
-def _validate_numeric_field_value(field: str, value: float, row_num: int) -> Tuple[bool, str]:
+def _validate_numeric_field_value(field: str, value: float, row_num: int) -> tuple[bool, str]:
     """Validate a numeric field value against its constraints.
     
     Args:
@@ -184,7 +182,7 @@ def _validate_numeric_field_value(field: str, value: float, row_num: int) -> Tup
     return True, ""
 
 
-def _validate_numeric_fields(row: Dict[str, str], row_num: int) -> Tuple[bool, str]:
+def _validate_numeric_fields(row: dict[str, str], row_num: int) -> tuple[bool, str]:
     """Validate all numeric fields in a CSV row.
     
     Args:
@@ -212,7 +210,7 @@ def _validate_numeric_fields(row: Dict[str, str], row_num: int) -> Tuple[bool, s
     return True, ""
 
 
-def validate_csv_row(row: Dict[str, str], row_num: int) -> Tuple[bool, str]:
+def validate_csv_row(row: dict[str, str], row_num: int) -> tuple[bool, str]:
     """Validate a CSV row for required fields and data types.
     
     Args:

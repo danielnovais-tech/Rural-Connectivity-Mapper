@@ -1,7 +1,6 @@
 """Machine Learning utilities for connectivity analysis and predictions."""
 
 import logging
-from typing import List, Dict
 import math
 
 # Optional numpy + sklearn imports - gracefully degrade if not available or incompatible
@@ -15,7 +14,6 @@ except Exception:  # pragma: no cover
 try:
     if not NUMPY_AVAILABLE:
         raise ImportError("numpy not available")
-    from sklearn.preprocessing import StandardScaler
     from sklearn.cluster import KMeans
     SKLEARN_AVAILABLE = True
 except Exception:  # pragma: no cover
@@ -64,7 +62,7 @@ def calculate_distance_from_major_city(latitude: float, longitude: float) -> flo
     return round(min_distance, 2)
 
 
-def extract_geospatial_features(data: List[Dict]):
+def extract_geospatial_features(data: list[dict]):
     """Extract geospatial features for ML models.
     
     Features include:
@@ -113,7 +111,7 @@ def extract_geospatial_features(data: List[Dict]):
     return np.array(features)
 
 
-def predict_improvement_potential(data: List[Dict]) -> List[Dict]:
+def predict_improvement_potential(data: list[dict]) -> list[dict]:
     """Predict improvement potential for each connectivity point using a rule-based score.
     
     Uses a heuristic formula based on geospatial features (e.g., distance from major cities)
@@ -193,7 +191,7 @@ def predict_improvement_potential(data: List[Dict]) -> List[Dict]:
         raise
 
 
-def identify_expansion_zones(data: List[Dict], n_zones: int = 3) -> Dict:
+def identify_expansion_zones(data: list[dict], n_zones: int = 3) -> dict:
     """Identify optimal zones for Starlink expansion using clustering.
     
     Uses K-means clustering to identify geographic zones that would benefit most
@@ -312,7 +310,7 @@ def _generate_zone_recommendation(avg_quality: float, avg_distance: float) -> st
         return "LOW PRIORITY: Urban area with good connectivity - maintain current service"
 
 
-def analyze_starlink_roi(data: List[Dict]) -> Dict:
+def analyze_starlink_roi(data: list[dict]) -> dict:
     """Analyze ROI for Starlink deployment using ML-enhanced metrics.
     
     Evaluates potential return on investment for Starlink expansion by analyzing
@@ -410,7 +408,7 @@ def analyze_starlink_roi(data: List[Dict]) -> Dict:
         raise
 
 
-def generate_ml_report(data: List[Dict]) -> Dict:
+def generate_ml_report(data: list[dict]) -> dict:
     """Generate comprehensive ML-enhanced analysis report.
     
     Combines all ML analysis functions to provide a complete picture of

@@ -1,17 +1,18 @@
 """Tests for export utilities."""
 
 import json
-import pytest
-from pathlib import Path
-import tempfile
 import shutil
+import tempfile
+from pathlib import Path
+
+import pytest
 
 from src.utils.export_utils import (
-    export_for_hybrid_simulator,
-    export_for_agrix_boost,
-    export_ecosystem_bundle,
     _generate_farm_recommendations,
-    _get_quality_distribution
+    _get_quality_distribution,
+    export_ecosystem_bundle,
+    export_for_agrix_boost,
+    export_for_hybrid_simulator,
 )
 
 
@@ -107,7 +108,7 @@ def test_export_for_hybrid_simulator(sample_data, temp_output_dir):
     assert result == output_path
     
     # Load and verify content
-    with open(result, 'r') as f:
+    with open(result) as f:
         data = json.load(f)
     
     # Check metadata
@@ -157,7 +158,7 @@ def test_export_for_agrix_boost(sample_data, temp_output_dir):
     assert result == output_path
     
     # Load and verify content
-    with open(result, 'r') as f:
+    with open(result) as f:
         data = json.load(f)
     
     # Check metadata
@@ -216,7 +217,7 @@ def test_export_ecosystem_bundle(sample_data, temp_output_dir):
     assert Path(result['manifest']).exists()
     
     # Load and verify manifest
-    with open(result['manifest'], 'r') as f:
+    with open(result['manifest']) as f:
         manifest = json.load(f)
     
     assert manifest['ecosystem'] == 'Rural Connectivity Ecosystem 2026'
@@ -305,7 +306,7 @@ def test_export_empty_data(temp_output_dir):
     
     assert Path(result).exists()
     
-    with open(result, 'r') as f:
+    with open(result) as f:
         data = json.load(f)
     
     assert data['metadata']['total_points'] == 0
@@ -318,7 +319,7 @@ def test_failover_indicators_thresholds(sample_data, temp_output_dir):
     
     result = export_for_hybrid_simulator(sample_data, output_path)
     
-    with open(result, 'r') as f:
+    with open(result) as f:
         data = json.load(f)
     
     # Check Fair quality point (index 2)
@@ -340,7 +341,7 @@ def test_farm_suitability_thresholds(sample_data, temp_output_dir):
     
     result = export_for_agrix_boost(sample_data, output_path)
     
-    with open(result, 'r') as f:
+    with open(result) as f:
         data = json.load(f)
     
     # Check Fair quality point (index 2)

@@ -1,13 +1,12 @@
 """Tests for country configuration utilities."""
 
-import pytest
 from src.utils.country_config import (
     get_country_config,
-    get_supported_countries,
-    get_country_providers,
     get_country_data_sources,
+    get_country_providers,
     get_latam_summary,
-    translate_field_names
+    get_supported_countries,
+    translate_field_names,
 )
 
 

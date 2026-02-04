@@ -4,10 +4,10 @@ import pytest
 
 pytest.importorskip("pandas", exc_type=ImportError)
 from src.utils.anatel_utils import (
+    convert_anatel_to_connectivity_points,
     fetch_anatel_broadband_data,
     fetch_anatel_mobile_data,
     get_anatel_provider_stats,
-    convert_anatel_to_connectivity_points
 )
 
 

@@ -2,12 +2,11 @@
 
 import logging
 import time
-from typing import Optional, Tuple, Union, Any, cast
+from typing import Any, cast
+
+from geopy.exc import GeocoderQuotaExceeded, GeocoderServiceError, GeocoderTimedOut, GeocoderUnavailable
 from geopy.geocoders import Nominatim
 from geopy.location import Location
-from geopy.exc import GeocoderTimedOut, GeocoderServiceError, GeocoderUnavailable, GeocoderQuotaExceeded
-from .config_utils import get_language, get_default_country
-
 
 logger = logging.getLogger(__name__)
 
@@ -66,7 +65,7 @@ def geocode_coordinates(
     longitude: float,
     timeout: Any = 10,
     max_retries: int = 3
-) -> Optional[str]:
+) -> str | None:
     """Convert coordinates to a human-readable address (reverse geocoding).
     
     Args:
@@ -87,7 +86,7 @@ def geocode_coordinates(
         try:
             _wait_for_rate_limit()
             
-            location = cast(Optional[Location], geolocator.reverse(
+            location = cast(Location | None, geolocator.reverse(
                 coords,
                 timeout=timeout,
                 exactly_one=True
@@ -128,7 +127,7 @@ def geocode_address(
     address: str,
     timeout: Any = 10,
     max_retries: int = 3
-) -> Optional[Tuple[float, float]]:
+) -> tuple[float, float] | None:
     """Convert an address to coordinates (forward geocoding).
     
     Args:
@@ -149,7 +148,7 @@ def geocode_address(
         try:
             _wait_for_rate_limit()
             
-            location = cast(Optional[Location], geolocator.geocode(
+            location = cast(Location | None, geolocator.geocode(
                 address,
                 timeout=timeout,
                 exactly_one=True

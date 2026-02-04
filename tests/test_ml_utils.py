@@ -6,12 +6,12 @@ pytest.importorskip("numpy", exc_type=ImportError)
 pytest.importorskip("sklearn", exc_type=ImportError)
 
 from src.utils.ml_utils import (
+    analyze_starlink_roi,
     calculate_distance_from_major_city,
     extract_geospatial_features,
-    predict_improvement_potential,
+    generate_ml_report,
     identify_expansion_zones,
-    analyze_starlink_roi,
-    generate_ml_report
+    predict_improvement_potential,
 )
 
 

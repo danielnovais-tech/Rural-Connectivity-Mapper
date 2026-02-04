@@ -3,7 +3,7 @@ Schemas de dados para validação dos datasets da ANATEL.
 Define a estrutura esperada para cada tipo de dataset.
 """
 
-from typing import Dict, List, Any
+from typing import Any
 
 # Schema para dados de backhaul
 BACKHAUL_SCHEMA = {
@@ -101,7 +101,7 @@ SCHEMAS = {
 }
 
 
-def get_schema(dataset_type: str) -> Dict[str, Any]:
+def get_schema(dataset_type: str) -> dict[str, Any]:
     """
     Retorna o schema para um tipo de dataset.
     
@@ -114,7 +114,7 @@ def get_schema(dataset_type: str) -> Dict[str, Any]:
     return SCHEMAS.get(dataset_type, {})
 
 
-def validate_dataset(df, dataset_type: str) -> tuple[bool, List[str]]:
+def validate_dataset(df, dataset_type: str) -> tuple[bool, list[str]]:
     """
     Valida se um DataFrame atende ao schema esperado.
     

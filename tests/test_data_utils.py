@@ -1,11 +1,12 @@
 """Tests for data utilities."""
 
-import pytest
 import json
 from pathlib import Path
 from unittest.mock import patch
 
-from src.utils.data_utils import load_data, save_data, backup_data
+import pytest
+
+from src.utils.data_utils import backup_data, load_data, save_data
 
 
 @pytest.fixture

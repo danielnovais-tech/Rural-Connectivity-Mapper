@@ -6,13 +6,7 @@ This script demonstrates how to use the starlink_api module to:
 3. Compare Starlink with competitors (Viasat, HughesNet)
 """
 
-from src.utils.starlink_api import (
-    get_coverage_data,
-    get_performance_metrics,
-    get_availability_status,
-    compare_with_competitors
-)
-import json
+from src.utils.starlink_api import compare_with_competitors, get_coverage_data, get_performance_metrics
 
 
 def print_section(title):
@@ -61,7 +55,7 @@ def demo_starlink_api():
         print('\n3️⃣  Provider Comparison:')
         comparison = compare_with_competitors(lat, lon)
         
-        print(f"\n   Provider Rankings:")
+        print("\n   Provider Rankings:")
         providers = comparison['providers']
         sorted_providers = sorted(
             providers.items(),

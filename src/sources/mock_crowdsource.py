@@ -1,11 +1,11 @@
 """Mock crowdsource data source connector."""
 
-from datetime import datetime, timezone, timedelta
-from typing import List
-import uuid
 import random
+import uuid
+from datetime import UTC, datetime, timedelta
 
 from src.schemas import MeasurementSchema, SourceType, TechnologyType
+
 from .base import DataSource
 
 
@@ -25,7 +25,7 @@ class MockCrowdsourceSource(DataSource):
         super().__init__("mock_crowdsource")
         self.num_samples = num_samples
     
-    def fetch(self) -> List[MeasurementSchema]:
+    def fetch(self) -> list[MeasurementSchema]:
         """Fetch mock crowdsource measurements.
         
         Generates realistic sample data with various quality levels,
@@ -48,7 +48,7 @@ class MockCrowdsourceSource(DataSource):
             
             # Generate random timestamp within last 90 days
             days_ago = random.randint(0, 90)
-            timestamp = datetime.now(timezone.utc) - timedelta(days=days_ago)
+            timestamp = datetime.now(UTC) - timedelta(days=days_ago)
             
             # Generate realistic speed measurements
             # Simulating various connection types in rural areas

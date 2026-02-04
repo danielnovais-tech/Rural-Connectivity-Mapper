@@ -4,11 +4,11 @@ import pytest
 
 pytest.importorskip("pandas", exc_type=ImportError)
 from src.utils.ibge_utils import (
-    fetch_ibge_municipalities,
+    combine_ibge_anatel_data,
     fetch_ibge_demographics,
-    get_rural_areas_needing_connectivity,
+    fetch_ibge_municipalities,
     get_ibge_statistics_summary,
-    combine_ibge_anatel_data
+    get_rural_areas_needing_connectivity,
 )
 
 

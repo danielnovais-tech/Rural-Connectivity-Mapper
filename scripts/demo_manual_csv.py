@@ -7,9 +7,9 @@ This script demonstrates the manual CSV pipeline workflow:
 3. Integrate into the bronze/silver/gold pipeline
 """
 
+import shutil
 import sys
 from pathlib import Path
-import shutil
 
 # Add src to path
 sys.path.insert(0, str(Path(__file__).parent.parent))
@@ -43,7 +43,7 @@ def main():
             print(f"   ✓ {target_csv.name} ready for processing")
         else:
             print(f"📂 Sample CSV already in {manual_dir}/")
-            print(f"   Note: File has been processed before (will be skipped)")
+            print("   Note: File has been processed before (will be skipped)")
     else:
         print(f"⚠️  Sample CSV not found: {sample_csv}")
         print(f"   Please place CSV files in {manual_dir}/ manually")

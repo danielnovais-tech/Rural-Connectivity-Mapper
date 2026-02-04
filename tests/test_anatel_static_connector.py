@@ -1,10 +1,11 @@
 """Tests for ANATEL static connector."""
 
-import pytest
-import pandas as pd
-import tempfile
 import shutil
+import tempfile
 from pathlib import Path
+
+import pandas as pd
+import pytest
 
 from data_pipeline.connectors.anatel_static_connector import ANATELStaticConnector
 from data_pipeline.connectors.data_schemas import get_schema, validate_dataset

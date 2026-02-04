@@ -122,7 +122,7 @@ class TestTrackEvent:
         
         track_event('test_event', session_id)
         
-        with open(mock_analytics_path, 'r') as f:
+        with open(mock_analytics_path) as f:
             line = f.readline()
             event = json.loads(line)
         
@@ -149,7 +149,7 @@ class TestTrackEvent:
             geo=geo
         )
         
-        with open(mock_analytics_path, 'r') as f:
+        with open(mock_analytics_path) as f:
             event = json.loads(f.readline())
         
         assert event['context'] == context
@@ -165,7 +165,7 @@ class TestTrackEvent:
         track_event('event2', session_id)
         track_event('event3', session_id)
         
-        with open(mock_analytics_path, 'r') as f:
+        with open(mock_analytics_path) as f:
             lines = f.readlines()
         
         assert len(lines) == 3
@@ -181,7 +181,7 @@ class TestTrackEvent:
         original_open = open
         def mock_open(*args, **kwargs):
             if 'events.jsonl' in str(args[0]):
-                raise IOError("Mock error")
+                raise OSError("Mock error")
             return original_open(*args, **kwargs)
         
         monkeypatch.setattr('builtins.open', mock_open)
@@ -201,7 +201,7 @@ class TestTimedEvent:
         with timed_event('timed_test', session_id):
             time.sleep(0.05)  # Sleep for 50ms
         
-        with open(mock_analytics_path, 'r') as f:
+        with open(mock_analytics_path) as f:
             event = json.loads(f.readline())
         
         assert event['event_name'] == 'timed_test'
@@ -218,7 +218,7 @@ class TestTimedEvent:
         except ValueError:
             pass
         
-        with open(mock_analytics_path, 'r') as f:
+        with open(mock_analytics_path) as f:
             event = json.loads(f.readline())
         
         assert event['event_name'] == 'error_test'
@@ -236,7 +236,7 @@ class TestTimedEvent:
                         properties=properties, geo=geo):
             pass
         
-        with open(mock_analytics_path, 'r') as f:
+        with open(mock_analytics_path) as f:
             event = json.loads(f.readline())
         
         assert event['context'] == context

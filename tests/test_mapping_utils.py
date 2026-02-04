@@ -1,8 +1,8 @@
 """Tests for mapping utilities."""
 
-import pytest
 from pathlib import Path
-from unittest.mock import patch, MagicMock
+
+import pytest
 
 from src.utils.mapping_utils import generate_map, get_starlink_coverage_zones
 
@@ -53,7 +53,7 @@ def test_generate_map(sample_data, tmp_path):
     assert Path(map_path).exists()
     
     # Verify HTML content
-    with open(map_path, 'r') as f:
+    with open(map_path) as f:
         content = f.read()
     
     # Should contain Folium map elements
@@ -74,7 +74,7 @@ def test_generate_map_empty_data(tmp_path):
     assert Path(map_path).exists()
     
     # Verify coverage layer is still included even without data
-    with open(map_path, 'r') as f:
+    with open(map_path) as f:
         content = f.read()
     
     # Should contain coverage layer by default
@@ -110,7 +110,7 @@ def test_generate_map_with_starlink_coverage(sample_data, tmp_path):
     assert Path(map_path).exists()
     
     # Verify HTML content includes Starlink coverage elements
-    with open(map_path, 'r') as f:
+    with open(map_path) as f:
         content = f.read()
     
     # Should contain Starlink coverage zone references
@@ -167,7 +167,7 @@ def test_generate_map_coverage_layer_enabled(sample_data, tmp_path):
     
     # Verify HTML content includes coverage layer
 
-    with open(map_path, 'r', encoding='utf-8') as f:
+    with open(map_path, encoding='utf-8') as f:
         content = f.read()
     
     # Should contain layer control for toggling coverage
@@ -188,7 +188,7 @@ def test_generate_map_coverage_without_data_file(sample_data, tmp_path, monkeypa
     # Should still create a valid map
     assert Path(map_path).exists()
 
-    with open(map_path, 'r') as f:
+    with open(map_path) as f:
         content = f.read()
     
     # Should contain coverage layer name
@@ -210,7 +210,7 @@ def test_generate_map_without_starlink_coverage(sample_data, tmp_path):
     assert Path(map_path).exists()
     
     # Verify HTML content doesn't include coverage layer elements
-    with open(map_path, 'r') as f:
+    with open(map_path) as f:
         content = f.read()
     
     # Should not contain coverage layer name

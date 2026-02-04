@@ -1,11 +1,12 @@
 """Tests for the fusion engine."""
 
-import pytest
 import json
-from pathlib import Path
-from datetime import datetime, timezone, timedelta
-import tempfile
 import shutil
+import tempfile
+from datetime import UTC, datetime, timedelta
+from pathlib import Path
+
+import pytest
 
 from src.pipeline.fusion_engine import FusionEngine
 from src.schemas import MeasurementSchema, SourceType, TechnologyType
@@ -27,7 +28,7 @@ def sample_measurements():
             id="test_001",
             lat=-15.7801,
             lon=-47.9292,
-            timestamp_utc=datetime.now(timezone.utc) - timedelta(days=1),
+            timestamp_utc=datetime.now(UTC) - timedelta(days=1),
             download_mbps=100.0,
             upload_mbps=50.0,
             latency_ms=20.0,
@@ -40,7 +41,7 @@ def sample_measurements():
             id="test_002",
             lat=-15.7901,
             lon=-47.9392,
-            timestamp_utc=datetime.now(timezone.utc) - timedelta(days=2),
+            timestamp_utc=datetime.now(UTC) - timedelta(days=2),
             download_mbps=25.0,
             upload_mbps=10.0,
             latency_ms=50.0,
@@ -53,7 +54,7 @@ def sample_measurements():
             id="test_003",
             lat=-15.8001,
             lon=-47.9492,
-            timestamp_utc=datetime.now(timezone.utc) - timedelta(days=3),
+            timestamp_utc=datetime.now(UTC) - timedelta(days=3),
             download_mbps=5.0,
             upload_mbps=1.0,
             latency_ms=200.0,
@@ -77,7 +78,7 @@ def bronze_with_json(temp_bronze_dir, sample_measurements):
     # Save ANATEL data
     anatel_data = {
         "source": "anatel",
-        "ingestion_timestamp": datetime.now(timezone.utc).isoformat(),
+        "ingestion_timestamp": datetime.now(UTC).isoformat(),
         "count": 1,
         "measurements": [sample_measurements[0].to_dict()]
     }
@@ -87,7 +88,7 @@ def bronze_with_json(temp_bronze_dir, sample_measurements):
     # Save crowdsource data
     crowdsource_data = {
         "source": "mock_crowdsource",
-        "ingestion_timestamp": datetime.now(timezone.utc).isoformat(),
+        "ingestion_timestamp": datetime.now(UTC).isoformat(),
         "count": 2,
         "measurements": [m.to_dict() for m in sample_measurements[1:]]
     }
@@ -197,7 +198,7 @@ class TestFusionEngine:
             id="perfect",
             lat=-15.7801,
             lon=-47.9292,
-            timestamp_utc=datetime.now(timezone.utc),
+            timestamp_utc=datetime.now(UTC),
             download_mbps=100.0,  # Perfect score
             upload_mbps=50.0,     # Perfect score
             latency_ms=0.0,       # Perfect score
@@ -227,7 +228,7 @@ class TestFusionEngine:
             id="incomplete",
             lat=-15.7801,
             lon=-47.9292,
-            timestamp_utc=datetime.now(timezone.utc),
+            timestamp_utc=datetime.now(UTC),
             download_mbps=50.0,
             upload_mbps=None,  # Missing
             latency_ms=None,   # Missing

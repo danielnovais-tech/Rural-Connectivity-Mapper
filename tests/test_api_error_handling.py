@@ -1,12 +1,12 @@
 """Tests for API error handling with SSL, timeout, and fallback mechanisms."""
 
-import pytest
-from unittest.mock import patch, Mock
+from unittest.mock import Mock, patch
+
 import requests
 
 from src.utils.anatel_utils import fetch_anatel_backhaul_data
-from src.utils.starlink_api import get_coverage_data, get_performance_metrics, get_availability_status
 from src.utils.ibge_utils import fetch_ibge_municipalities
+from src.utils.starlink_api import get_availability_status, get_coverage_data, get_performance_metrics
 
 
 class TestAnatelAPIErrorHandling:

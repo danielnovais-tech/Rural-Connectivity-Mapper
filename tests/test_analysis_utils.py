@@ -1,17 +1,14 @@
 """Tests for analysis utilities."""
 
-import pytest
-from datetime import datetime
 
+import pytest
 
 from src.utils.analysis_utils import (
     analyze_temporal_evolution,
     cluster_connectivity_points,
-    forecast_quality_scores
+    compare_providers,
+    forecast_quality_scores,
 )
-
-from src.utils.analysis_utils import analyze_temporal_evolution, compare_providers
-
 
 
 @pytest.fixture

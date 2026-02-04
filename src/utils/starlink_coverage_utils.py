@@ -6,12 +6,12 @@ Ready to be replaced with official API when available.
 """
 
 import logging
-from typing import List, Dict, Any
+from typing import Any
 
 logger = logging.getLogger(__name__)
 
 
-def get_starlink_coverage_zones() -> List[Dict[str, Any]]:
+def get_starlink_coverage_zones() -> list[dict[str, Any]]:
     """Get Starlink coverage zones for Brazil.
     
     This is currently a placeholder implementation that returns simulated coverage
@@ -110,7 +110,7 @@ def get_starlink_coverage_zones() -> List[Dict[str, Any]]:
     return coverage_zones
 
 
-def get_starlink_signal_points() -> List[Dict[str, Any]]:
+def get_starlink_signal_points() -> list[dict[str, Any]]:
     """Get Starlink signal strength points for rural Brazil.
     
     Returns simulated signal strength data points across rural Brazil.

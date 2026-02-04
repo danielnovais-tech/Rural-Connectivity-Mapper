@@ -1,12 +1,11 @@
 """Report generation utilities for multi-format output."""
 
+import csv
 import json
 import logging
 import os
-from typing import List, Dict, Optional
-from pathlib import Path
 from datetime import datetime
-import csv
+from pathlib import Path
 
 try:
     from colorama import Fore, Style, init
@@ -15,7 +14,7 @@ try:
 except ImportError:
     COLORAMA_AVAILABLE = False
 
-from .i18n_utils import get_translation, get_rating_translation
+from .i18n_utils import get_rating_translation, get_translation
 
 logger = logging.getLogger(__name__)
 
@@ -32,7 +31,7 @@ def _get_default_blackbox_settings_path() -> Path:
     return Path.home() / ".blackbox" / "settings.json"
 
 
-def getCustomExcludes(config_path: Optional[str] = None) -> List[str]:
+def getCustomExcludes(config_path: str | None = None) -> list[str]:
     """Read global exclude patterns from settings.json.
 
     The intended default location is ~/.blackbox/settings.json.
@@ -54,7 +53,7 @@ def getCustomExcludes(config_path: Optional[str] = None) -> List[str]:
         return []
 
     try:
-        with open(settings_path, "r", encoding="utf-8") as f:
+        with open(settings_path, encoding="utf-8") as f:
             data = json.load(f)
     except (json.JSONDecodeError, OSError):
         return []
@@ -68,14 +67,14 @@ def getCustomExcludes(config_path: Optional[str] = None) -> List[str]:
 
 
 def getCombinedExcludes(
-    project_excludes: Optional[List[str]] = None,
-    config_path: Optional[str] = None,
-) -> List[str]:
+    project_excludes: list[str] | None = None,
+    config_path: str | None = None,
+) -> list[str]:
     """Combine built-in excludes with optional project + global excludes.
 
     This is intended for any code that scans the filesystem to build reports.
     """
-    combined: List[str] = []
+    combined: list[str] = []
 
     # Built-in defaults that are generally noisy across projects.
     built_in = [
@@ -101,7 +100,7 @@ def getCombinedExcludes(
     return combined
 
 
-def generate_report(data: List[Dict], report_format: str, output_path: Optional[str] = None, language: str = 'en') -> str:
+def generate_report(data: list[dict], report_format: str, output_path: str | None = None, language: str = 'en') -> str:
     """Generate report in specified format.
     
     Args:
@@ -132,7 +131,7 @@ def generate_report(data: List[Dict], report_format: str, output_path: Optional[
         )
 
 
-def _generate_json_report(data: List[Dict], output_path: Optional[str] = None) -> str:
+def _generate_json_report(data: list[dict], output_path: str | None = None) -> str:
     """Generate JSON format report."""
     try:
         if output_path is None:
@@ -151,7 +150,7 @@ def _generate_json_report(data: List[Dict], output_path: Optional[str] = None) -
         raise
 
 
-def _generate_csv_report(data: List[Dict], output_path: Optional[str] = None) -> str:
+def _generate_csv_report(data: list[dict], output_path: str | None = None) -> str:
     """Generate CSV format report."""
     try:
         if output_path is None:
@@ -217,7 +216,7 @@ def _generate_csv_report(data: List[Dict], output_path: Optional[str] = None) ->
         raise
 
 
-def _generate_txt_report(data: List[Dict], output_path: Optional[str] = None, language: str = 'en') -> str:
+def _generate_txt_report(data: list[dict], output_path: str | None = None, language: str = 'en') -> str:
     """Generate TXT format report with color and translations.
     
     Args:
@@ -292,7 +291,7 @@ def _generate_txt_report(data: List[Dict], output_path: Optional[str] = None, la
         raise
 
 
-def _generate_html_report(data: List[Dict], output_path: Optional[str] = None, language: str = 'en') -> str:
+def _generate_html_report(data: list[dict], output_path: str | None = None, language: str = 'en') -> str:
     """Generate HTML format report with translations.
     
     Args:

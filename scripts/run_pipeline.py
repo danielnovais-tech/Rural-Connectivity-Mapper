@@ -9,7 +9,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
 from src.pipeline import PipelineOrchestrator
-from src.sources import AnatelParquetSource, MockCrowdsourceSource, MockSpeedtestSource, ManualCSVSource
+from src.sources import AnatelParquetSource, ManualCSVSource, MockCrowdsourceSource, MockSpeedtestSource
 
 
 def _parse_csv_list(value: str) -> list[str]:
@@ -73,9 +73,9 @@ def main():
     
     print("✅ Pipeline execution completed successfully!")
     print("\nYou can now find the processed data in:")
-    print(f"  - Bronze (raw): data/bronze/")
-    print(f"  - Silver (enriched): data/silver/")
-    print(f"  - Gold (aggregated): data/gold/")
+    print("  - Bronze (raw): data/bronze/")
+    print("  - Silver (enriched): data/silver/")
+    print("  - Gold (aggregated): data/gold/")
 
 
 if __name__ == "__main__":

@@ -1,7 +1,7 @@
 """Models package for Rural Connectivity Mapper."""
 
-from .SpeedTest import SpeedTest
-from .QualityScore import QualityScore
 from .ConnectivityPoint import ConnectivityPoint
+from .QualityScore import QualityScore
+from .SpeedTest import SpeedTest
 
 __all__ = ['SpeedTest', 'QualityScore', 'ConnectivityPoint']

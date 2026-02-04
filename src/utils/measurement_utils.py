@@ -1,12 +1,11 @@
 """Measurement utilities for network speed testing."""
 
 import logging
-from typing import Dict, Optional
 
 logger = logging.getLogger(__name__)
 
 
-def measure_speed() -> Optional[Dict]:
+def measure_speed() -> dict | None:
     """Measure network speed using speedtest-cli.
     
     Returns:

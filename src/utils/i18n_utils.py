@@ -1,7 +1,6 @@
 """Internationalization utilities for multilingual support."""
 
 import logging
-from typing import Dict, Optional
 
 logger = logging.getLogger(__name__)
 
@@ -111,7 +110,7 @@ TRANSLATIONS = {
 DEFAULT_LANGUAGE = 'en'
 
 
-def get_translation(key: str, language: Optional[str] = None, **kwargs) -> str:
+def get_translation(key: str, language: str | None = None, **kwargs) -> str:
     """Get translation for a key in specified language.
     
     Args:
@@ -150,7 +149,7 @@ def get_translation(key: str, language: Optional[str] = None, **kwargs) -> str:
     return translation
 
 
-def get_rating_translation(rating: str, language: Optional[str] = None) -> str:
+def get_rating_translation(rating: str, language: str | None = None) -> str:
     """Get translation for a quality rating.
     
     Args:

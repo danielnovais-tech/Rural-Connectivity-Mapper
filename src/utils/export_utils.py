@@ -2,9 +2,8 @@
 
 import json
 import logging
-from typing import List, Dict, Optional
-from pathlib import Path
 from datetime import datetime
+from pathlib import Path
 
 logger = logging.getLogger(__name__)
 
@@ -26,7 +25,7 @@ FARM_ANALYTICS_QUALITY_THRESHOLD = 40  # Minimum quality score for data analytic
 
 
 def export_for_hybrid_simulator(
-    data: List[Dict],
+    data: list[dict],
     output_path: str = 'exports/hybrid_simulator_input.json'
 ) -> str:
     """Export connectivity data for Hybrid Architecture Simulator failover testing.
@@ -107,7 +106,7 @@ def export_for_hybrid_simulator(
 
 
 def export_for_agrix_boost(
-    data: List[Dict],
+    data: list[dict],
     output_path: str = 'exports/agrix_boost_connectivity.json'
 ) -> str:
     """Export connectivity data for AgriX-Boost farm dashboards.
@@ -186,7 +185,7 @@ def export_for_agrix_boost(
     return str(output_file)
 
 
-def _generate_farm_recommendations(speed_test: Dict, quality_score: Dict) -> List[str]:
+def _generate_farm_recommendations(speed_test: dict, quality_score: dict) -> list[str]:
     """Generate recommendations for farm connectivity based on metrics.
     
     Args:
@@ -233,9 +232,9 @@ def _generate_farm_recommendations(speed_test: Dict, quality_score: Dict) -> Lis
 
 
 def export_ecosystem_bundle(
-    data: List[Dict],
+    data: list[dict],
     output_dir: str = 'exports/ecosystem'
-) -> Dict[str, str]:
+) -> dict[str, str]:
     """Export complete ecosystem bundle for all integrated projects.
     
     Creates exports for both Hybrid Architecture Simulator and AgriX-Boost,
@@ -313,7 +312,7 @@ def export_ecosystem_bundle(
     }
 
 
-def _get_quality_distribution(data: List[Dict]) -> Dict[str, int]:
+def _get_quality_distribution(data: list[dict]) -> dict[str, int]:
     """Calculate distribution of quality ratings.
     
     Args:

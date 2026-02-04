@@ -2,8 +2,9 @@
 
 from datetime import datetime
 from enum import Enum
-from typing import Optional, Dict, Any
-from pydantic import BaseModel, Field, field_validator, ConfigDict
+from typing import Any
+
+from pydantic import BaseModel, ConfigDict, Field, field_validator
 
 
 class SourceType(str, Enum):
@@ -54,7 +55,7 @@ class ConfidenceBreakdown(BaseModel):
         description="Score based on metadata completeness (0-100)"
     )
     
-    def to_dict(self) -> Dict[str, float]:
+    def to_dict(self) -> dict[str, float]:
         """Convert to dictionary."""
         return {
             "recency_score": self.recency_score,
@@ -92,15 +93,15 @@ class MeasurementSchema(BaseModel):
     )
     
     # Connectivity metrics
-    download_mbps: Optional[float] = Field(
+    download_mbps: float | None = Field(
         None, ge=0.0,
         description="Download speed in Mbps"
     )
-    upload_mbps: Optional[float] = Field(
+    upload_mbps: float | None = Field(
         None, ge=0.0,
         description="Upload speed in Mbps"
     )
-    latency_ms: Optional[float] = Field(
+    latency_ms: float | None = Field(
         None, ge=0.0,
         description="Latency in milliseconds"
     )
@@ -113,37 +114,37 @@ class MeasurementSchema(BaseModel):
     source: SourceType = Field(
         description="Data source identifier"
     )
-    provider: Optional[str] = Field(
+    provider: str | None = Field(
         None,
         description="Internet service provider name"
     )
     
     # Quality & Confidence (populated in silver/gold layers)
-    confidence_score: Optional[float] = Field(
+    confidence_score: float | None = Field(
         None, ge=0.0, le=100.0,
         description="Overall confidence score (0-100)"
     )
-    confidence_breakdown: Optional[ConfidenceBreakdown] = Field(
+    confidence_breakdown: ConfidenceBreakdown | None = Field(
         None,
         description="Breakdown of confidence score components"
     )
     
     # Additional metadata
-    metadata: Dict[str, Any] = Field(
+    metadata: dict[str, Any] = Field(
         default_factory=dict,
         description="Additional source-specific metadata"
     )
     
     # Optional fields
-    country: Optional[str] = Field(
+    country: str | None = Field(
         None,
         description="ISO 3166-1 alpha-2 country code (e.g., 'BR', 'US')"
     )
-    region: Optional[str] = Field(
+    region: str | None = Field(
         None,
         description="Region or state identifier"
     )
-    h3_index: Optional[str] = Field(
+    h3_index: str | None = Field(
         None,
         description="H3 geospatial index for aggregation"
     )
@@ -168,7 +169,7 @@ class MeasurementSchema(BaseModel):
                         continue
         raise ValueError(f"Unable to parse timestamp: {v}")
     
-    def to_dict(self) -> Dict[str, Any]:
+    def to_dict(self) -> dict[str, Any]:
         """Convert to dictionary with proper serialization."""
         data = self.model_dump()
         # Convert datetime to ISO format
@@ -182,6 +183,6 @@ class MeasurementSchema(BaseModel):
         return data
     
     @classmethod
-    def from_dict(cls, data: Dict[str, Any]) -> "MeasurementSchema":
+    def from_dict(cls, data: dict[str, Any]) -> "MeasurementSchema":
         """Create instance from dictionary."""
         return cls(**data)

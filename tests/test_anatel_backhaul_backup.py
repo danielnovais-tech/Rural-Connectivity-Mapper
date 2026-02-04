@@ -1,15 +1,10 @@
 """Tests for ANATEL backhaul backup utilities."""
 
-import pytest
-import os
 import json
+import os
 import tempfile
 
-from src.utils.anatel_utils import (
-    load_anatel_backhaul_backup,
-    fetch_anatel_backhaul_data,
-    ANATEL_BACKUP_BACKHAUL_FILE
-)
+from src.utils.anatel_utils import ANATEL_BACKUP_BACKHAUL_FILE, fetch_anatel_backhaul_data, load_anatel_backhaul_backup
 
 
 def test_load_anatel_backhaul_backup_returns_records():
@@ -160,7 +155,7 @@ def test_backup_file_exists():
 
 def test_backup_file_has_valid_structure():
     """Test that the backup file has valid structure."""
-    with open(ANATEL_BACKUP_BACKHAUL_FILE, 'r', encoding='utf-8') as f:
+    with open(ANATEL_BACKUP_BACKHAUL_FILE, encoding='utf-8') as f:
         data = json.load(f)
     
     # Check top-level structure

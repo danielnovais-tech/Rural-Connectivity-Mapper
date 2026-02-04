@@ -2,18 +2,19 @@
 """Demo script to test new features: ANATEL, IBGE, Starlink, and LATAM support."""
 
 import logging
+
 from src.utils import (
+    check_starlink_availability,
     fetch_anatel_broadband_data,
     fetch_anatel_mobile_data,
     get_anatel_provider_stats,
-    get_rural_areas_needing_connectivity,
-    get_ibge_statistics_summary,
-    check_starlink_availability,
-    get_starlink_service_plans,
-    get_starlink_coverage_map,
-    get_supported_countries,
     get_country_config,
-    get_latam_summary
+    get_ibge_statistics_summary,
+    get_latam_summary,
+    get_rural_areas_needing_connectivity,
+    get_starlink_coverage_map,
+    get_starlink_service_plans,
+    get_supported_countries,
 )
 
 logging.basicConfig(level=logging.INFO)
@@ -61,7 +62,7 @@ def test_ibge_integration():
     
     # Test statistics summary
     summary = get_ibge_statistics_summary()
-    print(f"\n✓ IBGE Statistics Summary:")
+    print("\n✓ IBGE Statistics Summary:")
     print(f"  Total municipalities: {summary['total_municipalities']:,}")
     print(f"  Rural population: {summary['rural_population']:,}")
     print(f"  Rural internet access: {summary['rural_households_with_internet']}%")
@@ -120,7 +121,7 @@ def test_latam_support():
     
     # Test LATAM summary
     summary = get_latam_summary()
-    print(f"\n✓ LATAM Summary:")
+    print("\n✓ LATAM Summary:")
     print(f"  Total countries: {summary['total_countries']}")
     print(f"  Unique providers: {summary['unique_providers_count']}")
     print(f"  Languages: {', '.join(summary['languages'])}")
