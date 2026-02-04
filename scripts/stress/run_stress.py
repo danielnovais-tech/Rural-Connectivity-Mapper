@@ -101,7 +101,13 @@ def generate_synthetic_points(
                 },
                 "quality_score": {
                     "overall_score": overall,
-                    "rating": "Excellent" if overall >= 80 else "Good" if overall >= 65 else "Fair" if overall >= 50 else "Poor",
+                    "rating": "Excellent"
+                    if overall >= 80
+                    else "Good"
+                    if overall >= 65
+                    else "Fair"
+                    if overall >= 50
+                    else "Poor",
                 },
             }
         )
@@ -228,9 +234,9 @@ def stress_geocoding(
     }
 
     # Avoid the built-in 1 req/sec limiter during stress runs.
-    with patch('src.utils.geocoding_utils._wait_for_rate_limit', lambda: None):
-        with patch('src.utils.geocoding_utils.geolocator.reverse', side_effect=flaky.reverse):
-            with patch('src.utils.geocoding_utils.geolocator.geocode', side_effect=flaky.geocode):
+    with patch("src.utils.geocoding_utils._wait_for_rate_limit", lambda: None):
+        with patch("src.utils.geocoding_utils.geolocator.reverse", side_effect=flaky.reverse):
+            with patch("src.utils.geocoding_utils.geolocator.geocode", side_effect=flaky.geocode):
                 start = time.perf_counter()
                 for i in range(geocode_samples):
                     # Alternate reverse + forward

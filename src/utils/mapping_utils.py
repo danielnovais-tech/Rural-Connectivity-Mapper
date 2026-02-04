@@ -8,6 +8,7 @@ from .config_utils import get_default_country, get_map_center, get_zoom_level
 
 try:
     import folium
+
     FOLIUM_AVAILABLE = True
 except ImportError:
     FOLIUM_AVAILABLE = False
@@ -22,94 +23,94 @@ def _create_empty_map(country_code: str, include_starlink_coverage: bool, output
     center = get_map_center(country_code)
     zoom = get_zoom_level(country_code)
     m = folium.Map(location=center, zoom_start=zoom)
-    
+
     if include_starlink_coverage:
         _add_starlink_coverage_layer(m)
-    
+
     m.save(str(output_path))
     return str(output_path)
 
 
-def _add_starlink_coverage_layer(m: 'folium.Map') -> None:
+def _add_starlink_coverage_layer(m: "folium.Map") -> None:
     """Add Starlink coverage zones to the map."""
-    starlink_layer = folium.FeatureGroup(name='Starlink Coverage Zones', show=True)
+    starlink_layer = folium.FeatureGroup(name="Starlink Coverage Zones", show=True)
     coverage_zones = get_starlink_coverage_zones()
-    
+
     for zone in coverage_zones:
         folium.Circle(
-            location=zone['center'],
-            radius=zone['radius'],
-            color=zone['color'],
+            location=zone["center"],
+            radius=zone["radius"],
+            color=zone["color"],
             fill=True,
-            fillColor=zone['color'],
-            fillOpacity=zone['opacity'],
+            fillColor=zone["color"],
+            fillOpacity=zone["opacity"],
             opacity=0.3,
             popup=folium.Popup(
                 f"<b>{zone['name']}</b><br>"
                 f"Coverage: {zone['coverage'].title()}<br>"
-                f"Radius: ~{zone['radius']//1000} km",
-                max_width=200
+                f"Radius: ~{zone['radius'] // 1000} km",
+                max_width=200,
             ),
-            tooltip=f"{zone['name']} - {zone['coverage'].title()} coverage"
+            tooltip=f"{zone['name']} - {zone['coverage'].title()} coverage",
         ).add_to(starlink_layer)
-    
+
     starlink_layer.add_to(m)
-    folium.LayerControl(position='topright', collapsed=False).add_to(m)
+    folium.LayerControl(position="topright", collapsed=False).add_to(m)
 
 
-def _add_connectivity_markers(m: 'folium.Map', data: list[dict]) -> None:
+def _add_connectivity_markers(m: "folium.Map", data: list[dict]) -> None:
     """Add connectivity data markers to the map."""
-    connectivity_group = folium.FeatureGroup(name='Connectivity Points', show=True)
-    
+    connectivity_group = folium.FeatureGroup(name="Connectivity Points", show=True)
+
     for point in data:
-        lat = point.get('latitude')
-        lon = point.get('longitude')
-        
+        lat = point.get("latitude")
+        lon = point.get("longitude")
+
         if lat is None or lon is None:
             continue
-        
+
         _add_single_marker(connectivity_group, point, lat, lon)
-    
+
     connectivity_group.add_to(m)
 
 
-def _add_single_marker(group: 'folium.FeatureGroup', point: dict, lat: float, lon: float) -> None:
+def _add_single_marker(group: "folium.FeatureGroup", point: dict, lat: float, lon: float) -> None:
     """Add a single connectivity marker to the feature group."""
-    qs = point.get('quality_score', {})
-    overall_score = qs.get('overall_score', 0)
-    rating = qs.get('rating', 'Unknown')
-    
+    qs = point.get("quality_score", {})
+    overall_score = qs.get("overall_score", 0)
+    rating = qs.get("rating", "Unknown")
+
     color = _get_marker_color(overall_score)
     popup_html = _create_marker_popup(point, lat, lon, overall_score, rating, color)
-    
+
     folium.Marker(
         location=[lat, lon],
         popup=folium.Popup(popup_html, max_width=300),
         tooltip=f"{point.get('provider', 'Unknown')} - {rating}",
-        icon=folium.Icon(color=color, icon='info-sign')
+        icon=folium.Icon(color=color, icon="info-sign"),
     ).add_to(group)
 
 
 def _get_marker_color(overall_score: float) -> str:
     """Determine marker color based on quality score."""
     if overall_score >= 80:
-        return 'green'
+        return "green"
     elif overall_score >= 60:
-        return 'blue'
+        return "blue"
     elif overall_score >= 40:
-        return 'orange'
+        return "orange"
     else:
-        return 'red'
+        return "red"
 
 
 def _create_marker_popup(point: dict, lat: float, lon: float, overall_score: float, rating: str, color: str) -> str:
     """Create HTML popup content for a marker."""
-    provider = point.get('provider', 'Unknown')
-    st = point.get('speed_test', {})
-    download = st.get('download', 'N/A')
-    upload = st.get('upload', 'N/A')
-    latency = st.get('latency', 'N/A')
-    
+    provider = point.get("provider", "Unknown")
+    st = point.get("speed_test", {})
+    download = st.get("download", "N/A")
+    upload = st.get("upload", "N/A")
+    latency = st.get("latency", "N/A")
+
     return f"""
     <div style="font-family: Arial; min-width: 200px;">
         <h4 style="margin: 0 0 10px 0; color: {color};">{provider}</h4>
@@ -139,9 +140,9 @@ def _create_marker_popup(point: dict, lat: float, lon: float, overall_score: flo
     """
 
 
-def _add_legend(m: 'folium.Map', include_starlink_coverage: bool) -> None:
+def _add_legend(m: "folium.Map", include_starlink_coverage: bool) -> None:
     """Add legend to the map."""
-    legend_html = '''
+    legend_html = """
     <div style="position: fixed; 
                 bottom: 50px; right: 50px; width: 220px; height: auto; 
                 background-color: white; border:2px solid grey; z-index:9999; 
@@ -153,92 +154,97 @@ def _add_legend(m: 'folium.Map', include_starlink_coverage: bool) -> None:
     <p style="margin: 3px 0;"><i class="fa fa-circle" style="color:blue"></i> Good (60-79)</p>
     <p style="margin: 3px 0;"><i class="fa fa-circle" style="color:orange"></i> Fair (40-59)</p>
     <p style="margin: 3px 0;"><i class="fa fa-circle" style="color:red"></i> Poor (&lt;40)</p>
-    '''
-    
+    """
+
     if include_starlink_coverage:
-        legend_html += '''
+        legend_html += """
     <p style="margin: 8px 0 4px 0; font-weight: bold;">Starlink Coverage</p>
     <p style="margin: 3px 0;"><span style="color:#00ff00">█</span> Excellent Signal</p>
     <p style="margin: 3px 0;"><span style="color:#ffff00">█</span> Good Signal</p>
     <p style="margin: 3px 0;"><span style="color:#ffa500">█</span> Fair Signal</p>
-        '''
-    
-    legend_html += '''
+        """
+
+    legend_html += """
     <p style="margin: 8px 0 0 0; font-size: 10px; font-style: italic;">
     Use layer control (top right) to toggle layers
     </p>
     <span style="display:none">LayerControl leaflet-control-layers layer-control</span>
     </div>
-    '''
-    
+    """
+
     root = m.get_root()
     # Folium renders custom HTML reliably when attached to the figure's html container.
-    if hasattr(root, 'html'):
+    if hasattr(root, "html"):
         root.html.add_child(folium.Element(legend_html))
     else:
         root.add_child(folium.Element(legend_html))
 
 
-def generate_map(data: list[dict], output_path: str | None = None, include_starlink_coverage: bool = True, country_code: str | None = None) -> str:
+def generate_map(
+    data: list[dict],
+    output_path: str | None = None,
+    include_starlink_coverage: bool = True,
+    country_code: str | None = None,
+) -> str:
     """Generate interactive Folium map from connectivity data.
-    
+
     Args:
         data: List of connectivity point dictionaries
         output_path: Optional output file path for HTML map
         include_starlink_coverage: Whether to include Starlink coverage overlay layer (default: True)
         country_code: ISO country code for map center (default: uses default country)
-        
+
     Returns:
         str: Path to generated HTML map file
-        
+
     Raises:
         ImportError: If folium is not installed
     """
     if not FOLIUM_AVAILABLE:
         raise ImportError("folium is required for map generation. Install with: pip install folium")
-    
+
     try:
         if output_path is None:
             output_path = f"connectivity_map_{datetime.now().strftime('%Y%m%d_%H%M%S')}.html"
-        
+
         path = Path(output_path)
         path.parent.mkdir(parents=True, exist_ok=True)
-        
+
         if country_code is None:
             country_code = get_default_country()
-        
+
         if not data:
             logger.warning("No data provided for map generation")
             return _create_empty_map(country_code, include_starlink_coverage, str(path))
-        
+
         # Calculate center of map from data points
-        latitudes = [point.get('latitude', 0) for point in data]
-        longitudes = [point.get('longitude', 0) for point in data]
+        latitudes = [point.get("latitude", 0) for point in data]
+        longitudes = [point.get("longitude", 0) for point in data]
         center_lat = sum(latitudes) / len(latitudes)
         center_lon = sum(longitudes) / len(longitudes)
-        
+
         # Create base map
         m = folium.Map(location=[center_lat, center_lon], zoom_start=5)
-        
+
         # Add Starlink coverage layer if requested
         if include_starlink_coverage:
             _add_starlink_coverage_layer(m)
-        
+
         # Add connectivity markers
         _add_connectivity_markers(m, data)
-        
+
         # Add layer control
-        folium.LayerControl(position='topright', collapsed=False).add_to(m)
-        
+        folium.LayerControl(position="topright", collapsed=False).add_to(m)
+
         # Add legend
         _add_legend(m, include_starlink_coverage)
-        
+
         # Save map
         m.save(str(path))
-        
+
         logger.info(f"Interactive map generated with {len(data)} points: {path}")
         return str(path)
-    
+
     except Exception as e:
         logger.error(f"Error generating map: {e}")
         raise

@@ -7,4 +7,4 @@ ANATEL static data processing.
 
 from .anatel_static_connector import ANATELStaticConnector
 
-__all__ = ['ANATELStaticConnector']
+__all__ = ["ANATELStaticConnector"]
