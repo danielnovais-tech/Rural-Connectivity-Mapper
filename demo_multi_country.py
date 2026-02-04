@@ -10,15 +10,15 @@ from pathlib import Path
 # Add src to path
 sys.path.insert(0, str(Path(__file__).parent))
 
+from src.models import ConnectivityPoint, SpeedTest
 from src.utils import (
-    list_available_countries,
     get_country_info,
-    get_providers,
     get_language,
     get_map_center,
-    get_zoom_level
+    get_providers,
+    get_zoom_level,
+    list_available_countries,
 )
-from src.models import ConnectivityPoint, SpeedTest
 
 
 def main():
@@ -69,7 +69,7 @@ def main():
         speed_test=br_speed,
         country="BR"
     )
-    print(f"\nBrazil (Brasília):")
+    print("\nBrazil (Brasília):")
     print(f"  Provider: {br_point.provider}")
     print(f"  Quality Score: {br_point.quality_score.overall_score:.1f}/100 ({br_point.quality_score.rating})")
     print(f"  Download: {br_point.speed_test.download} Mbps")
@@ -84,7 +84,7 @@ def main():
         speed_test=us_speed,
         country="US"
     )
-    print(f"\nUnited States (Austin):")
+    print("\nUnited States (Austin):")
     print(f"  Provider: {us_point.provider}")
     print(f"  Quality Score: {us_point.quality_score.overall_score:.1f}/100 ({us_point.quality_score.rating})")
     print(f"  Download: {us_point.speed_test.download} Mbps")
@@ -99,7 +99,7 @@ def main():
         speed_test=uk_speed,
         country="GB"
     )
-    print(f"\nUnited Kingdom (London):")
+    print("\nUnited Kingdom (London):")
     print(f"  Provider: {uk_point.provider}")
     print(f"  Quality Score: {uk_point.quality_score.overall_score:.1f}/100 ({uk_point.quality_score.rating})")
     print(f"  Download: {uk_point.speed_test.download} Mbps")

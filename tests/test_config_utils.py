@@ -1,15 +1,16 @@
 """Tests for configuration utilities."""
 
 import pytest
+
 from src.utils.config_utils import (
-    load_country_config,
     get_country_info,
     get_default_country,
-    get_providers,
     get_language,
     get_map_center,
+    get_providers,
     get_zoom_level,
-    list_available_countries
+    list_available_countries,
+    load_country_config,
 )
 
 

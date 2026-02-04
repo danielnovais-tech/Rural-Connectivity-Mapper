@@ -2,15 +2,14 @@
 
 import json
 import logging
-from typing import Any, List, Dict
-from pathlib import Path
-from datetime import datetime
 import shutil
+from datetime import datetime
+from pathlib import Path
 
 logger = logging.getLogger(__name__)
 
 
-def load_data(filepath: str) -> List[Dict]:
+def load_data(filepath: str) -> list[dict]:
     """Load JSON data from file.
     
     Args:
@@ -30,7 +29,7 @@ def load_data(filepath: str) -> List[Dict]:
             logger.warning(f"File not found: {filepath}. Returning empty list.")
             return []
         
-        with open(path, 'r', encoding='utf-8') as f:
+        with open(path, encoding='utf-8') as f:
             data = json.load(f)
         
         logger.info(f"Successfully loaded {len(data)} records from {filepath}")
@@ -44,7 +43,7 @@ def load_data(filepath: str) -> List[Dict]:
         raise
 
 
-def save_data(filepath: str, data: List[Dict]) -> None:
+def save_data(filepath: str, data: list[dict]) -> None:
     """Save data to JSON file.
     
     Args:

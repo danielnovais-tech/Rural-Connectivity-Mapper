@@ -11,13 +11,13 @@ into the unified data model. It provides:
 import csv
 import hashlib
 import json
-from datetime import datetime, timezone
-from pathlib import Path
-from typing import List, Dict, Optional, Set
-import uuid
 import logging
+import uuid
+from datetime import UTC, datetime
+from pathlib import Path
 
 from src.schemas import MeasurementSchema, SourceType, TechnologyType
+
 from .base import DataSource
 
 logger = logging.getLogger(__name__)
@@ -37,10 +37,10 @@ class ManualCSVSource(DataSource):
     
     def __init__(
         self,
-        watch_dir: Optional[Path] = None,
+        watch_dir: Path | None = None,
         source_name: str = "manual_csv",
         source_type: SourceType = SourceType.MANUAL,
-        processed_files_log: Optional[Path] = None,
+        processed_files_log: Path | None = None,
     ):
         """Initialize manual CSV source.
         
@@ -69,11 +69,11 @@ class ManualCSVSource(DataSource):
             self.processed_files_log = Path(processed_files_log)
         
         self.source_type = source_type
-        self._processed_files: Set[str] = self._load_processed_files()
+        self._processed_files: set[str] = self._load_processed_files()
         
         logger.info(f"Initialized ManualCSVSource watching {self.watch_dir}")
     
-    def _load_processed_files(self) -> Set[str]:
+    def _load_processed_files(self) -> set[str]:
         """Load the set of already processed file hashes.
         
         Returns:
@@ -83,10 +83,10 @@ class ManualCSVSource(DataSource):
             return set()
         
         try:
-            with open(self.processed_files_log, 'r') as f:
+            with open(self.processed_files_log) as f:
                 data = json.load(f)
             return set(data.get("processed_hashes", []))
-        except (json.JSONDecodeError, IOError) as e:
+        except (OSError, json.JSONDecodeError) as e:
             logger.warning(f"Could not load processed files log: {e}")
             return set()
     
@@ -94,13 +94,13 @@ class ManualCSVSource(DataSource):
         """Save the set of processed file hashes to disk."""
         data = {
             "processed_hashes": list(self._processed_files),
-            "last_updated": datetime.now(timezone.utc).isoformat()
+            "last_updated": datetime.now(UTC).isoformat()
         }
         
         try:
             with open(self.processed_files_log, 'w') as f:
                 json.dump(data, f, indent=2)
-        except IOError as e:
+        except OSError as e:
             logger.error(f"Could not save processed files log: {e}")
     
     def _get_file_hash(self, filepath: Path) -> str:
@@ -119,7 +119,7 @@ class ManualCSVSource(DataSource):
                 sha256_hash.update(byte_block)
         return sha256_hash.hexdigest()
     
-    def _parse_technology(self, tech_str: Optional[str]) -> TechnologyType:
+    def _parse_technology(self, tech_str: str | None) -> TechnologyType:
         """Parse technology string to TechnologyType enum.
         
         Args:
@@ -151,7 +151,7 @@ class ManualCSVSource(DataSource):
         else:
             return TechnologyType.OTHER
     
-    def _parse_csv_row(self, row: Dict[str, str], row_num: int, filename: str) -> Optional[MeasurementSchema]:
+    def _parse_csv_row(self, row: dict[str, str], row_num: int, filename: str) -> MeasurementSchema | None:
         """Parse a single CSV row into a MeasurementSchema.
         
         Args:
@@ -194,15 +194,15 @@ class ManualCSVSource(DataSource):
                             timestamp = datetime.strptime(timestamp_str, fmt)
                             # Make timezone-aware if not already
                             if timestamp.tzinfo is None:
-                                timestamp = timestamp.replace(tzinfo=timezone.utc)
+                                timestamp = timestamp.replace(tzinfo=UTC)
                             break
                         except ValueError:
                             continue
                     else:
                         logger.warning(f"Row {row_num}: Could not parse timestamp '{timestamp_str}', using current time")
-                        timestamp = datetime.now(timezone.utc)
+                        timestamp = datetime.now(UTC)
             else:
-                timestamp = datetime.now(timezone.utc)
+                timestamp = datetime.now(UTC)
             
             # Optional fields - handle '0' and '0.0' as valid values
             download_str = row_lower.get('download', row_lower.get('download_mbps', '')).strip()
@@ -260,7 +260,7 @@ class ManualCSVSource(DataSource):
             logger.warning(f"Row {row_num} in {filename}: Invalid data - {e}")
             return None
     
-    def _process_csv_file(self, filepath: Path) -> List[MeasurementSchema]:
+    def _process_csv_file(self, filepath: Path) -> list[MeasurementSchema]:
         """Process a single CSV file into measurements.
         
         Args:
@@ -280,7 +280,7 @@ class ManualCSVSource(DataSource):
 
             for encoding in encodings_to_try:
                 try:
-                    with open(filepath, "r", encoding=encoding) as f:
+                    with open(filepath, encoding=encoding) as f:
                         # Detect delimiter (support both comma and semicolon)
                         sample = f.read(1024)
                         f.seek(0)
@@ -311,7 +311,7 @@ class ManualCSVSource(DataSource):
         
         return measurements
     
-    def fetch(self) -> List[MeasurementSchema]:
+    def fetch(self) -> list[MeasurementSchema]:
         """Fetch measurements from unprocessed CSV files in the watch directory.
         
         Scans the watch directory for new CSV files, processes them, and marks them

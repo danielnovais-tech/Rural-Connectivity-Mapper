@@ -2,17 +2,16 @@
 
 import json
 import logging
-from pathlib import Path
 import sys
-from typing import Dict, List, Optional
+from pathlib import Path
 
 logger = logging.getLogger(__name__)
 
 # Cache for loaded configuration
-_config_cache: Optional[Dict] = None
+_config_cache: dict | None = None
 
 
-def load_country_config(config_path: Optional[str] = None) -> Dict:
+def load_country_config(config_path: str | None = None) -> dict:
     """Load country configuration from JSON file.
     
     Args:
@@ -34,7 +33,7 @@ def load_country_config(config_path: Optional[str] = None) -> Dict:
         config_path = base_dir / "config" / "countries.json"
     
     try:
-        with open(config_path, 'r', encoding='utf-8') as f:
+        with open(config_path, encoding='utf-8') as f:
             config = json.load(f)
         
         # Cache the config
@@ -65,7 +64,7 @@ def load_country_config(config_path: Optional[str] = None) -> Dict:
         raise
 
 
-def get_country_info(country_code: str, config: Optional[Dict] = None) -> Dict:
+def get_country_info(country_code: str, config: dict | None = None) -> dict:
     """Get configuration for a specific country.
     
     Args:
@@ -93,7 +92,7 @@ def get_country_info(country_code: str, config: Optional[Dict] = None) -> Dict:
     return config['countries'][country_code]
 
 
-def get_default_country(config: Optional[Dict] = None) -> str:
+def get_default_country(config: dict | None = None) -> str:
     """Get the default country code from configuration.
     
     Args:
@@ -108,7 +107,7 @@ def get_default_country(config: Optional[Dict] = None) -> str:
     return config.get('default_country', 'BR')
 
 
-def get_providers(country_code: str, config: Optional[Dict] = None) -> List[str]:
+def get_providers(country_code: str, config: dict | None = None) -> list[str]:
     """Get list of providers for a specific country.
     
     Args:
@@ -122,7 +121,7 @@ def get_providers(country_code: str, config: Optional[Dict] = None) -> List[str]
     return country_info.get('providers', ['Unknown'])
 
 
-def get_language(country_code: str, config: Optional[Dict] = None) -> str:
+def get_language(country_code: str, config: dict | None = None) -> str:
     """Get the language code for a specific country.
     
     Args:
@@ -136,7 +135,7 @@ def get_language(country_code: str, config: Optional[Dict] = None) -> str:
     return country_info.get('language', 'en')
 
 
-def get_map_center(country_code: str, config: Optional[Dict] = None) -> tuple:
+def get_map_center(country_code: str, config: dict | None = None) -> tuple:
     """Get the default map center coordinates for a specific country.
     
     Args:
@@ -151,7 +150,7 @@ def get_map_center(country_code: str, config: Optional[Dict] = None) -> tuple:
     return (center['latitude'], center['longitude'])
 
 
-def get_zoom_level(country_code: str, config: Optional[Dict] = None) -> int:
+def get_zoom_level(country_code: str, config: dict | None = None) -> int:
     """Get the default zoom level for a specific country's map.
     
     Args:
@@ -165,7 +164,7 @@ def get_zoom_level(country_code: str, config: Optional[Dict] = None) -> int:
     return country_info.get('zoom_level', 4)
 
 
-def list_available_countries(config: Optional[Dict] = None) -> List[str]:
+def list_available_countries(config: dict | None = None) -> list[str]:
     """Get list of all available country codes in configuration.
     
     Args:

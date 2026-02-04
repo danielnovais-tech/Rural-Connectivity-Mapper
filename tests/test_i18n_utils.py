@@ -1,12 +1,8 @@
 """Tests for internationalization utilities."""
 
-import pytest
 from unittest.mock import patch
-from src.utils.i18n_utils import (
-    get_translation, 
-    get_rating_translation, 
-    get_supported_languages
-)
+
+from src.utils.i18n_utils import get_rating_translation, get_supported_languages, get_translation
 
 
 def test_get_supported_languages():

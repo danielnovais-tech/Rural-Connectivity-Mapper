@@ -1,7 +1,7 @@
 """Base interface for data sources."""
 
 from abc import ABC, abstractmethod
-from typing import List
+
 from src.schemas import MeasurementSchema
 
 
@@ -21,7 +21,7 @@ class DataSource(ABC):
         self.source_name = source_name
     
     @abstractmethod
-    def fetch(self) -> List[MeasurementSchema]:
+    def fetch(self) -> list[MeasurementSchema]:
         """Fetch measurements from the data source.
         
         Returns:

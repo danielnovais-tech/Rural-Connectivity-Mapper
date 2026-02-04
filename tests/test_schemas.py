@@ -1,10 +1,11 @@
 """Unit tests for schema validation and normalization."""
 
+from datetime import UTC, datetime
+
 import pytest
-from datetime import datetime, timezone
 from pydantic import ValidationError
 
-from src.schemas import MeasurementSchema, SourceType, TechnologyType, ConfidenceBreakdown
+from src.schemas import ConfidenceBreakdown, MeasurementSchema, SourceType, TechnologyType
 
 
 class TestMeasurementSchema:
@@ -16,7 +17,7 @@ class TestMeasurementSchema:
             id="test123",
             lat=-15.7801,
             lon=-47.9292,
-            timestamp_utc=datetime.now(timezone.utc),
+            timestamp_utc=datetime.now(UTC),
             download_mbps=100.0,
             upload_mbps=20.0,
             latency_ms=25.0,
@@ -42,7 +43,7 @@ class TestMeasurementSchema:
             id="test",
             lat=45.0,
             lon=0.0,
-            timestamp_utc=datetime.now(timezone.utc),
+            timestamp_utc=datetime.now(UTC),
             source=SourceType.ANATEL,
         )
         
@@ -52,7 +53,7 @@ class TestMeasurementSchema:
                 id="test",
                 lat=91.0,
                 lon=0.0,
-                timestamp_utc=datetime.now(timezone.utc),
+                timestamp_utc=datetime.now(UTC),
                 source=SourceType.ANATEL,
             )
         
@@ -62,7 +63,7 @@ class TestMeasurementSchema:
                 id="test",
                 lat=-91.0,
                 lon=0.0,
-                timestamp_utc=datetime.now(timezone.utc),
+                timestamp_utc=datetime.now(UTC),
                 source=SourceType.ANATEL,
             )
     
@@ -73,7 +74,7 @@ class TestMeasurementSchema:
             id="test",
             lat=0.0,
             lon=120.0,
-            timestamp_utc=datetime.now(timezone.utc),
+            timestamp_utc=datetime.now(UTC),
             source=SourceType.ANATEL,
         )
         
@@ -83,7 +84,7 @@ class TestMeasurementSchema:
                 id="test",
                 lat=0.0,
                 lon=181.0,
-                timestamp_utc=datetime.now(timezone.utc),
+                timestamp_utc=datetime.now(UTC),
                 source=SourceType.ANATEL,
             )
         
@@ -93,7 +94,7 @@ class TestMeasurementSchema:
                 id="test",
                 lat=0.0,
                 lon=-181.0,
-                timestamp_utc=datetime.now(timezone.utc),
+                timestamp_utc=datetime.now(UTC),
                 source=SourceType.ANATEL,
             )
     
@@ -104,7 +105,7 @@ class TestMeasurementSchema:
             id="test",
             lat=0.0,
             lon=0.0,
-            timestamp_utc=datetime.now(timezone.utc),
+            timestamp_utc=datetime.now(UTC),
             download_mbps=100.0,
             upload_mbps=20.0,
             latency_ms=25.0,
@@ -117,7 +118,7 @@ class TestMeasurementSchema:
                 id="test",
                 lat=0.0,
                 lon=0.0,
-                timestamp_utc=datetime.now(timezone.utc),
+                timestamp_utc=datetime.now(UTC),
                 download_mbps=-10.0,
                 source=SourceType.ANATEL,
             )
@@ -128,7 +129,7 @@ class TestMeasurementSchema:
             id="test",
             lat=0.0,
             lon=0.0,
-            timestamp_utc=datetime.now(timezone.utc),
+            timestamp_utc=datetime.now(UTC),
             source=SourceType.ANATEL,
             # All metrics optional
             download_mbps=None,
@@ -148,7 +149,7 @@ class TestMeasurementSchema:
             id="test",
             lat=0.0,
             lon=0.0,
-            timestamp_utc=datetime.now(timezone.utc),
+            timestamp_utc=datetime.now(UTC),
             source=SourceType.ANATEL,
         )
         
@@ -160,7 +161,7 @@ class TestMeasurementSchema:
             id="test",
             lat=0.0,
             lon=0.0,
-            timestamp_utc=datetime.now(timezone.utc),
+            timestamp_utc=datetime.now(UTC),
             source=SourceType.ANATEL,
         )
         
@@ -168,7 +169,7 @@ class TestMeasurementSchema:
     
     def test_to_dict_conversion(self):
         """Test conversion to dictionary."""
-        timestamp = datetime.now(timezone.utc)
+        timestamp = datetime.now(UTC)
         measurement = MeasurementSchema(
             id="test123",
             lat=-15.7801,
@@ -200,7 +201,7 @@ class TestMeasurementSchema:
             "id": "test123",
             "lat": -15.7801,
             "lon": -47.9292,
-            "timestamp_utc": datetime.now(timezone.utc).isoformat(),
+            "timestamp_utc": datetime.now(UTC).isoformat(),
             "download_mbps": 100.0,
             "upload_mbps": 20.0,
             "latency_ms": 25.0,
@@ -247,7 +248,7 @@ class TestMeasurementSchema:
             id="test",
             lat=0.0,
             lon=0.0,
-            timestamp_utc=datetime.now(timezone.utc),
+            timestamp_utc=datetime.now(UTC),
             source=SourceType.ANATEL,
             confidence_score=85.5,
         )
@@ -259,7 +260,7 @@ class TestMeasurementSchema:
                 id="test",
                 lat=0.0,
                 lon=0.0,
-                timestamp_utc=datetime.now(timezone.utc),
+                timestamp_utc=datetime.now(UTC),
                 source=SourceType.ANATEL,
                 confidence_score=101.0,
             )
@@ -270,7 +271,7 @@ class TestMeasurementSchema:
                 id="test",
                 lat=0.0,
                 lon=0.0,
-                timestamp_utc=datetime.now(timezone.utc),
+                timestamp_utc=datetime.now(UTC),
                 source=SourceType.ANATEL,
                 confidence_score=-5.0,
             )

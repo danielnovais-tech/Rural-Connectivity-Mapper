@@ -1,14 +1,16 @@
 """Tests for crowdsourcing server endpoints."""
 
-import pytest
-import json
 import io
-from pathlib import Path
-import tempfile
+import json
 import shutil
 
 # Import the Flask app
 import sys
+import tempfile
+from pathlib import Path
+
+import pytest
+
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
 import crowdsource_server

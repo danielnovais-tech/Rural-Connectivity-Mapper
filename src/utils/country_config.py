@@ -5,7 +5,6 @@ for Latin American countries.
 """
 
 import logging
-from typing import Dict, List, Optional
 from dataclasses import dataclass
 
 logger = logging.getLogger(__name__)
@@ -21,8 +20,8 @@ class CountryConfig:
     telecom_regulator: str
     stats_agency: str
     coordinates_center: tuple[float, float]  # (latitude, longitude)
-    supported_providers: List[str]
-    data_sources: Dict[str, str]
+    supported_providers: list[str]
+    data_sources: dict[str, str]
 
 
 # LATAM country configurations
@@ -180,7 +179,7 @@ LATAM_COUNTRIES = {
 }
 
 
-def get_country_config(country_code: str) -> Optional[CountryConfig]:
+def get_country_config(country_code: str) -> CountryConfig | None:
     """Get configuration for a specific country.
     
     Args:
@@ -197,7 +196,7 @@ def get_country_config(country_code: str) -> Optional[CountryConfig]:
     return config
 
 
-def get_supported_countries() -> List[str]:
+def get_supported_countries() -> list[str]:
     """Get list of supported country codes.
     
     Returns:
@@ -208,7 +207,7 @@ def get_supported_countries() -> List[str]:
     return countries
 
 
-def get_country_providers(country_code: str) -> List[str]:
+def get_country_providers(country_code: str) -> list[str]:
     """Get list of supported providers for a country.
     
     Args:
@@ -223,7 +222,7 @@ def get_country_providers(country_code: str) -> List[str]:
     return []
 
 
-def get_country_data_sources(country_code: str) -> Dict[str, str]:
+def get_country_data_sources(country_code: str) -> dict[str, str]:
     """Get data source URLs for a country.
     
     Args:
@@ -238,7 +237,7 @@ def get_country_data_sources(country_code: str) -> Dict[str, str]:
     return {}
 
 
-def get_latam_summary() -> Dict:
+def get_latam_summary() -> dict:
     """Get summary of LATAM coverage and statistics.
     
     Returns:
@@ -275,7 +274,7 @@ def get_latam_summary() -> Dict:
     return summary
 
 
-def translate_field_names(country_code: str) -> Dict[str, str]:
+def translate_field_names(country_code: str) -> dict[str, str]:
     """Get field name translations for a country.
     
     Args:

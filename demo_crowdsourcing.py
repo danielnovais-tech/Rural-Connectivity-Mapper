@@ -8,8 +8,8 @@ This script demonstrates all three methods of submitting speedtest data:
 3. API endpoint (simulated)
 """
 
-import subprocess
 import json
+import subprocess
 import time
 from pathlib import Path
 

@@ -1,10 +1,10 @@
 """Gold layer: aggregated and analysis-ready data."""
 
 import json
-from pathlib import Path
-from typing import List, Dict, Any
-from datetime import datetime, timezone
 from collections import defaultdict
+from datetime import UTC, datetime
+from pathlib import Path
+from typing import Any
 
 from src.schemas import MeasurementSchema
 
@@ -28,7 +28,7 @@ class GoldLayer:
         self.gold_dir = Path(gold_dir)
         self.gold_dir.mkdir(parents=True, exist_ok=True)
     
-    def process(self, silver_measurements: List[MeasurementSchema]) -> Dict[str, Path]:
+    def process(self, silver_measurements: list[MeasurementSchema]) -> dict[str, Path]:
         """Process silver data into gold layer aggregations.
         
         Args:
@@ -58,7 +58,7 @@ class GoldLayer:
         
         return created_files
     
-    def _aggregate_geographic(self, measurements: List[MeasurementSchema]) -> Path:
+    def _aggregate_geographic(self, measurements: list[MeasurementSchema]) -> Path:
         """Aggregate measurements by H3 cell.
         
         For each H3 cell, calculates:
@@ -128,13 +128,13 @@ class GoldLayer:
             }
         
         # Save
-        timestamp = datetime.now(timezone.utc).strftime("%Y%m%d_%H%M%S")
+        timestamp = datetime.now(UTC).strftime("%Y%m%d_%H%M%S")
         filepath = self.gold_dir / f"geographic_h3_{timestamp}.json"
         
         with open(filepath, 'w') as f:
             json.dump({
                 'aggregation_type': 'geographic_h3',
-                'timestamp': datetime.now(timezone.utc).isoformat(),
+                'timestamp': datetime.now(UTC).isoformat(),
                 'cell_count': len(aggregated),
                 'total_measurements': len(measurements),
                 'cells': aggregated,
@@ -142,7 +142,7 @@ class GoldLayer:
         
         return filepath
     
-    def _aggregate_by_source(self, measurements: List[MeasurementSchema]) -> Path:
+    def _aggregate_by_source(self, measurements: list[MeasurementSchema]) -> Path:
         """Aggregate measurements by data source.
         
         For each source, calculates summary statistics.
@@ -164,36 +164,36 @@ class GoldLayer:
                 agg['confidence_sum'] += m.confidence_score
         
         # Calculate averages
-        for source, agg in source_aggregates.items():
+        for _source, agg in source_aggregates.items():
             agg['avg_confidence'] = round(
                 agg['confidence_sum'] / agg['count'], 2
             ) if agg['count'] > 0 else 0.0
             del agg['confidence_sum']  # Remove intermediate sum
         
         # Save
-        timestamp = datetime.now(timezone.utc).strftime("%Y%m%d_%H%M%S")
+        timestamp = datetime.now(UTC).strftime("%Y%m%d_%H%M%S")
         filepath = self.gold_dir / f"by_source_{timestamp}.json"
         
         with open(filepath, 'w') as f:
             json.dump({
                 'aggregation_type': 'by_source',
-                'timestamp': datetime.now(timezone.utc).isoformat(),
+                'timestamp': datetime.now(UTC).isoformat(),
                 'sources': dict(source_aggregates),
             }, f, indent=2)
         
         return filepath
     
-    def _save_full_dataset(self, measurements: List[MeasurementSchema]) -> Path:
+    def _save_full_dataset(self, measurements: list[MeasurementSchema]) -> Path:
         """Save complete enriched dataset for consumption.
         
         This is the primary consumption endpoint with all enrichments applied.
         """
-        timestamp = datetime.now(timezone.utc).strftime("%Y%m%d_%H%M%S")
+        timestamp = datetime.now(UTC).strftime("%Y%m%d_%H%M%S")
         filepath = self.gold_dir / f"full_dataset_{timestamp}.json"
         
         data = {
             'dataset_type': 'full_enriched',
-            'timestamp': datetime.now(timezone.utc).isoformat(),
+            'timestamp': datetime.now(UTC).isoformat(),
             'count': len(measurements),
             'measurements': [m.to_dict() for m in measurements]
         }
@@ -203,7 +203,7 @@ class GoldLayer:
         
         return filepath
     
-    def read_latest(self, aggregation_type: str = 'full_dataset') -> Dict[str, Any]:
+    def read_latest(self, aggregation_type: str = 'full_dataset') -> dict[str, Any]:
         """Read latest gold data.
         
         Args:
@@ -218,5 +218,5 @@ class GoldLayer:
         if not files:
             return {}
         
-        with open(files[0], 'r') as f:
+        with open(files[0]) as f:
             return json.load(f)

@@ -22,7 +22,7 @@ from src.utils import (
     simulate_router_impact,
     validate_coordinates,
 )
-from src.utils.analytics import track_event, safe_geo
+from src.utils.analytics import safe_geo, track_event
 from src.utils.starlink_api import compare_with_competitors
 
 # Initialize Flask app
@@ -164,7 +164,7 @@ def add_data_point():
             'success': False,
             'error': f'Invalid value: {str(e)}'
         }), 400
-    except (KeyError, TypeError, OSError, IOError) as e:
+    except (KeyError, TypeError, OSError) as e:
         logger.error("Error adding data point: %s", e)
         return jsonify({
             'success': False,
@@ -306,7 +306,7 @@ def generate_report_api(report_format):
             as_attachment=True,
             download_name=f'connectivity_report.{report_format}'
         )
-    except (ValueError, KeyError, OSError, IOError, TypeError) as e:
+    except (ValueError, KeyError, OSError, TypeError) as e:
         logger.error("Error generating report: %s", e)
         return jsonify({
             'success': False,
@@ -342,7 +342,7 @@ def get_map():
                 pass
 
         return response
-    except (ValueError, KeyError, OSError, IOError, TypeError, ImportError) as e:
+    except (ValueError, KeyError, OSError, TypeError, ImportError) as e:
         logger.error("Error generating map: %s", e)
         return jsonify({
             'success': False,

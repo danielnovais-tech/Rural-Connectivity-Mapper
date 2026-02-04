@@ -13,7 +13,6 @@ import logging
 import shutil
 from datetime import datetime
 from pathlib import Path
-from typing import Dict, List, Optional
 
 import pandas as pd
 
@@ -31,7 +30,7 @@ logger = logging.getLogger(__name__)
 class ANATELStaticConnector:
     """Processes manually downloaded ANATEL CSVs and writes Parquet outputs."""
 
-    KNOWN_DATASETS: Dict[str, Dict[str, object]] = {
+    KNOWN_DATASETS: dict[str, dict[str, object]] = {
         "backhaul": {
             "expected_columns": [
                 "id",
@@ -69,7 +68,7 @@ class ANATELStaticConnector:
         },
     }
 
-    def __init__(self, manual_dir: Path = Path("data/manual"), output_dir: Optional[Path] = None):
+    def __init__(self, manual_dir: Path = Path("data/manual"), output_dir: Path | None = None):
         self.manual_dir = Path(manual_dir)
         self.manual_dir.mkdir(parents=True, exist_ok=True)
 
@@ -77,12 +76,12 @@ class ANATELStaticConnector:
         self.output_dir = Path(output_dir) if output_dir is not None else (self.manual_dir.parent / "bronze" / "anatel")
         self.output_dir.mkdir(parents=True, exist_ok=True)
 
-    def discover_new_files(self) -> List[Path]:
+    def discover_new_files(self) -> list[Path]:
         """Finds new CSV files in the manual directory."""
         csv_files = list(self.manual_dir.glob("*.csv")) + list(self.manual_dir.glob("*.CSV"))
 
         # On Windows (case-insensitive FS) the same file can match both patterns.
-        unique_files: List[Path] = []
+        unique_files: list[Path] = []
         seen: set[str] = set()
         for path in csv_files:
             try:
@@ -162,7 +161,7 @@ class ANATELStaticConnector:
             return geohash2.encode(lat, lon, precision)
         return f"{lat:.4f},{lon:.4f}"
 
-    def process_file(self, filepath: Path) -> Dict:
+    def process_file(self, filepath: Path) -> dict:
         """Process a single CSV file."""
         filepath = Path(filepath)
         logger.info("Processing: %s", filepath.name)
@@ -217,14 +216,14 @@ class ANATELStaticConnector:
         if not files:
             return []
 
-        results: List[Dict] = []
+        results: list[dict] = []
         for filepath in files:
             results.append(self.process_file(filepath))
 
         self._generate_report(results)
         return results
 
-    def _generate_report(self, results: List[Dict]) -> None:
+    def _generate_report(self, results: list[dict]) -> None:
         report = {
             "data_execucao": datetime.now().isoformat(),
             "total_arquivos": len(results),

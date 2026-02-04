@@ -2,12 +2,11 @@
 
 import logging
 import random
-from typing import List, Dict
 
 logger = logging.getLogger(__name__)
 
 
-def simulate_router_impact(data: List[Dict]) -> List[Dict]:
+def simulate_router_impact(data: list[dict]) -> list[dict]:
     """Simulate the impact of router improvements on quality scores.
     
     Applies a random improvement of 15-25% to quality scores to simulate

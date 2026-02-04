@@ -1,11 +1,11 @@
 """Mock speedtest data source connector."""
 
-from datetime import datetime, timezone, timedelta
-from typing import List
-import uuid
 import random
+import uuid
+from datetime import UTC, datetime, timedelta
 
 from src.schemas import MeasurementSchema, SourceType, TechnologyType
+
 from .base import DataSource
 
 
@@ -25,7 +25,7 @@ class MockSpeedtestSource(DataSource):
         super().__init__("mock_speedtest")
         self.num_samples = num_samples
     
-    def fetch(self) -> List[MeasurementSchema]:
+    def fetch(self) -> list[MeasurementSchema]:
         """Fetch mock speedtest measurements.
         
         Generates realistic sample data with higher quality and completeness
@@ -42,7 +42,7 @@ class MockSpeedtestSource(DataSource):
         lat_range = (30.0, 48.0)   # Southern to Northern US (excluding Alaska)
         lon_range = (-120.0, -75.0)  # Western to Eastern US
         
-        for i in range(self.num_samples):
+        for _i in range(self.num_samples):
             # Generate random location
             lat = random.uniform(*lat_range)
             lon = random.uniform(*lon_range)
@@ -51,7 +51,7 @@ class MockSpeedtestSource(DataSource):
             # Speedtest data is typically fresher
             days_ago = random.randint(0, 30)
             hours_ago = random.randint(0, 23)
-            timestamp = datetime.now(timezone.utc) - timedelta(
+            timestamp = datetime.now(UTC) - timedelta(
                 days=days_ago, hours=hours_ago
             )
             

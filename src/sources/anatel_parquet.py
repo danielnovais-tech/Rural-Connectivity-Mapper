@@ -22,7 +22,7 @@ import logging
 from collections.abc import Iterable
 from dataclasses import dataclass
 from datetime import UTC, datetime
-from enum import Enum
+from enum import StrEnum
 from pathlib import Path
 from typing import Any
 
@@ -35,7 +35,7 @@ from .base import DataSource
 logger = logging.getLogger(__name__)
 
 
-class AnatelParquetMode(str, Enum):
+class AnatelParquetMode(StrEnum):
     BEST_EFFORT = "best-effort"
     STRICT = "strict"
 

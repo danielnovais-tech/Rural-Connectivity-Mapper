@@ -14,7 +14,7 @@ from pathlib import Path
 # Add project root to path
 sys.path.insert(0, str(Path(__file__).parent))
 
-from src.pipeline import FusionEngine, BronzeLayer
+from src.pipeline import BronzeLayer, FusionEngine
 from src.sources import MockCrowdsourceSource, MockSpeedtestSource
 
 
@@ -89,7 +89,7 @@ def main():
     min_icr = min(icr_values)
     max_icr = max(icr_values)
     
-    print(f"\n  ICR Statistics:")
+    print("\n  ICR Statistics:")
     print(f"    - Average: {avg_icr:.2f}")
     print(f"    - Minimum: {min_icr:.2f}")
     print(f"    - Maximum: {max_icr:.2f}")
@@ -119,7 +119,7 @@ def main():
         print(f"  Download: {measurement.download_mbps:.2f} Mbps" if measurement.download_mbps else "  Download: N/A")
         print(f"  Upload: {measurement.upload_mbps:.2f} Mbps" if measurement.upload_mbps else "  Upload: N/A")
         print(f"  Latency: {measurement.latency_ms:.2f} ms" if measurement.latency_ms else "  Latency: N/A")
-        print(f"  ICR Components:")
+        print("  ICR Components:")
         print(f"    - Download Score: {components['download_score']:.2f}")
         print(f"    - Upload Score: {components['upload_score']:.2f}")
         print(f"    - Latency Score: {components['latency_score']:.2f}")

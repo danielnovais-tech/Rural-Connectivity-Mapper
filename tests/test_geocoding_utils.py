@@ -1,10 +1,11 @@
 """Tests for geocoding utilities."""
 
-import pytest
 from unittest.mock import Mock, patch
 
-from src.utils.geocoding_utils import geocode_coordinates, geocode_address
-from geopy.exc import GeocoderTimedOut, GeocoderQuotaExceeded, GeocoderUnavailable, GeocoderServiceError
+import pytest
+from geopy.exc import GeocoderQuotaExceeded, GeocoderServiceError, GeocoderTimedOut, GeocoderUnavailable
+
+from src.utils.geocoding_utils import geocode_address, geocode_coordinates
 
 
 def test_geocoding_coordinates():

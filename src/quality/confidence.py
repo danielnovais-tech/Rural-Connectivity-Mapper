@@ -1,10 +1,8 @@
 """Confidence score calculation for measurements."""
 
-from datetime import datetime, timezone
-from typing import Dict, Optional
-import math
+from datetime import UTC, datetime
 
-from src.schemas import MeasurementSchema, SourceType, ConfidenceBreakdown
+from src.schemas import ConfidenceBreakdown, MeasurementSchema, SourceType
 
 
 class SourceReliabilityWeights:
@@ -13,7 +11,7 @@ class SourceReliabilityWeights:
     Higher weight = more reliable source.
     """
     
-    WEIGHTS: Dict[SourceType, float] = {
+    WEIGHTS: dict[SourceType, float] = {
         SourceType.ANATEL: 0.95,      # Official regulatory data - highest trust
         SourceType.IBGE: 0.90,        # Government statistical data
         SourceType.STARLINK: 0.85,    # Direct from provider
@@ -61,7 +59,7 @@ class ConfidenceCalculator:
     def calculate(
         cls,
         measurement: MeasurementSchema,
-        current_time: Optional[datetime] = None
+        current_time: datetime | None = None
     ) -> tuple[float, ConfidenceBreakdown]:
         """Calculate confidence score and breakdown for a measurement.
         
@@ -73,7 +71,7 @@ class ConfidenceCalculator:
             Tuple of (overall_score, breakdown)
         """
         if current_time is None:
-            current_time = datetime.now(timezone.utc)
+            current_time = datetime.now(UTC)
         
         # Calculate component scores
         recency_score = cls._calculate_recency_score(
@@ -112,9 +110,9 @@ class ConfidenceCalculator:
         """
         # Ensure both timestamps are timezone-aware
         if timestamp.tzinfo is None:
-            timestamp = timestamp.replace(tzinfo=timezone.utc)
+            timestamp = timestamp.replace(tzinfo=UTC)
         if current_time.tzinfo is None:
-            current_time = current_time.replace(tzinfo=timezone.utc)
+            current_time = current_time.replace(tzinfo=UTC)
         
         age_days = (current_time - timestamp).total_seconds() / 86400
         

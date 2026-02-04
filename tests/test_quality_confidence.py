@@ -1,10 +1,9 @@
 """Unit tests for quality and confidence scoring."""
 
-import pytest
-from datetime import datetime, timezone, timedelta
+from datetime import UTC, datetime, timedelta
 
-from src.schemas import MeasurementSchema, SourceType, TechnologyType
 from src.quality import ConfidenceCalculator, SourceReliabilityWeights
+from src.schemas import MeasurementSchema, SourceType, TechnologyType
 
 
 class TestSourceReliabilityWeights:
@@ -50,7 +49,7 @@ class TestConfidenceCalculator:
         metadata: dict = None,
     ) -> MeasurementSchema:
         """Helper to create test measurements."""
-        timestamp = datetime.now(timezone.utc) - timedelta(days=days_old)
+        timestamp = datetime.now(UTC) - timedelta(days=days_old)
         
         return MeasurementSchema(
             id=f"test_{days_old}",
@@ -217,7 +216,7 @@ class TestConfidenceCalculator:
     
     def test_future_timestamp_low_recency(self):
         """Future timestamps should get low recency score."""
-        future_time = datetime.now(timezone.utc) + timedelta(days=10)
+        future_time = datetime.now(UTC) + timedelta(days=10)
         measurement = MeasurementSchema(
             id="future_test",
             lat=-15.7801,
@@ -241,7 +240,7 @@ class TestConfidenceBreakdown:
             id="test",
             lat=-15.7801,
             lon=-47.9292,
-            timestamp_utc=datetime.now(timezone.utc),
+            timestamp_utc=datetime.now(UTC),
             download_mbps=100.0,
             source=SourceType.ANATEL,
         )

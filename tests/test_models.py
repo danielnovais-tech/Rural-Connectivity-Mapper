@@ -1,9 +1,9 @@
 """Tests for data models."""
 
-import pytest
-from datetime import datetime
 
-from src.models import SpeedTest, QualityScore, ConnectivityPoint
+import pytest
+
+from src.models import ConnectivityPoint, QualityScore, SpeedTest
 
 
 def test_connectivity_point_creation():

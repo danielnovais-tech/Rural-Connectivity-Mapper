@@ -1,14 +1,11 @@
 """Tests for ManualCSVSource connector."""
 
 import csv
-import json
 import tempfile
-from datetime import datetime, timezone, timedelta
 from pathlib import Path
-import pytest
 
-from src.sources.manual_csv import ManualCSVSource
 from src.schemas import MeasurementSchema, SourceType, TechnologyType
+from src.sources.manual_csv import ManualCSVSource
 
 
 class TestManualCSVSource:

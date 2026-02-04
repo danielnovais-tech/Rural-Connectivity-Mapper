@@ -1,17 +1,14 @@
 """Tests for analysis utilities."""
 
-import pytest
-from datetime import datetime
 
+import pytest
 
 from src.utils.analysis_utils import (
     analyze_temporal_evolution,
     cluster_connectivity_points,
-    forecast_quality_scores
+    compare_providers,
+    forecast_quality_scores,
 )
-
-from src.utils.analysis_utils import analyze_temporal_evolution, compare_providers
-
 
 
 @pytest.fixture
@@ -179,7 +176,7 @@ def test_provider_stats(sample_data):
     assert 'Viasat' in provider_stats
     
     # Each provider should have count and avg_score
-    for provider, stats in provider_stats.items():
+    for _provider, stats in provider_stats.items():
         assert 'count' in stats
         assert 'avg_score' in stats
         assert stats['count'] > 0
@@ -242,7 +239,7 @@ def test_cluster_stats(sample_data):
     assert len(cluster_stats) == 2
     
     # Each cluster should have required fields
-    for cluster_id, stats in cluster_stats.items():
+    for _cluster_id, stats in cluster_stats.items():
         assert 'count' in stats
         assert 'centroid' in stats
         assert 'avg_metrics' in stats

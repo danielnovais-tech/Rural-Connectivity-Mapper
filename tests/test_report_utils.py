@@ -1,11 +1,12 @@
 """Tests for report generation utilities."""
 
-import pytest
-import json
 import csv
+import json
 from pathlib import Path
 
-from src.utils.report_utils import generate_report, getCustomExcludes, getCombinedExcludes
+import pytest
+
+from src.utils.report_utils import generate_report, getCombinedExcludes, getCustomExcludes
 
 
 @pytest.fixture
@@ -68,7 +69,7 @@ def test_generate_json_report(sample_data, tmp_path):
     assert Path(result_path).exists()
     
     # Verify JSON content
-    with open(result_path, 'r') as f:
+    with open(result_path) as f:
         data = json.load(f)
     
     assert len(data) == 2
@@ -85,7 +86,7 @@ def test_generate_csv_report(sample_data, tmp_path):
     assert Path(result_path).exists()
     
     # Verify CSV content
-    with open(result_path, 'r') as f:
+    with open(result_path) as f:
         reader = csv.DictReader(f)
         rows = list(reader)
     
@@ -104,7 +105,7 @@ def test_generate_html_report(sample_data, tmp_path):
     assert Path(result_path).exists()
     
     # Verify HTML content
-    with open(result_path, 'r') as f:
+    with open(result_path) as f:
         content = f.read()
     
     assert '<!DOCTYPE html>' in content
@@ -122,7 +123,7 @@ def test_generate_html_report_portuguese(sample_data, tmp_path):
     assert Path(result_path).exists()
     
     # Verify Portuguese content
-    with open(result_path, 'r') as f:
+    with open(result_path) as f:
         content = f.read()
     
     assert '<!DOCTYPE html>' in content
@@ -140,7 +141,7 @@ def test_generate_txt_report(sample_data, tmp_path):
     assert Path(result_path).exists()
     
     # Verify TXT content
-    with open(result_path, 'r') as f:
+    with open(result_path) as f:
         content = f.read()
     
     assert 'RURAL CONNECTIVITY MAPPER 2026' in content
@@ -157,7 +158,7 @@ def test_generate_txt_report_portuguese(sample_data, tmp_path):
     assert Path(result_path).exists()
     
     # Verify Portuguese TXT content
-    with open(result_path, 'r') as f:
+    with open(result_path) as f:
         content = f.read()
     
     assert 'MAPEADOR DE CONECTIVIDADE RURAL' in content

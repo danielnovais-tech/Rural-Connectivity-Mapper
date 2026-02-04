@@ -7,12 +7,11 @@ logged locally to JSON Lines format.
 
 import json
 import logging
-import uuid
 from contextlib import contextmanager
 from datetime import datetime
 from pathlib import Path
-from typing import Any, Dict, Optional
 from time import time
+from typing import Any
 
 logger = logging.getLogger(__name__)
 
@@ -32,7 +31,7 @@ def ensure_analytics_directory():
     ANALYTICS_DIR.mkdir(parents=True, exist_ok=True)
 
 
-def safe_geo(latitude: Optional[float], longitude: Optional[float]) -> Optional[Dict[str, float]]:
+def safe_geo(latitude: float | None, longitude: float | None) -> dict[str, float] | None:
     """Convert precise coordinates to privacy-safe rounded coordinates.
     
     Rounds coordinates to 2 decimal places (~1km precision) to protect user privacy
@@ -78,10 +77,10 @@ def generate_anonymous_user_id(session_id: str) -> str:
 def track_event(
     event_name: str,
     session_id: str,
-    context: Optional[Dict[str, Any]] = None,
-    metrics: Optional[Dict[str, Any]] = None,
-    properties: Optional[Dict[str, Any]] = None,
-    geo: Optional[Dict[str, float]] = None
+    context: dict[str, Any] | None = None,
+    metrics: dict[str, Any] | None = None,
+    properties: dict[str, Any] | None = None,
+    geo: dict[str, float] | None = None
 ) -> None:
     """Track an analytics event by appending to events.jsonl.
     
@@ -126,9 +125,9 @@ def track_event(
 def timed_event(
     event_name: str,
     session_id: str,
-    context: Optional[Dict[str, Any]] = None,
-    properties: Optional[Dict[str, Any]] = None,
-    geo: Optional[Dict[str, float]] = None
+    context: dict[str, Any] | None = None,
+    properties: dict[str, Any] | None = None,
+    geo: dict[str, float] | None = None
 ):
     """Context manager to track events with duration measurement.
     
@@ -151,7 +150,7 @@ def timed_event(
     
     try:
         yield
-    except Exception as e:
+    except Exception:
         exception_occurred = True
         raise
     finally:
@@ -173,7 +172,7 @@ def timed_event(
         )
 
 
-def read_events(limit: Optional[int] = None) -> list:
+def read_events(limit: int | None = None) -> list:
     """Read analytics events from the events file.
     
     Args:
@@ -187,7 +186,7 @@ def read_events(limit: Optional[int] = None) -> list:
             return []
         
         events = []
-        with open(EVENTS_FILE, 'r', encoding='utf-8') as f:
+        with open(EVENTS_FILE, encoding='utf-8') as f:
             for line in f:
                 if line.strip():
                     events.append(json.loads(line))
@@ -204,7 +203,7 @@ def read_events(limit: Optional[int] = None) -> list:
         return []
 
 
-def compute_analytics_summary() -> Dict[str, Any]:
+def compute_analytics_summary() -> dict[str, Any]:
     """Compute summary analytics from tracked events.
     
     Returns:

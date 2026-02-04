@@ -5,8 +5,6 @@ for different locations.
 """
 
 import logging
-import requests
-from typing import Dict, List, Optional, Tuple
 from datetime import datetime
 
 logger = logging.getLogger(__name__)
@@ -21,7 +19,7 @@ STARLINK_ENDPOINTS = {
 }
 
 
-def check_starlink_availability(latitude: float, longitude: float) -> Dict:
+def check_starlink_availability(latitude: float, longitude: float) -> dict:
     """Check if Starlink service is available at given coordinates.
     
     Args:
@@ -71,7 +69,7 @@ def check_starlink_availability(latitude: float, longitude: float) -> Dict:
     return availability
 
 
-def check_batch_availability(coordinates: List[Tuple[float, float]]) -> List[Dict]:
+def check_batch_availability(coordinates: list[tuple[float, float]]) -> list[dict]:
     """Check Starlink availability for multiple locations.
     
     Args:
@@ -91,7 +89,7 @@ def check_batch_availability(coordinates: List[Tuple[float, float]]) -> List[Dic
     return results
 
 
-def get_starlink_service_plans() -> List[Dict]:
+def get_starlink_service_plans() -> list[dict]:
     """Get available Starlink service plans.
     
     Returns:
@@ -163,7 +161,7 @@ def get_starlink_service_plans() -> List[Dict]:
     return plans
 
 
-def get_starlink_coverage_map(country: str = 'BR') -> Dict:
+def get_starlink_coverage_map(country: str = 'BR') -> dict:
     """Get Starlink coverage information for a country.
     
     Args:
@@ -256,7 +254,7 @@ def get_starlink_coverage_map(country: str = 'BR') -> Dict:
 
 
 def estimate_starlink_performance(latitude: float, longitude: float, 
-                                   weather_condition: str = 'clear') -> Dict:
+                                   weather_condition: str = 'clear') -> dict:
     """Estimate expected Starlink performance at a location.
     
     Args:
@@ -303,7 +301,7 @@ def estimate_starlink_performance(latitude: float, longitude: float,
     return performance
 
 
-def get_starlink_vs_competitors(latitude: float, longitude: float) -> Dict:
+def get_starlink_vs_competitors(latitude: float, longitude: float) -> dict:
     """Compare Starlink with other satellite internet providers.
     
     Args:

@@ -1,15 +1,16 @@
 """Tests for ANATEL connectors."""
 
-import pytest
-import tempfile
-import shutil
-from pathlib import Path
 import json
+import shutil
+import tempfile
+from pathlib import Path
+
+import pytest
 
 pytest.importorskip("pandas", exc_type=ImportError)
 
-from data_pipeline.connectors.anatel_static_connector import ANATELStaticConnector
 from data_pipeline.connectors.anatel_smart_connector import AnatelSmartConnector
+from data_pipeline.connectors.anatel_static_connector import ANATELStaticConnector
 
 
 class TestAnatelStaticConnector:
@@ -202,7 +203,7 @@ class TestAnatelSmartConnector:
         assert len(report_files) >= 1
         
         # Verify report content
-        with open(report_files[0], 'r', encoding='utf-8') as f:
+        with open(report_files[0], encoding='utf-8') as f:
             report = json.load(f)
         
         assert 'metadata' in report

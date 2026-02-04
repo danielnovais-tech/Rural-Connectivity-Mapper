@@ -1,7 +1,8 @@
 """Tests for measurement utilities."""
 
-import pytest
 from unittest.mock import Mock, patch
+
+import pytest
 
 from src.utils.measurement_utils import measure_speed
 

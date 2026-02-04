@@ -1,10 +1,9 @@
 """Analysis utilities for temporal evolution and trends."""
 
 import logging
-from typing import List, Dict, Tuple
-from datetime import datetime
-from collections import defaultdict
 import math
+from collections import defaultdict
+from datetime import datetime
 
 # Optional numpy import - gracefully degrade if not available or incompatible
 try:
@@ -31,20 +30,20 @@ from .i18n_utils import get_translation
 logger = logging.getLogger(__name__)
 
 
-def _mean(values: List[float]) -> float:
+def _mean(values: list[float]) -> float:
     if not values:
         return 0.0
     return sum(values) / len(values)
 
 
-def _std(values: List[float]) -> float:
+def _std(values: list[float]) -> float:
     if not values:
         return 0.0
     m = _mean(values)
     return math.sqrt(sum((x - m) ** 2 for x in values) / len(values))
 
 
-def analyze_temporal_evolution(data: List[Dict], language: str = 'en') -> Dict:
+def analyze_temporal_evolution(data: list[dict], language: str = 'en') -> dict:
     """Analyze temporal evolution of connectivity quality.
     
     Groups data by date and calculates statistics to identify trends.
@@ -197,7 +196,7 @@ def analyze_temporal_evolution(data: List[Dict], language: str = 'en') -> Dict:
 
 
 
-def cluster_connectivity_points(data: List[Dict], n_clusters: int = 3) -> Dict:
+def cluster_connectivity_points(data: list[dict], n_clusters: int = 3) -> dict:
     """Cluster connectivity points using K-Means based on quality metrics.
     
     Groups connectivity points into clusters based on download speed, upload speed,
@@ -320,7 +319,7 @@ def cluster_connectivity_points(data: List[Dict], n_clusters: int = 3) -> Dict:
         raise
 
 
-def forecast_quality_scores(data: List[Dict], forecast_horizon: int = 5) -> Dict:
+def forecast_quality_scores(data: list[dict], forecast_horizon: int = 5) -> dict:
     """Forecast future quality scores based on historical connectivity data.
     
     Uses historical patterns and clustering to predict future quality scores
@@ -477,7 +476,7 @@ def forecast_quality_scores(data: List[Dict], forecast_horizon: int = 5) -> Dict
         }
 
 
-def compare_providers(data: List[Dict]) -> Dict:
+def compare_providers(data: list[dict]) -> dict:
     """Compare ISP performance with detailed metrics analysis.
     
     Analyzes and compares providers including satellite-specific metrics

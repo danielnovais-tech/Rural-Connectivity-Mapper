@@ -1,13 +1,13 @@
 """Pipeline orchestrator for end-to-end data processing."""
 
 from pathlib import Path
-from typing import List, Optional
 
 from src.sources import DataSource
+
 from .bronze import BronzeLayer
-from .silver import SilverLayer
-from .gold import GoldLayer
 from .fusion_engine import FusionEngine
+from .gold import GoldLayer
+from .silver import SilverLayer
 
 
 class PipelineOrchestrator:
@@ -19,10 +19,10 @@ class PipelineOrchestrator:
     
     def __init__(
         self,
-        data_dir: Optional[Path] = None,
-        bronze_dir: Optional[Path] = None,
-        silver_dir: Optional[Path] = None,
-        gold_dir: Optional[Path] = None,
+        data_dir: Path | None = None,
+        bronze_dir: Path | None = None,
+        silver_dir: Path | None = None,
+        gold_dir: Path | None = None,
         use_fusion: bool = True,
     ):
         """Initialize pipeline orchestrator.
@@ -51,7 +51,7 @@ class PipelineOrchestrator:
         self.silver = SilverLayer(self.silver_dir)
         self.gold = GoldLayer(self.gold_dir)
     
-    def run(self, sources: List[DataSource]) -> None:
+    def run(self, sources: list[DataSource]) -> None:
         """Run the complete pipeline with the given sources.
         
         Args:
@@ -83,13 +83,13 @@ class PipelineOrchestrator:
         print("\n" + "=" * 70)
         print("✅ PIPELINE COMPLETE")
         print("=" * 70)
-        print(f"\n📊 Summary:")
+        print("\n📊 Summary:")
         print(f"  Bronze (raw):        {len(bronze_measurements)} measurements")
         print(f"  Silver (processed):  {len(silver_measurements)} measurements")
         print(f"  Gold (aggregated):   {len(gold_files)} files created")
         if self.use_fusion:
-            print(f"  Fusion: ✓ Enabled (ICR calculated)")
-        print(f"\n📁 Output directories:")
+            print("  Fusion: ✓ Enabled (ICR calculated)")
+        print("\n📁 Output directories:")
         print(f"  Bronze: {self.bronze_dir}")
         print(f"  Silver: {self.silver_dir}")
         print(f"  Gold:   {self.gold_dir}")
