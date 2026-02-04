@@ -67,6 +67,7 @@ def load_country_config(config_path: str | Path | None = None) -> dict:
         logger.error(f"Error parsing country configuration: {e}")
         raise
 
+
 def get_country_info(country_code: str, config: dict | None = None) -> dict:
     """Get configuration for a specific country.
 
