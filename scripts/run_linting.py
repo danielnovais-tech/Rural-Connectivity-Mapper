@@ -2,8 +2,6 @@
 """Run Ruff + mypy checks.
 
 Designed to be Windows-friendly and to run using the currently active interpreter.
-
-TEMP_APPLYPATCH_MARKER
 """
 
 from __future__ import annotations
