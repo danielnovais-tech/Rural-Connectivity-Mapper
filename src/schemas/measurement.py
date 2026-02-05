@@ -1,10 +1,20 @@
 """Canonical schema for connectivity measurements."""
 
 from datetime import datetime
-from enum import StrEnum
-from typing import Any
+from enum import Enum
+from typing import Any, Dict
 
 from pydantic import BaseModel, ConfigDict, Field, field_validator
+
+
+# Python 3.11+ provides enum.StrEnum. Provide a fallback for older runtimes.
+try:  # pragma: no cover
+    from enum import StrEnum  # type: ignore
+except ImportError:  # pragma: no cover
+    class StrEnum(str, Enum):
+        """Fallback StrEnum for Python < 3.11."""
+
+        pass
 
 
 class SourceType(StrEnum):
@@ -45,9 +55,12 @@ class ConfidenceBreakdown(BaseModel):
     consistency_score: float = Field(
         ge=0.0, le=100.0, description="Score based on measurement consistency/outlier detection (0-100)"
     )
-    completeness_score: float = Field(ge=0.0, le=100.0, description="Score based on metadata completeness (0-100)")
-
-    def to_dict(self) -> dict[str, float]:
+    completeness_score: float = Field(
+        ge=0.0, le=100.0,
+        description="Score based on metadata completeness (0-100)"
+    )
+    
+    def to_dict(self) -> Dict[str, float]:
         """Convert to dictionary."""
         return {
             "recency_score": self.recency_score,
@@ -77,30 +90,53 @@ class MeasurementSchema(BaseModel):
     timestamp_utc: datetime = Field(description="Measurement timestamp in UTC")
 
     # Connectivity metrics
-    download_mbps: float | None = Field(None, ge=0.0, description="Download speed in Mbps")
-    upload_mbps: float | None = Field(None, ge=0.0, description="Upload speed in Mbps")
-    latency_ms: float | None = Field(None, ge=0.0, description="Latency in milliseconds")
-
+    download_mbps: float | None = Field(default=None, ge=0.0, description="Download speed in Mbps")
+    upload_mbps: float | None = Field(default=None, ge=0.0, description="Upload speed in Mbps")
+    latency_ms: float | None = Field(default=None, ge=0.0, description="Latency in milliseconds")
+    
     # Technology & Source
-    technology: TechnologyType = Field(default=TechnologyType.UNKNOWN, description="Connection technology type")
-    source: SourceType = Field(description="Data source identifier")
-    provider: str | None = Field(None, description="Internet service provider name")
-
+    technology: TechnologyType = Field(
+        default=TechnologyType.UNKNOWN,
+        description="Connection technology type"
+    )
+    source: SourceType = Field(
+        description="Data source identifier"
+    )
+    provider: str | None = Field(default=None, description="Internet service provider name")
+    
     # Quality & Confidence (populated in silver/gold layers)
-    confidence_score: float | None = Field(None, ge=0.0, le=100.0, description="Overall confidence score (0-100)")
+    confidence_score: float | None = Field(
+        default=None,
+        ge=0.0,
+        le=100.0,
+        description="Overall confidence score (0-100)",
+    )
     confidence_breakdown: ConfidenceBreakdown | None = Field(
-        None, description="Breakdown of confidence score components"
+        default=None,
+        description="Breakdown of confidence score components",
     )
 
     # Additional metadata
-    metadata: dict[str, Any] = Field(default_factory=dict, description="Additional source-specific metadata")
-
+    metadata: Dict[str, Any] = Field(
+        default_factory=dict,
+        description="Additional source-specific metadata"
+    )
+    
     # Optional fields
-    country: str | None = Field(None, description="ISO 3166-1 alpha-2 country code (e.g., 'BR', 'US')")
-    region: str | None = Field(None, description="Region or state identifier")
-    h3_index: str | None = Field(None, description="H3 geospatial index for aggregation")
-
-    @field_validator("timestamp_utc", mode="before")
+    country: str | None = Field(
+        default=None,
+        description="ISO 3166-1 alpha-2 country code (e.g., 'BR', 'US')",
+    )
+    region: str | None = Field(
+        default=None,
+        description="Region or state identifier",
+    )
+    h3_index: str | None = Field(
+        default=None,
+        description="H3 geospatial index for aggregation",
+    )
+    
+    @field_validator('timestamp_utc', mode='before')
     @classmethod
     def parse_timestamp(cls, v):
         """Parse timestamp from various formats."""
@@ -120,8 +156,8 @@ class MeasurementSchema(BaseModel):
                     except ValueError:
                         continue
         raise ValueError(f"Unable to parse timestamp: {v}")
-
-    def to_dict(self) -> dict[str, Any]:
+    
+    def to_dict(self) -> Dict[str, Any]:
         """Convert to dictionary with proper serialization."""
         data = self.model_dump()
         # Convert datetime to ISO format

@@ -1,6 +1,7 @@
 """Pipeline orchestrator for end-to-end data processing."""
 
 from pathlib import Path
+from typing import List
 
 from src.sources import DataSource
 
@@ -50,8 +51,8 @@ class PipelineOrchestrator:
         self.fusion = FusionEngine(self.bronze_dir, self.silver_dir)
         self.silver = SilverLayer(self.silver_dir)
         self.gold = GoldLayer(self.gold_dir)
-
-    def run(self, sources: list[DataSource]) -> None:
+    
+    def run(self, sources: List[DataSource]) -> None:
         """Run the complete pipeline with the given sources.
 
         Args:

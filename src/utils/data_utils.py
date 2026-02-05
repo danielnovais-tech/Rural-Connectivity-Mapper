@@ -28,8 +28,8 @@ def load_data(filepath: str) -> list[dict]:
         if not path.exists():
             logger.warning(f"File not found: {filepath}. Returning empty list.")
             return []
-
-        with open(path, encoding="utf-8") as f:
+        
+        with open(path, 'r', encoding='utf-8') as f:
             data = json.load(f)
 
         logger.info(f"Successfully loaded {len(data)} records from {filepath}")
@@ -51,7 +51,7 @@ def save_data(filepath: str, data: list[dict]) -> None:
         data: List of dictionaries to save
 
     Raises:
-        IOError: If file cannot be written
+        OSError: If file cannot be written
     """
     try:
         path = Path(filepath)

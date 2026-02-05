@@ -7,6 +7,7 @@ the Brazilian National Telecommunications Agency.
 import json
 import logging
 import os
+from typing import Any
 
 import requests
 import urllib3
@@ -220,7 +221,7 @@ def convert_anatel_to_connectivity_points(anatel_data: list[dict]) -> list[dict]
     logger.info(f"Converting {len(anatel_data)} ANATEL records to connectivity points")
 
     # Brazilian state capitals coordinates (for mapping)
-    coordinates = {
+    coordinates: dict[str, tuple[float, float]] = {
         "São Paulo": (-23.5505, -46.6333),
         "Rio de Janeiro": (-22.9068, -43.1729),
         "Belo Horizonte": (-19.9167, -43.9345),
@@ -232,7 +233,11 @@ def convert_anatel_to_connectivity_points(anatel_data: list[dict]) -> list[dict]
     connectivity_points = []
 
     for record in anatel_data:
-        municipality = record.get("municipality")
+        # `record` is an untyped dict at runtime; ensure `municipality` is a `str`
+        # so `dict.get()` satisfies type checkers.
+        raw_municipality: Any = record.get("municipality")
+        municipality: str = raw_municipality if isinstance(raw_municipality, str) else ""
+
         coords = coordinates.get(municipality, (0.0, 0.0))
 
         point = {
@@ -279,7 +284,7 @@ def load_anatel_backhaul_backup(path: str = ANATEL_BACKUP_BACKHAUL_FILE) -> list
         return []
 
     try:
-        with open(path, encoding="utf-8") as f:
+        with open(path, 'r', encoding='utf-8') as f:
             data = json.load(f)
 
         # Validate top-level structure

@@ -60,6 +60,8 @@ class TestSafeGeo:
         """Test that already rounded values stay the same."""
         result = safe_geo(-15.78, -47.93)
 
+        assert result is not None
+
         assert result["lat"] == -15.78
         assert result["lon"] == -47.93
 
@@ -67,11 +69,13 @@ class TestSafeGeo:
         """Test edge cases like 0, negative, and extreme values."""
         # Zero
         result = safe_geo(0.0, 0.0)
+        assert result is not None
         assert result["lat"] == 0.0
         assert result["lon"] == 0.0
 
         # Extreme values
         result = safe_geo(89.999999, -179.999999)
+        assert result is not None
         assert result["lat"] == 90.0
         assert result["lon"] == -180.0
 
@@ -120,10 +124,10 @@ class TestTrackEvent:
     def test_track_event_writes_valid_json(self, mock_analytics_path):
         """Test that tracked events are valid JSON."""
         session_id = str(uuid.uuid4())
-
-        track_event("test_event", session_id)
-
-        with open(mock_analytics_path) as f:
+        
+        track_event('test_event', session_id)
+        
+        with open(mock_analytics_path, 'r') as f:
             line = f.readline()
             event = json.loads(line)
 
@@ -149,8 +153,8 @@ class TestTrackEvent:
             properties=properties,
             geo=geo,
         )
-
-        with open(mock_analytics_path) as f:
+        
+        with open(mock_analytics_path, 'r') as f:
             event = json.loads(f.readline())
 
         assert event["context"] == context
@@ -161,12 +165,12 @@ class TestTrackEvent:
     def test_track_event_appends_multiple_events(self, mock_analytics_path):
         """Test that multiple events are appended to the file."""
         session_id = str(uuid.uuid4())
-
-        track_event("event1", session_id)
-        track_event("event2", session_id)
-        track_event("event3", session_id)
-
-        with open(mock_analytics_path) as f:
+        
+        track_event('event1', session_id)
+        track_event('event2', session_id)
+        track_event('event3', session_id)
+        
+        with open(mock_analytics_path, 'r') as f:
             lines = f.readlines()
 
         assert len(lines) == 3
@@ -182,8 +186,8 @@ class TestTrackEvent:
         original_open = open
 
         def mock_open(*args, **kwargs):
-            if "events.jsonl" in str(args[0]):
-                raise OSError("Mock error")
+            if 'events.jsonl' in str(args[0]):
+                raise IOError("Mock error")
             return original_open(*args, **kwargs)
 
         monkeypatch.setattr("builtins.open", mock_open)
@@ -203,8 +207,8 @@ class TestTimedEvent:
 
         with timed_event("timed_test", session_id):
             time.sleep(0.05)  # Sleep for 50ms
-
-        with open(mock_analytics_path) as f:
+        
+        with open(mock_analytics_path, 'r') as f:
             event = json.loads(f.readline())
 
         assert event["event_name"] == "timed_test"
@@ -220,8 +224,8 @@ class TestTimedEvent:
                 raise ValueError("Test error")
         except ValueError:
             pass
-
-        with open(mock_analytics_path) as f:
+        
+        with open(mock_analytics_path, 'r') as f:
             event = json.loads(f.readline())
 
         assert event["event_name"] == "error_test"
@@ -237,8 +241,8 @@ class TestTimedEvent:
 
         with timed_event("complex_timed", session_id, context=context, properties=properties, geo=geo):
             pass
-
-        with open(mock_analytics_path) as f:
+        
+        with open(mock_analytics_path, 'r') as f:
             event = json.loads(f.readline())
 
         assert event["context"] == context

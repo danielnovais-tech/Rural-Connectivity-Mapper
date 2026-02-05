@@ -36,7 +36,7 @@ def demo_starlink_api():
 
         # 1. Get coverage data
         print("\n1️⃣  Coverage Information:")
-        coverage = get_coverage_data(lat, lon)
+        coverage = get_coverage_data(lat, lon) or {}
         print(f"   ✓ Service Available: {coverage.get('available')}")
         print(f"   ✓ Service Tier: {coverage.get('service_tier')}")
         print(f"   ✓ Expected Download: {coverage.get('expected_download_mbps')} Mbps")
@@ -45,7 +45,7 @@ def demo_starlink_api():
 
         # 2. Get performance metrics
         print("\n2️⃣  Performance Metrics:")
-        performance = get_performance_metrics(lat, lon)
+        performance = get_performance_metrics(lat, lon) or {}
         print(f"   ✓ Download Speed: {performance.get('download_mbps')} Mbps")
         print(f"   ✓ Upload Speed: {performance.get('upload_mbps')} Mbps")
         print(f"   ✓ Latency: {performance.get('latency_ms')} ms")
@@ -53,12 +53,16 @@ def demo_starlink_api():
 
         # 3. Provider comparison
         print("\n3️⃣  Provider Comparison:")
-        comparison = compare_with_competitors(lat, lon)
-
-        print("\n   Provider Rankings:")
-        providers = comparison["providers"]
-        sorted_providers = sorted(providers.items(), key=lambda x: x[1].get("quality_score", 0), reverse=True)
-
+        comparison = compare_with_competitors(lat, lon) or {}
+        
+        print(f"\n   Provider Rankings:")
+        providers = comparison.get('providers', {})
+        sorted_providers = sorted(
+            providers.items(),
+            key=lambda x: x[1].get('quality_score', 0),
+            reverse=True
+        )
+        
         for i, (provider, data) in enumerate(sorted_providers, 1):
             emoji = "🥇" if i == 1 else "🥈" if i == 2 else "🥉"
             print(f"   {emoji} {provider.upper()}")

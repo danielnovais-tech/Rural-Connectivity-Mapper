@@ -1,34 +1,30 @@
 #!/usr/bin/env python3
 """Streamlit Web Dashboard for Rural Connectivity Mapper 2026."""
 
-import csv
-import io
-import tempfile
-from datetime import datetime
-from pathlib import Path
-
-import pandas as pd
 import streamlit as st
 import streamlit.components.v1 as components
+import pandas as pd
+import json
+import csv
+from datetime import datetime
+from pathlib import Path
+import io
+import tempfile
 
 from src.models import ConnectivityPoint, SpeedTest
 from src.utils import (
-    analyze_temporal_evolution,
-    generate_map,
-    generate_report,
-    load_data,
-    measure_speed,
-    save_data,
-    simulate_router_impact,
-    validate_coordinates,
+    load_data, save_data, generate_report, simulate_router_impact,
+    generate_map, analyze_temporal_evolution, measure_speed,
+    validate_coordinates
 )
 
+
 # Configuration constants
-DATA_PATH = "src/data/pontos.json"
+DATA_PATH = 'src/data/pontos.json'
 MAP_HEIGHT = 600  # Height in pixels for embedded maps
-DOWNLOAD_MBPS_LABEL = "Download (Mbps)"
-UPLOAD_MBPS_LABEL = "Upload (Mbps)"
-COVERAGE_PERCENTAGE_LABEL = "Coverage %"
+DOWNLOAD_MBPS_LABEL = 'Download (Mbps)'
+UPLOAD_MBPS_LABEL = 'Upload (Mbps)'
+COVERAGE_PERCENTAGE_LABEL = 'Coverage %'
 
 
 """Streamlit dashboard for Rural Connectivity Mapper 2026.
@@ -37,22 +33,26 @@ This module provides an interactive web dashboard for visualizing and analyzing
 connectivity data from ANATEL, IBGE, and Starlink.
 """
 
-import sys
-import uuid
-
+import streamlit as st
+import pandas as pd
 import folium
+from streamlit_folium import st_folium
 import plotly.express as px
 import plotly.graph_objects as go
-from streamlit_folium import st_folium
+from datetime import datetime
+import sys
+from pathlib import Path
+import uuid
 
 # Add src to path
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
-from src.utils.analytics import compute_analytics_summary, timed_event, track_event
+from src.utils.data_utils import load_data, save_data
 from src.utils.anatel_utils import (
     fetch_anatel_broadband_data,
     fetch_anatel_mobile_data,
     get_anatel_provider_stats,
+    convert_anatel_to_connectivity_points
 )
 from src.utils.country_config import get_country_config, get_latam_summary, get_supported_countries
 from src.utils.ibge_utils import (
@@ -62,8 +62,16 @@ from src.utils.ibge_utils import (
 from src.utils.starlink_utils import (
     check_starlink_availability,
     get_starlink_coverage_map,
+    get_starlink_vs_competitors,
     get_starlink_service_plans,
 )
+from src.utils.country_config import (
+    get_supported_countries,
+    get_country_config,
+    get_latam_summary
+)
+from src.utils.analytics import track_event, timed_event, compute_analytics_summary
+
 
 # Page configuration
 st.set_page_config(
@@ -318,7 +326,7 @@ def visualize_map(data):
             map_path = generate_map(data, tmp.name)
 
             # Read and display the HTML map
-            with open(map_path, encoding="utf-8") as f:
+            with open(map_path, 'r', encoding='utf-8') as f:
                 map_html = f.read()
 
             components.html(map_html, height=MAP_HEIGHT, scrolling=True)
@@ -339,29 +347,44 @@ def generate_reports(data):
 
     with col1:
         if st.button("JSON Report"):
-            report_path = generate_report(data, "json", "dashboard_report.json")
-            with open(report_path) as f:
+            report_path = generate_report(data, 'json', 'dashboard_report.json')
+            with open(report_path, 'r') as f:
                 st.download_button(
                     "Download JSON", f.read(), file_name="connectivity_report.json", mime="application/json"
                 )
 
     with col2:
         if st.button("CSV Report"):
-            report_path = generate_report(data, "csv", "dashboard_report.csv")
-            with open(report_path) as f:
-                st.download_button("Download CSV", f.read(), file_name="connectivity_report.csv", mime="text/csv")
-
+            report_path = generate_report(data, 'csv', 'dashboard_report.csv')
+            with open(report_path, 'r') as f:
+                st.download_button(
+                    "Download CSV",
+                    f.read(),
+                    file_name='connectivity_report.csv',
+                    mime='text/csv'
+                )
+    
     with col3:
         if st.button("TXT Report"):
-            report_path = generate_report(data, "txt", "dashboard_report.txt")
-            with open(report_path) as f:
-                st.download_button("Download TXT", f.read(), file_name="connectivity_report.txt", mime="text/plain")
-
+            report_path = generate_report(data, 'txt', 'dashboard_report.txt')
+            with open(report_path, 'r') as f:
+                st.download_button(
+                    "Download TXT",
+                    f.read(),
+                    file_name='connectivity_report.txt',
+                    mime='text/plain'
+                )
+    
     with col4:
         if st.button("HTML Report"):
-            report_path = generate_report(data, "html", "dashboard_report.html")
-            with open(report_path) as f:
-                st.download_button("Download HTML", f.read(), file_name="connectivity_report.html", mime="text/html")
+            report_path = generate_report(data, 'html', 'dashboard_report.html')
+            with open(report_path, 'r') as f:
+                st.download_button(
+                    "Download HTML",
+                    f.read(),
+                    file_name='connectivity_report.html',
+                    mime='text/html'
+                )
 
 
 def simulate_improvements(data):

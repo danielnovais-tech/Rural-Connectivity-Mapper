@@ -3,6 +3,7 @@
 import json
 from datetime import UTC, datetime
 from pathlib import Path
+from typing import List
 
 from src.schemas import MeasurementSchema
 from src.sources import DataSource
@@ -61,8 +62,8 @@ class BronzeLayer:
         print(f"  → {filepath}")
 
         return filepath
-
-    def read_latest(self, source_name: str) -> list[MeasurementSchema]:
+    
+    def read_latest(self, source_name: str) -> List[MeasurementSchema]:
         """Read latest data file for a source.
 
         Args:
@@ -87,8 +88,8 @@ class BronzeLayer:
         measurements = [MeasurementSchema.from_dict(m) for m in data.get("measurements", [])]
 
         return measurements
-
-    def read_all(self) -> list[MeasurementSchema]:
+    
+    def read_all(self) -> List[MeasurementSchema]:
         """Read all bronze data from all sources.
 
         Returns:

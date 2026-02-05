@@ -6,6 +6,7 @@ for different locations.
 
 import logging
 from datetime import datetime
+from typing import Any
 
 logger = logging.getLogger(__name__)
 
@@ -157,7 +158,7 @@ def get_starlink_service_plans() -> list[dict]:
     return plans
 
 
-def get_starlink_coverage_map(country: str = "BR") -> dict:
+def get_starlink_coverage_map(country: str = 'BR') -> dict[str, Any]:
     """Get Starlink coverage information for a country.
 
     Args:
@@ -247,7 +248,8 @@ def get_starlink_coverage_map(country: str = "BR") -> dict:
     return coverage
 
 
-def estimate_starlink_performance(latitude: float, longitude: float, weather_condition: str = "clear") -> dict:
+def estimate_starlink_performance(latitude: float, longitude: float, 
+                                   weather_condition: str = 'clear') -> dict[str, Any]:
     """Estimate expected Starlink performance at a location.
 
     Args:

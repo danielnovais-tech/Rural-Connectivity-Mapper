@@ -3,6 +3,7 @@
 import json
 from datetime import UTC, datetime
 from pathlib import Path
+from typing import List
 
 import h3
 
@@ -28,8 +29,8 @@ class SilverLayer:
         """
         self.silver_dir = Path(silver_dir)
         self.silver_dir.mkdir(parents=True, exist_ok=True)
-
-    def process(self, bronze_measurements: list[MeasurementSchema]) -> list[MeasurementSchema]:
+    
+    def process(self, bronze_measurements: List[MeasurementSchema]) -> List[MeasurementSchema]:
         """Process bronze data into silver layer.
 
         Args:
@@ -50,14 +51,14 @@ class SilverLayer:
 
         # Step 3: Enrich with confidence scores and H3 index
         enriched = self._enrich(validated)
-        print("  ✓ Enriched with confidence scores and H3 indexing")
-
+        print(f"  ✓ Enriched with confidence scores and H3 indexing")
+        
         # Step 4: Save to silver
         self._save(enriched)
 
         return enriched
-
-    def _deduplicate(self, measurements: list[MeasurementSchema]) -> list[MeasurementSchema]:
+    
+    def _deduplicate(self, measurements: List[MeasurementSchema]) -> List[MeasurementSchema]:
         """Remove duplicate measurements.
 
         Deduplication strategy:
@@ -87,8 +88,8 @@ class SilverLayer:
                 deduplicated.append(measurement)
 
         return deduplicated
-
-    def _validate(self, measurements: list[MeasurementSchema]) -> list[MeasurementSchema]:
+    
+    def _validate(self, measurements: List[MeasurementSchema]) -> List[MeasurementSchema]:
         """Validate measurements and filter invalid ones.
 
         Validation rules:
@@ -115,8 +116,8 @@ class SilverLayer:
             validated.append(measurement)
 
         return validated
-
-    def _enrich(self, measurements: list[MeasurementSchema]) -> list[MeasurementSchema]:
+    
+    def _enrich(self, measurements: List[MeasurementSchema]) -> List[MeasurementSchema]:
         """Enrich measurements with confidence scores and H3 indexing.
 
         Args:
@@ -144,8 +145,8 @@ class SilverLayer:
             enriched.append(measurement)
 
         return enriched
-
-    def _save(self, measurements: list[MeasurementSchema]) -> Path:
+    
+    def _save(self, measurements: List[MeasurementSchema]) -> Path:
         """Save enriched measurements to silver layer.
 
         Args:
@@ -170,8 +171,8 @@ class SilverLayer:
         print(f"  → {filepath}")
 
         return filepath
-
-    def read_latest(self) -> list[MeasurementSchema]:
+    
+    def read_latest(self) -> List[MeasurementSchema]:
         """Read latest silver data.
 
         Returns:
@@ -180,8 +181,8 @@ class SilverLayer:
         files = sorted(self.silver_dir.glob("silver_*.json"), reverse=True)
         if not files:
             return []
-
-        with open(files[0]) as f:
+        
+        with open(files[0], 'r') as f:
             data = json.load(f)
 
         measurements = [MeasurementSchema.from_dict(m) for m in data.get("measurements", [])]
