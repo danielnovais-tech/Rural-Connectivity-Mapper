@@ -35,6 +35,29 @@ jobs:
     - name: Run tests
       run: |
         python -m pytest tests/ -v
+
+    - name: Debug SpeedTest import (on failure)
+      if: failure()
+      run: |
+        python - <<'PY'
+        from __future__ import annotations
+
+        import sys
+
+        print("Python:", sys.version)
+        print("sys.path (first 5):")
+        for p in sys.path[:5]:
+            print(" -", p)
+
+        from src.models import SpeedTest  # noqa: E402
+        import src.models.SpeedTest as st_mod  # noqa: E402
+
+        print("SpeedTest module file:", getattr(st_mod, "__file__", None))
+        print("Weights:", SpeedTest.JITTER_WEIGHT, SpeedTest.PACKET_LOSS_WEIGHT, SpeedTest.OBSTRUCTION_WEIGHT)
+
+        st = SpeedTest(download=150.0, upload=20.0, latency=25.0, jitter=3.0, packet_loss=0.1, obstruction=5.0)
+        print("Example stability (jitter=3, loss=0.1, obstruction=5):", st.stability)
+        PY
     
     - name: Generate coverage report
       if: matrix.python-version == '3.12'
