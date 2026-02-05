@@ -108,7 +108,7 @@ def test_identify_expansion_zones():
     assert zones["total_zones"] <= 3
 
     # Check zone structure
-    for zone_key, zone_data in zones['zones'].items():
+    for _zone_key, zone_data in zones['zones'].items():
         assert 'center' in zone_data
         assert 'latitude' in zone_data['center']
         assert 'longitude' in zone_data['center']

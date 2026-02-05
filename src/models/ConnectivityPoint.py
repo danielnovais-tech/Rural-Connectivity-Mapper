@@ -2,7 +2,6 @@
 
 import uuid
 from datetime import datetime
-from typing import Dict, Optional
 
 from .QualityScore import QualityScore
 from .SpeedTest import SpeedTest
@@ -28,9 +27,9 @@ class ConnectivityPoint:
         longitude: float,
         provider: str,
         speed_test: SpeedTest,
-        quality_score: Optional[QualityScore] = None,
-        timestamp: Optional[str] = None,
-        point_id: Optional[str] = None,
+        quality_score: QualityScore | None = None,
+        timestamp: str | None = None,
+        point_id: str | None = None,
         country: str = "BR"
     ):
         """Initialize ConnectivityPoint instance.
@@ -54,7 +53,7 @@ class ConnectivityPoint:
         self.id = point_id if point_id else str(uuid.uuid4())
         self.country = country.upper() if country else "BR"
     
-    def to_dict(self) -> Dict:
+    def to_dict(self) -> dict:
         """Convert ConnectivityPoint to dictionary representation.
 
         Returns:
@@ -72,7 +71,7 @@ class ConnectivityPoint:
         }
 
     @classmethod
-    def from_dict(cls, data: Dict) -> 'ConnectivityPoint':
+    def from_dict(cls, data: dict) -> 'ConnectivityPoint':
         """Create ConnectivityPoint instance from dictionary.
 
         Args:

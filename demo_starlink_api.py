@@ -55,7 +55,7 @@ def demo_starlink_api():
         print("\n3️⃣  Provider Comparison:")
         comparison = compare_with_competitors(lat, lon) or {}
         
-        print(f"\n   Provider Rankings:")
+        print("\n   Provider Rankings:")
         providers = comparison.get('providers', {})
         sorted_providers = sorted(
             providers.items(),

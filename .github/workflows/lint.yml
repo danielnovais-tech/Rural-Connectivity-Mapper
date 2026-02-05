@@ -41,6 +41,7 @@ jobs:
         excluded_dirs = {
             ".git",
             ".venv",
+          ".venv-build",
             "__pycache__",
             "htmlcov",
             "build",

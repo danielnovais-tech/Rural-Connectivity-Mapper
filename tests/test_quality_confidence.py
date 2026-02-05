@@ -1,7 +1,7 @@
 """Unit tests for quality and confidence scoring."""
 
 from datetime import UTC, datetime, timedelta
-from typing import Any, Optional
+from typing import Any
 
 from src.quality import ConfidenceCalculator, SourceReliabilityWeights
 from src.schemas import MeasurementSchema, SourceType, TechnologyType
@@ -42,12 +42,12 @@ class TestConfidenceCalculator:
         self,
         days_old: int = 0,
         source: SourceType = SourceType.ANATEL,
-        download: Optional[float] = 100.0,
-        upload: Optional[float] = 20.0,
-        latency: Optional[float] = 25.0,
+        download: float | None = 100.0,
+        upload: float | None = 20.0,
+        latency: float | None = 25.0,
         technology: TechnologyType = TechnologyType.FIBER,
-        provider: Optional[str] = "Test Provider",
-        metadata: Optional[dict[str, Any]] = None,
+        provider: str | None = "Test Provider",
+        metadata: dict[str, Any] | None = None,
     ) -> MeasurementSchema:
         """Helper to create test measurements."""
         timestamp = datetime.now(UTC) - timedelta(days=days_old)

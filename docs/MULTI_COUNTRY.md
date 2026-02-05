@@ -26,7 +26,7 @@ Output:
 
 ```bash
 Available country codes:
-==================================================
+--------------------------------------------------
   AU: Australia
   BR: Brazil
   CA: Canada
@@ -36,7 +36,7 @@ Available country codes:
   IN: India
   MX: Mexico
   US: United States
-==================================================
+--------------------------------------------------
 ```
 
 ## Using Different Countries

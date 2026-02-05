@@ -284,7 +284,7 @@ def load_anatel_backhaul_backup(path: str = ANATEL_BACKUP_BACKHAUL_FILE) -> list
         return []
 
     try:
-        with open(path, 'r', encoding='utf-8') as f:
+        with open(path, encoding='utf-8') as f:
             data = json.load(f)
 
         # Validate top-level structure

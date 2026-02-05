@@ -1,7 +1,7 @@
 """Confidence score calculation for measurements."""
 
-from datetime import UTC, datetime, timezone
-from typing import Dict, Optional, cast
+from datetime import UTC, datetime
+from typing import cast
 
 from src.schemas import ConfidenceBreakdown, MeasurementSchema, SourceType
 
@@ -15,7 +15,7 @@ class SourceReliabilityWeights:
     # Avoid hard dependency on specific enum members: repositories may define
     # SourceType values with different casing/names. Populate weights only for
     # members that exist.
-    WEIGHTS: Dict[SourceType, float] = {}
+    WEIGHTS: dict[SourceType, float] = {}
 
     @staticmethod
     def _register(weight: float, *member_names: str) -> None:
@@ -74,7 +74,7 @@ class ConfidenceCalculator:
     def calculate(
         cls,
         measurement: MeasurementSchema,
-        current_time: Optional[datetime] = None
+        current_time: datetime | None = None
     ) -> tuple[float, ConfidenceBreakdown]:
         """Calculate confidence score and breakdown for a measurement.
 
@@ -86,7 +86,7 @@ class ConfidenceCalculator:
             Tuple of (overall_score, breakdown)
         """
         if current_time is None:
-            current_time = datetime.now(timezone.utc)
+            current_time = datetime.now(UTC)
         
         # Calculate component scores
         recency_score = cls._calculate_recency_score(measurement.timestamp_utc, current_time)
@@ -121,7 +121,7 @@ class ConfidenceCalculator:
         if timestamp.tzinfo is None:
             timestamp = timestamp.replace(tzinfo=UTC)
         if current_time.tzinfo is None:
-            current_time = current_time.replace(tzinfo=timezone.utc)
+            current_time = current_time.replace(tzinfo=UTC)
         
         age_days = (current_time - timestamp).total_seconds() / 86400
 

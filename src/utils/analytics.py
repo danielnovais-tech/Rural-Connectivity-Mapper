@@ -11,7 +11,7 @@ from contextlib import contextmanager
 from datetime import datetime
 from pathlib import Path
 from time import time
-from typing import Any, Optional, Dict
+from typing import Any
 
 logger = logging.getLogger(__name__)
 
@@ -74,10 +74,10 @@ def generate_anonymous_user_id(session_id: str) -> str:
 def track_event(
     event_name: str,
     session_id: str,
-    context: Optional[Dict[str, Any]] = None,
-    metrics: Optional[Dict[str, Any]] = None,
-    properties: Optional[Dict[str, Any]] = None,
-    geo: Optional[Dict[str, float]] = None
+    context: dict[str, Any] | None = None,
+    metrics: dict[str, Any] | None = None,
+    properties: dict[str, Any] | None = None,
+    geo: dict[str, float] | None = None
 ) -> None:
     """Track an analytics event by appending to events.jsonl.
 
@@ -122,9 +122,9 @@ def track_event(
 def timed_event(
     event_name: str,
     session_id: str,
-    context: Optional[Dict[str, Any]] = None,
-    properties: Optional[Dict[str, Any]] = None,
-    geo: Optional[Dict[str, float]] = None
+    context: dict[str, Any] | None = None,
+    properties: dict[str, Any] | None = None,
+    geo: dict[str, float] | None = None
 ):
     """Context manager to track events with duration measurement.
 
@@ -183,7 +183,7 @@ def read_events(limit: int | None = None) -> list:
             return []
 
         events = []
-        with open(EVENTS_FILE, 'r', encoding='utf-8') as f:
+        with open(EVENTS_FILE, encoding='utf-8') as f:
             for line in f:
                 if line.strip():
                     events.append(json.loads(line))

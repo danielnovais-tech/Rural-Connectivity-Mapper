@@ -3,7 +3,7 @@
 import logging
 from datetime import datetime
 from pathlib import Path
-from typing import Any, Dict, List, Optional, cast
+from typing import Any, cast
 
 from .config_utils import get_default_country, get_map_center, get_zoom_level
 
@@ -13,13 +13,6 @@ try:
     FOLIUM_AVAILABLE = True
 except ImportError:
     FOLIUM_AVAILABLE = False
-
-from .starlink_coverage_utils import (
-    get_starlink_coverage_zones,
-    get_starlink_signal_points,
-    get_coverage_color,
-    get_coverage_rating
-)
 
 logger = logging.getLogger(__name__)
 
@@ -64,7 +57,7 @@ def _add_starlink_coverage_layer(m: "folium.Map") -> None:
     folium.LayerControl(position="topright", collapsed=False).add_to(m)
 
 
-def _add_connectivity_markers(m: 'folium.Map', data: List[Dict]) -> None:
+def _add_connectivity_markers(m: 'folium.Map', data: list[dict]) -> None:
     """Add connectivity data markers to the map."""
     connectivity_group = folium.FeatureGroup(name="Connectivity Points", show=True)
 
@@ -80,7 +73,7 @@ def _add_connectivity_markers(m: 'folium.Map', data: List[Dict]) -> None:
     connectivity_group.add_to(m)
 
 
-def _add_single_marker(group: 'folium.FeatureGroup', point: Dict, lat: float, lon: float) -> None:
+def _add_single_marker(group: 'folium.FeatureGroup', point: dict, lat: float, lon: float) -> None:
     """Add a single connectivity marker to the feature group."""
     qs = point.get("quality_score", {})
     overall_score = qs.get("overall_score", 0)
@@ -275,7 +268,7 @@ def get_starlink_coverage_zones():
     return coverage_zones
 
 
-def generate_map(data: List[Dict], output_path: Optional[str] = None, include_starlink_coverage: bool = True, country_code: Optional[str] = None) -> str:
+def generate_map(data: list[dict], output_path: str | None = None, include_starlink_coverage: bool = True, country_code: str | None = None) -> str:
     """Generate interactive Folium map from connectivity data.
 
     Args:

@@ -6,12 +6,12 @@ Ready to be replaced with official API when available.
 """
 
 import logging
-from typing import Any, Dict, List, cast
+from typing import Any
 
 logger = logging.getLogger(__name__)
 
 
-def get_starlink_coverage_zones() -> List[Dict[str, Any]]:
+def get_starlink_coverage_zones() -> list[dict[str, Any]]:
     """Get Starlink coverage zones for Brazil.
 
     This is currently a placeholder implementation that returns simulated coverage

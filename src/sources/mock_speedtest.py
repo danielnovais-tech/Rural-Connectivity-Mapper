@@ -3,7 +3,6 @@
 import random
 import uuid
 from datetime import UTC, datetime, timedelta
-from typing import List
 
 from src.schemas import ConfidenceBreakdown, MeasurementSchema, SourceType, TechnologyType
 
@@ -26,7 +25,7 @@ class MockSpeedtestSource(DataSource):
         super().__init__("mock_speedtest")
         self.num_samples = num_samples
     
-    def fetch(self) -> List[MeasurementSchema]:
+    def fetch(self) -> list[MeasurementSchema]:
         """Fetch mock speedtest measurements.
 
         Generates realistic sample data with higher quality and completeness
@@ -43,7 +42,7 @@ class MockSpeedtestSource(DataSource):
         lat_range = (30.0, 48.0)  # Southern to Northern US (excluding Alaska)
         lon_range = (-120.0, -75.0)  # Western to Eastern US
         
-        for i in range(self.num_samples):
+        for _i in range(self.num_samples):
             # Generate random location
             lat = random.uniform(*lat_range)
             lon = random.uniform(*lon_range)

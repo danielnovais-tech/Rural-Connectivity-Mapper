@@ -3,7 +3,6 @@
 import random
 import uuid
 from datetime import UTC, datetime, timedelta
-from typing import List
 
 from src.schemas import ConfidenceBreakdown, MeasurementSchema, SourceType, TechnologyType
 
@@ -26,7 +25,7 @@ class MockCrowdsourceSource(DataSource):
         super().__init__("mock_crowdsource")
         self.num_samples = num_samples
     
-    def fetch(self) -> List[MeasurementSchema]:
+    def fetch(self) -> list[MeasurementSchema]:
         """Fetch mock crowdsource measurements.
 
         Generates realistic sample data with various quality levels,

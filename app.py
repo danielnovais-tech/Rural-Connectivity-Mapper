@@ -135,7 +135,7 @@ def add_data_point():
             'success': False,
             'error': f'Invalid value: {str(e)}'
         }), 400
-    except (KeyError, TypeError, OSError, IOError) as e:
+    except (KeyError, TypeError, OSError) as e:
         logger.error("Error adding data point: %s", e)
         return jsonify({"success": False, "error": str(e)}), 500
 
@@ -259,7 +259,7 @@ def generate_report_api(report_format):
             as_attachment=True,
             download_name=f'connectivity_report.{report_format}'
         )
-    except (ValueError, KeyError, OSError, IOError, TypeError) as e:
+    except (ValueError, KeyError, OSError, TypeError) as e:
         logger.error("Error generating report: %s", e)
         return jsonify({"success": False, "error": str(e)}), 500
 

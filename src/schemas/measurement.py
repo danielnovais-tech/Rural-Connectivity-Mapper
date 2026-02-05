@@ -2,10 +2,9 @@
 
 from datetime import datetime
 from enum import Enum
-from typing import Any, Dict
+from typing import Any
 
 from pydantic import BaseModel, ConfigDict, Field, field_validator
-
 
 # Python 3.11+ provides enum.StrEnum. Provide a fallback for older runtimes.
 try:  # pragma: no cover
@@ -60,7 +59,7 @@ class ConfidenceBreakdown(BaseModel):
         description="Score based on metadata completeness (0-100)"
     )
     
-    def to_dict(self) -> Dict[str, float]:
+    def to_dict(self) -> dict[str, float]:
         """Convert to dictionary."""
         return {
             "recency_score": self.recency_score,
@@ -117,7 +116,7 @@ class MeasurementSchema(BaseModel):
     )
 
     # Additional metadata
-    metadata: Dict[str, Any] = Field(
+    metadata: dict[str, Any] = Field(
         default_factory=dict,
         description="Additional source-specific metadata"
     )
@@ -157,7 +156,7 @@ class MeasurementSchema(BaseModel):
                         continue
         raise ValueError(f"Unable to parse timestamp: {v}")
     
-    def to_dict(self) -> Dict[str, Any]:
+    def to_dict(self) -> dict[str, Any]:
         """Convert to dictionary with proper serialization."""
         data = self.model_dump()
         # Convert datetime to ISO format

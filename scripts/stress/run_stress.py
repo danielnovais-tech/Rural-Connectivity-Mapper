@@ -35,9 +35,8 @@ from geopy.exc import GeocoderQuotaExceeded, GeocoderTimedOut, GeocoderUnavailab
 
 from src.utils.analysis_utils import analyze_temporal_evolution
 from src.utils.export_utils import export_ecosystem_bundle
+from src.utils.geocoding_utils import geocode_address, geocode_coordinates
 from src.utils.report_utils import generate_report
-from src.utils.geocoding_utils import geocode_coordinates, geocode_address
-from geopy.exc import GeocoderTimedOut, GeocoderQuotaExceeded, GeocoderUnavailable
 
 
 @dataclass

@@ -15,7 +15,6 @@ import logging
 import uuid
 from datetime import UTC, datetime
 from pathlib import Path
-from typing import Dict, List, Optional, Set, cast
 
 from src.schemas import MeasurementSchema, SourceType, TechnologyType
 
@@ -40,7 +39,7 @@ class ManualCSVSource(DataSource):
         self,
         watch_dir: Path | None = None,
         source_name: str = "manual_csv",
-        source_type: SourceType = cast(SourceType, SourceType.MANUAL),
+        source_type: SourceType | None = None,
         processed_files_log: Path | None = None,
     ):
         """Initialize manual CSV source.
@@ -69,12 +68,12 @@ class ManualCSVSource(DataSource):
         else:
             self.processed_files_log = Path(processed_files_log)
 
-        self.source_type = source_type
-        self._processed_files: Set[str] = self._load_processed_files()
+        self.source_type = SourceType.MANUAL if source_type is None else source_type
+        self._processed_files: set[str] = self._load_processed_files()
         
         logger.info(f"Initialized ManualCSVSource watching {self.watch_dir}")
     
-    def _load_processed_files(self) -> Set[str]:
+    def _load_processed_files(self) -> set[str]:
         """Load the set of already processed file hashes.
 
         Returns:
@@ -87,7 +86,7 @@ class ManualCSVSource(DataSource):
             with open(self.processed_files_log) as f:
                 data = json.load(f)
             return set(data.get("processed_hashes", []))
-        except (json.JSONDecodeError, IOError) as e:
+        except (OSError, json.JSONDecodeError) as e:
             logger.warning(f"Could not load processed files log: {e}")
             return set()
 
@@ -120,7 +119,7 @@ class ManualCSVSource(DataSource):
                 sha256_hash.update(byte_block)
         return sha256_hash.hexdigest()
     
-    def _parse_technology(self, tech_str: Optional[str]) -> TechnologyType:
+    def _parse_technology(self, tech_str: str | None) -> TechnologyType:
         """Parse technology string to TechnologyType enum.
 
         Args:
@@ -154,7 +153,7 @@ class ManualCSVSource(DataSource):
         else:
             return TechnologyType(TechnologyType.OTHER)
     
-    def _parse_csv_row(self, row: Dict[str, str], row_num: int, filename: str) -> Optional[MeasurementSchema]:
+    def _parse_csv_row(self, row: dict[str, str], row_num: int, filename: str) -> MeasurementSchema | None:
         """Parse a single CSV row into a MeasurementSchema.
 
         Args:
@@ -264,7 +263,7 @@ class ManualCSVSource(DataSource):
             logger.warning(f"Row {row_num} in {filename}: Invalid data - {e}")
             return None
     
-    def _process_csv_file(self, filepath: Path) -> List[MeasurementSchema]:
+    def _process_csv_file(self, filepath: Path) -> list[MeasurementSchema]:
         """Process a single CSV file into measurements.
 
         Args:
@@ -315,7 +314,7 @@ class ManualCSVSource(DataSource):
 
         return measurements
     
-    def fetch(self) -> List[MeasurementSchema]:
+    def fetch(self) -> list[MeasurementSchema]:
         """Fetch measurements from unprocessed CSV files in the watch directory.
 
         Scans the watch directory for new CSV files, processes them, and marks them

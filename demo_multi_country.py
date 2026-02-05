@@ -91,7 +91,7 @@ def main():
         speed_test=uk_speed,
         country="GB"
     )
-    print(f"\nUnited Kingdom (London):")
+    print("\nUnited Kingdom (London):")
     print(f"  Provider: {uk_point.provider}")
     print(f"  Quality Score: {uk_point.quality_score.overall_score:.1f}/100 ({uk_point.quality_score.rating})")
     print(f"  Download: {uk_point.speed_test.download} Mbps")
