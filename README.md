@@ -6,7 +6,7 @@ A comprehensive platform for mapping, analyzing, and improving rural connectivit
 
 ### Prerequisites
 
-- Python 3.12+
+- Python 3.10+ (recommended: 3.12)
 - pip package manager
 
 ### Data Pipeline (Pilar 1: Source of Truth)
@@ -95,7 +95,7 @@ Gold Layer (Aggregated, Analysis-Ready)
 
 ## 🛠️ Development
 
-This project targets Python 3.12+ (CI runs 3.12–3.13).
+This project supports Python 3.10+ (CI runs 3.10–3.12).
 
 ### Available Commands
 

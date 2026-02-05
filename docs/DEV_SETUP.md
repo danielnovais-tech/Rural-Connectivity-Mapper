@@ -2,7 +2,7 @@
 
 ## 1) Create and select a Python environment
 
-- Use Python 3.12+
+- Use Python 3.10+ (recommended: 3.12)
 - Create a venv (Task): **Bootstrap: Create .venv (system python)**
 - In VS Code: select the interpreter at `.venv/Scripts/python.exe`
 
