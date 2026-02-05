@@ -1,5 +1,6 @@
 """Tests for analysis utilities."""
 
+
 import pytest
 
 from src.utils.analysis_utils import (
@@ -191,10 +192,11 @@ def test_provider_stats(sample_data):
     assert "Viasat" in provider_stats
 
     # Each provider should have count and avg_score
-    for _provider, stats in provider_stats.items():
-        assert "count" in stats
-        assert "avg_score" in stats
-        assert stats["count"] > 0
+    for provider, stats in provider_stats.items():
+        assert 'count' in stats
+        assert 'avg_score' in stats
+        assert stats['count'] > 0
+
 
 
 def test_cluster_connectivity_points(sample_data):
@@ -253,12 +255,12 @@ def test_cluster_stats(sample_data):
     assert len(cluster_stats) == 2
 
     # Each cluster should have required fields
-    for _cluster_id, stats in cluster_stats.items():
-        assert "count" in stats
-        assert "centroid" in stats
-        assert "avg_metrics" in stats
-        assert "std_metrics" in stats
-
+    for cluster_id, stats in cluster_stats.items():
+        assert 'count' in stats
+        assert 'centroid' in stats
+        assert 'avg_metrics' in stats
+        assert 'std_metrics' in stats
+        
         # Verify centroid has all features
         centroid = stats["centroid"]
         assert "download" in centroid
