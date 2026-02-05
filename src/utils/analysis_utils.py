@@ -54,7 +54,7 @@ def analyze_temporal_evolution(data: list[dict], language: str = "en") -> dict:
         language: Language code for insights (en, pt). Default: 'en'
 
     Returns:
-        Dict: Analysis results with trends and insights
+        dict: Analysis results with trends and insights
     """
     try:
         logger.info(f"Analyzing temporal evolution of {len(data)} points...")
@@ -186,6 +186,7 @@ def analyze_temporal_evolution(data: list[dict], language: str = "en") -> dict:
         raise
 
 
+
 def cluster_connectivity_points(data: list[dict], n_clusters: int = 3) -> dict:
     """Cluster connectivity points using K-Means based on quality metrics.
 
@@ -239,15 +240,15 @@ def cluster_connectivity_points(data: list[dict], n_clusters: int = 3) -> dict:
         # Convert to numpy array
         if not NUMPY_AVAILABLE or np is None:
             raise RuntimeError("NumPy is required for clustering")
-        X = np.array(features)
+        x = np.array(features)
 
         # Standardize features
         scaler = StandardScaler()
-        X_scaled = scaler.fit_transform(X)
+        x_scaled = scaler.fit_transform(x)
 
         # Perform K-Means clustering
         kmeans = KMeans(n_clusters=n_clusters, random_state=42, n_init="auto")
-        cluster_labels = kmeans.fit_predict(X_scaled)
+        cluster_labels = kmeans.fit_predict(x_scaled)
 
         # Inverse transform centroids to original scale
         centroids_scaled = kmeans.cluster_centers_
