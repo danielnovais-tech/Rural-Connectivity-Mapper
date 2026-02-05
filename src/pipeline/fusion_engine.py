@@ -9,8 +9,9 @@ This module is responsible for:
 
 import json
 import logging
-from datetime import UTC, datetime
+from datetime import UTC, datetime, timezone
 from pathlib import Path
+from typing import List, Optional
 
 try:
     import pandas as pd
@@ -33,8 +34,8 @@ class FusionEngine:
     - Calculating the Rural Connectivity Index (ICR)
     - Preparing unified data for Silver layer processing
     """
-
-    def __init__(self, bronze_dir: Path, silver_dir: Path | None = None):
+    
+    def __init__(self, bronze_dir: Path, silver_dir: Optional[Path] = None):
         """Initialize fusion engine.
 
         Args:
@@ -43,8 +44,8 @@ class FusionEngine:
         """
         self.bronze_dir = Path(bronze_dir)
         self.silver_dir = Path(silver_dir) if silver_dir else None
-
-    def read_bronze_json(self, source_name: str | None = None) -> list[MeasurementSchema]:
+        
+    def read_bronze_json(self, source_name: Optional[str] = None) -> List[MeasurementSchema]:
         """Read JSON files from Bronze layer.
 
         Args:
@@ -71,8 +72,8 @@ class FusionEngine:
 
         logger.info(f"Read {len(measurements)} measurements from Bronze layer")
         return measurements
-
-    def read_bronze_parquet(self, source_name: str | None = None) -> list[MeasurementSchema]:
+    
+    def read_bronze_parquet(self, source_name: Optional[str] = None) -> List[MeasurementSchema]:
         """Read Parquet files from Bronze layer.
 
         Args:
@@ -105,8 +106,8 @@ class FusionEngine:
 
         logger.info(f"Read {len(measurements)} measurements from Bronze Parquet files")
         return measurements
-
-    def read_bronze_data(self, source_name: str | None = None, format: str = "auto") -> list[MeasurementSchema]:
+    
+    def read_bronze_data(self, source_name: Optional[str] = None, format: str = "auto") -> List[MeasurementSchema]:
         """Read data from Bronze layer (auto-detect or specify format).
 
         Args:
@@ -136,8 +137,8 @@ class FusionEngine:
             raise ValueError(f"Unknown format: {format}. Use 'json', 'parquet', or 'auto'")
 
         return measurements
-
-    def unify_sources(self, measurements: list[MeasurementSchema]) -> list[MeasurementSchema]:
+    
+    def unify_sources(self, measurements: List[MeasurementSchema]) -> List[MeasurementSchema]:
         """Unify measurements from multiple sources.
 
         This method prepares data from different sources (official APIs, crowdsourcing, etc.)
@@ -152,16 +153,17 @@ class FusionEngine:
         """
         unified: list[MeasurementSchema] = []
         source_counts: dict[str, int] = {}
+
         for measurement in measurements:
             # Track source counts
             source = measurement.source.value
             source_counts[source] = source_counts.get(source, 0) + 1
 
             # Add fusion metadata
-            if "fusion_metadata" not in measurement.metadata:
-                measurement.metadata["fusion_metadata"] = {
-                    "unified_at": datetime.now(UTC).isoformat(),
-                    "source": source,
+            if 'fusion_metadata' not in measurement.metadata:
+                measurement.metadata['fusion_metadata'] = {
+                    'unified_at': datetime.now(timezone.utc).isoformat(),
+                    'source': source,
                 }
 
             unified.append(measurement)
@@ -171,8 +173,8 @@ class FusionEngine:
             logger.info(f"  - {source}: {count} measurements")
 
         return unified
-
-    def calculate_icr(self, measurements: list[MeasurementSchema]) -> list[MeasurementSchema]:
+    
+    def calculate_icr(self, measurements: List[MeasurementSchema]) -> List[MeasurementSchema]:
         """Calculate Rural Connectivity Index (ICR) for measurements.
 
         The ICR is a composite metric that evaluates the quality of rural connectivity
@@ -258,8 +260,8 @@ class FusionEngine:
 
         logger.info(f"Calculated ICR for {len(measurements)} measurements")
         return measurements
-
-    def process(self, format: str = "auto") -> list[MeasurementSchema]:
+    
+    def process(self, format: str = "auto") -> List[MeasurementSchema]:
         """Process Bronze layer data through fusion engine.
 
         This is the main entry point that:
@@ -294,8 +296,8 @@ class FusionEngine:
         print("✅ Fusion engine processing complete\n")
 
         return enriched
-
-    def _read_json_file(self, filepath: Path) -> list[MeasurementSchema]:
+    
+    def _read_json_file(self, filepath: Path) -> List[MeasurementSchema]:
         """Read a single JSON file and extract measurements.
 
         Args:
@@ -321,8 +323,8 @@ class FusionEngine:
         except Exception as e:
             logger.error(f"Failed to read JSON file {filepath}: {e}")
             return []
-
-    def _read_parquet_file(self, filepath: Path) -> list[MeasurementSchema]:
+    
+    def _read_parquet_file(self, filepath: Path) -> List[MeasurementSchema]:
         """Read a single Parquet file and extract measurements.
 
         Args:

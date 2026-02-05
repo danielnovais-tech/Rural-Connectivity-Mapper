@@ -13,36 +13,37 @@ KNOWN_PROVIDERS = ["Starlink", "Viasat", "HughesNet", "Claro", "Vivo", "TIM", "O
 
 # Realistic bounds for speed test values
 SPEED_TEST_BOUNDS = {
-    "download": (0.0, 1000.0),  # Mbps - max for satellite/fiber
-    "upload": (0.0, 500.0),  # Mbps
-    "latency": (0.0, 2000.0),  # ms - max for satellite
-    "jitter": (0.0, 500.0),  # ms
-    "packet_loss": (0.0, 100.0),  # percentage
+    'download': (0.0, 1000.0),  # Mbps - max for satellite/fiber
+    'upload': (0.0, 500.0),     # Mbps
+    'latency': (0.0, 2000.0),   # ms - max for satellite
+    'jitter': (0.0, 500.0),     # ms
+    'packet_loss': (0.0, 100.0) # percentage
 }
+
 
 
 def validate_coordinates(latitude: float, longitude: float) -> bool:
     """Validate geographic coordinates.
-
+    
     Args:
         latitude: Latitude value to validate
         longitude: Longitude value to validate
-
+        
     Returns:
         bool: True if coordinates are valid, False otherwise
     """
     try:
         lat = float(latitude)
         lon = float(longitude)
-
+        
         if lat < -90 or lat > 90:
             logger.warning(f"Invalid latitude: {lat}. Must be between -90 and 90.")
             return False
-
+        
         if lon < -180 or lon > 180:
             logger.warning(f"Invalid longitude: {lon}. Must be between -180 and 180.")
             return False
-
+        
         return True
     except (ValueError, TypeError) as e:
         logger.error(f"Error validating coordinates: {e}")
@@ -51,28 +52,31 @@ def validate_coordinates(latitude: float, longitude: float) -> bool:
 
 def _validate_speed_field(field: str, value: Any, check_bounds: bool) -> bool:
     """Validate a single speed test field.
-
+    
     Args:
         field: Name of the field being validated
         value: Value to validate
         check_bounds: If True, validate values are within realistic bounds
-
+        
     Returns:
         bool: True if field is valid, False otherwise
     """
     if not isinstance(value, (int, float)):
         logger.warning(f"Field {field} must be numeric, got {type(value)}")
         return False
-
+    
     if value < 0:
         logger.warning(f"Field {field} must be positive, got {value}")
         return False
-
+    
     # Check realistic bounds if enabled
     if check_bounds and field in SPEED_TEST_BOUNDS:
         min_val, max_val = SPEED_TEST_BOUNDS[field]
         if value < min_val or value > max_val:
-            logger.warning(f"Field {field} value {value} is outside realistic bounds [{min_val}, {max_val}]")
+            logger.warning(
+                f"Field {field} value {value} is outside realistic bounds "
+                f"[{min_val}, {max_val}]"
+            )
             return False
 
     return True
