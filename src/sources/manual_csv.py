@@ -15,6 +15,7 @@ import logging
 import uuid
 from datetime import UTC, datetime
 from pathlib import Path
+from typing import Dict, List, Optional, Set, cast
 
 from src.schemas import MeasurementSchema, SourceType, TechnologyType
 
@@ -39,7 +40,7 @@ class ManualCSVSource(DataSource):
         self,
         watch_dir: Path | None = None,
         source_name: str = "manual_csv",
-        source_type: SourceType = SourceType.MANUAL,
+        source_type: SourceType = cast(SourceType, SourceType.MANUAL),
         processed_files_log: Path | None = None,
     ):
         """Initialize manual CSV source.
@@ -69,11 +70,11 @@ class ManualCSVSource(DataSource):
             self.processed_files_log = Path(processed_files_log)
 
         self.source_type = source_type
-        self._processed_files: set[str] = self._load_processed_files()
-
+        self._processed_files: Set[str] = self._load_processed_files()
+        
         logger.info(f"Initialized ManualCSVSource watching {self.watch_dir}")
-
-    def _load_processed_files(self) -> set[str]:
+    
+    def _load_processed_files(self) -> Set[str]:
         """Load the set of already processed file hashes.
 
         Returns:
@@ -86,14 +87,17 @@ class ManualCSVSource(DataSource):
             with open(self.processed_files_log) as f:
                 data = json.load(f)
             return set(data.get("processed_hashes", []))
-        except (OSError, json.JSONDecodeError) as e:
+        except (json.JSONDecodeError, IOError) as e:
             logger.warning(f"Could not load processed files log: {e}")
             return set()
 
     def _save_processed_files(self) -> None:
         """Save the set of processed file hashes to disk."""
-        data = {"processed_hashes": list(self._processed_files), "last_updated": datetime.now(UTC).isoformat()}
-
+        data = {
+            "processed_hashes": list(self._processed_files),
+            "last_updated": datetime.now(UTC).isoformat()
+        }
+        
         try:
             with open(self.processed_files_log, "w") as f:
                 json.dump(data, f, indent=2)
@@ -115,8 +119,8 @@ class ManualCSVSource(DataSource):
             for byte_block in iter(lambda: f.read(4096), b""):
                 sha256_hash.update(byte_block)
         return sha256_hash.hexdigest()
-
-    def _parse_technology(self, tech_str: str | None) -> TechnologyType:
+    
+    def _parse_technology(self, tech_str: Optional[str]) -> TechnologyType:
         """Parse technology string to TechnologyType enum.
 
         Args:
@@ -126,29 +130,31 @@ class ManualCSVSource(DataSource):
             TechnologyType enum value
         """
         if not tech_str:
-            return TechnologyType.UNKNOWN
+            # Some schema implementations expose UNKNOWN as a raw string literal;
+            # wrap via the type to ensure the return type is TechnologyType.
+            return TechnologyType(TechnologyType.UNKNOWN)
 
         tech_lower = tech_str.lower()
 
         # Map common variations to technology types
         if any(x in tech_lower for x in ["fibr", "fiber", "ftth", "fttc"]):
-            return TechnologyType.FIBER
+            return TechnologyType(TechnologyType.FIBER)
         elif any(x in tech_lower for x in ["cable", "coax"]):
-            return TechnologyType.CABLE
+            return TechnologyType(TechnologyType.CABLE)
         elif any(x in tech_lower for x in ["dsl", "adsl", "vdsl"]):
-            return TechnologyType.DSL
+            return TechnologyType(TechnologyType.DSL)
         elif any(x in tech_lower for x in ["satélite", "satellite", "starlink", "viasat", "hughesnet"]):
-            return TechnologyType.SATELLITE
+            return TechnologyType(TechnologyType.SATELLITE)
         elif any(x in tech_lower for x in ["5g", "mobile_5g"]):
-            return TechnologyType.MOBILE_5G
+            return TechnologyType(TechnologyType.MOBILE_5G)
         elif any(x in tech_lower for x in ["4g", "lte", "mobile_4g"]):
-            return TechnologyType.MOBILE_4G
+            return TechnologyType(TechnologyType.MOBILE_4G)
         elif any(x in tech_lower for x in ["wireless", "radio", "wisp"]):
-            return TechnologyType.FIXED_WIRELESS
+            return TechnologyType(TechnologyType.FIXED_WIRELESS)
         else:
-            return TechnologyType.OTHER
-
-    def _parse_csv_row(self, row: dict[str, str], row_num: int, filename: str) -> MeasurementSchema | None:
+            return TechnologyType(TechnologyType.OTHER)
+    
+    def _parse_csv_row(self, row: Dict[str, str], row_num: int, filename: str) -> Optional[MeasurementSchema]:
         """Parse a single CSV row into a MeasurementSchema.
 
         Args:
@@ -193,13 +199,11 @@ class ManualCSVSource(DataSource):
                         except ValueError:
                             continue
                     else:
-                        logger.warning(
-                            f"Row {row_num}: Could not parse timestamp '{timestamp_str}', using current time"
-                        )
+                        logger.warning(f"Row {row_num}: Could not parse timestamp '{timestamp_str}', using current time")
                         timestamp = datetime.now(UTC)
             else:
                 timestamp = datetime.now(UTC)
-
+            
             # Optional fields - handle '0' and '0.0' as valid values
             download_str = row_lower.get("download", row_lower.get("download_mbps", "")).strip()
             download = float(download_str) if download_str else None
@@ -259,8 +263,8 @@ class ManualCSVSource(DataSource):
         except (ValueError, KeyError) as e:
             logger.warning(f"Row {row_num} in {filename}: Invalid data - {e}")
             return None
-
-    def _process_csv_file(self, filepath: Path) -> list[MeasurementSchema]:
+    
+    def _process_csv_file(self, filepath: Path) -> List[MeasurementSchema]:
         """Process a single CSV file into measurements.
 
         Args:
@@ -310,8 +314,8 @@ class ManualCSVSource(DataSource):
             logger.error(f"Error processing {filepath}: {e}")
 
         return measurements
-
-    def fetch(self) -> list[MeasurementSchema]:
+    
+    def fetch(self) -> List[MeasurementSchema]:
         """Fetch measurements from unprocessed CSV files in the watch directory.
 
         Scans the watch directory for new CSV files, processes them, and marks them
