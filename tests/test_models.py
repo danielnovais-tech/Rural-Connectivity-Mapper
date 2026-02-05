@@ -43,9 +43,9 @@ def test_speed_test_stability_calculation():
         obstruction=10.0,  # 10% obstruction
     )
 
-    # With 10% obstruction, penalty should be 10 * 0.2 = 2 points
-    # Base: 100 - jitter(6) - packet_loss(1) - obstruction(2) = 91
-    assert 90 <= speed_test_obstructed.stability <= 92
+    # With 10% obstruction, penalty should be 10 * 5 = 50 points
+    # Base: 100 - jitter(6) - packet_loss(1) - obstruction(50) = 43
+    assert 40 <= speed_test_obstructed.stability <= 45
 
 
 def test_quality_score_calculation():
@@ -146,8 +146,8 @@ def test_speed_test_obstruction_calculation():
     )
 
     # Obstruction should reduce stability score
-    # Base 100 - jitter(3*2=6) - packet_loss(0.1*10=1) - obstruction(5*0.2=1) = 92
-    assert 91 <= speed_test_with_obstruction.stability <= 93
+    # Base 100 - jitter(3*2=6) - packet_loss(0.1*10=1) - obstruction(5*5=25) = 68
+    assert 65 <= speed_test_with_obstruction.stability <= 70
 
     # Test with high obstruction (poor satellite line of sight)
     speed_test_high_obstruction = SpeedTest(
@@ -160,5 +160,5 @@ def test_speed_test_obstruction_calculation():
     )
 
     # High obstruction should significantly reduce stability
-    # Base 100 - jitter(10) - packet_loss(10) - obstruction(2) = 78
-    assert 75 <= speed_test_high_obstruction.stability <= 80
+    # Base 100 - jitter(10) - packet_loss(10) - obstruction(10*5=50) = 30
+    assert 28 <= speed_test_high_obstruction.stability <= 32

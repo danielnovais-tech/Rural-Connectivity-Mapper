@@ -14,6 +14,12 @@ class SpeedTest:
         stability (float): Connection stability score (0-100)
     """
 
+    # Penalty weights used by calculate_stability().
+    # Adjust OBSTRUCTION_WEIGHT to change how much obstruction impacts stability.
+    JITTER_WEIGHT = 2.0
+    PACKET_LOSS_WEIGHT = 10.0
+    OBSTRUCTION_WEIGHT = 5.0
+
     def __init__(
         self,
         download: float,
@@ -53,18 +59,18 @@ class SpeedTest:
         score = 100.0
 
         # Reduce score based on jitter (higher jitter = lower stability)
-        # Jitter penalty: -2 points per ms of jitter, capped at 40 points
-        jitter_penalty = min(self.jitter * 2, 40)
+        # Jitter penalty: -2 points per ms of jitter
+        jitter_penalty = self.jitter * self.JITTER_WEIGHT
         score -= jitter_penalty
 
         # Reduce score based on packet loss
-        # Packet loss penalty: -10 points per 1% packet loss, capped at 40 points
-        packet_loss_penalty = min(self.packet_loss * 10, 40)
+        # Packet loss penalty: -10 points per 1% packet loss
+        packet_loss_penalty = self.packet_loss * self.PACKET_LOSS_WEIGHT
         score -= packet_loss_penalty
 
         # Reduce score based on obstruction (for satellite connections)
-        # Obstruction penalty: -0.2 points per 1% obstruction, capped at 20 points
-        obstruction_penalty = min(self.obstruction * 0.2, 20)
+        # Obstruction penalty: configurable via OBSTRUCTION_WEIGHT
+        obstruction_penalty = self.obstruction * self.OBSTRUCTION_WEIGHT
         score -= obstruction_penalty
 
         # Ensure score is between 0 and 100

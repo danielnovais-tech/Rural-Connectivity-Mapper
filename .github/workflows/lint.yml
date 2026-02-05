@@ -24,7 +24,7 @@ jobs:
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
-        pip install ruff flake8
+        pip install -r requirements-dev.txt
 
     - name: Fail on merge conflict markers
       run: |
@@ -41,7 +41,7 @@ jobs:
         excluded_dirs = {
             ".git",
             ".venv",
-          ".venv-build",
+            ".venv-build",
             "__pycache__",
             "htmlcov",
             "build",
@@ -75,10 +75,6 @@ jobs:
         print("No merge conflict markers found.")
         PY
     
-    - name: Run ruff
+    - name: Ruff + mypy
       run: |
-        ruff check .
-    
-    - name: Run flake8
-      run: |
-        flake8 src/ tests/ main.py demo_workflow.py --max-line-length=120 --statistics
+        python scripts/run_linting.py
