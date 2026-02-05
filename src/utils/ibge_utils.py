@@ -7,10 +7,6 @@ the Brazilian Institute of Geography and Statistics.
 import logging
 
 import requests
-import urllib3
-
-# Disable SSL warnings when verify=False is used (for testing only)
-urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 logger = logging.getLogger(__name__)
 
@@ -37,7 +33,7 @@ def fetch_ibge_municipalities(state_code: str | None = None) -> list[dict]:
     try:
         # Real IBGE API call
         url = f"{IBGE_BASE_URL}{IBGE_ENDPOINTS['municipalities']}"
-        response = requests.get(url, timeout=30, verify=False)
+        response = requests.get(url, timeout=30)
         response.raise_for_status()
 
         municipalities = response.json()

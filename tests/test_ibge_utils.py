@@ -1,8 +1,10 @@
 """Tests for IBGE utilities."""
 
 import pytest
+import requests
 
 pytest.importorskip("pandas", exc_type=ImportError)
+import src.utils.ibge_utils as ibge_utils
 from src.utils.ibge_utils import (
     combine_ibge_anatel_data,
     fetch_ibge_demographics,
@@ -10,6 +12,14 @@ from src.utils.ibge_utils import (
     get_ibge_statistics_summary,
     get_rural_areas_needing_connectivity,
 )
+
+
+@pytest.fixture(autouse=True)
+def _no_real_ibge_http(monkeypatch: pytest.MonkeyPatch) -> None:
+    def _raise_request_exception(*args: object, **kwargs: object) -> object:
+        raise requests.exceptions.RequestException("Network disabled in unit tests")
+
+    monkeypatch.setattr(ibge_utils.requests, "get", _raise_request_exception)
 
 
 def test_fetch_ibge_municipalities():
