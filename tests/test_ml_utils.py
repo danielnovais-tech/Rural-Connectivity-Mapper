@@ -108,15 +108,15 @@ def test_identify_expansion_zones():
     assert zones["total_zones"] <= 3
 
     # Check zone structure
-    for _zone_key, zone_data in zones["zones"].items():
-        assert "center" in zone_data
-        assert "latitude" in zone_data["center"]
-        assert "longitude" in zone_data["center"]
-        assert "point_count" in zone_data
-        assert "avg_quality_score" in zone_data
-        assert "avg_distance_from_city_km" in zone_data
-        assert "priority_score" in zone_data
-        assert "recommendation" in zone_data
+    for zone_key, zone_data in zones['zones'].items():
+        assert 'center' in zone_data
+        assert 'latitude' in zone_data['center']
+        assert 'longitude' in zone_data['center']
+        assert 'point_count' in zone_data
+        assert 'avg_quality_score' in zone_data
+        assert 'avg_distance_from_city_km' in zone_data
+        assert 'priority_score' in zone_data
+        assert 'recommendation' in zone_data
 
 
 def test_identify_expansion_zones_insufficient_data():
