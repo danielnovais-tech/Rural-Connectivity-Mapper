@@ -6,25 +6,12 @@ Ready to be replaced with official API when available.
 """
 
 import logging
-from typing import Any, cast
+from typing import Any, Dict, List, cast
 
 logger = logging.getLogger(__name__)
 
 
-def _compute_center(coordinates: list[list[float]]) -> list[float]:
-    # Coordinates are expected as [[lat, lon], ...]. Some polygons repeat the
-    # first point as the last point; avoid double-counting it.
-    points = coordinates
-    if len(points) >= 2 and points[0] == points[-1]:
-        points = points[:-1]
-    if not points:
-        return [0.0, 0.0]
-    avg_lat = sum(lat for lat, _lon in points) / len(points)
-    avg_lon = sum(lon for _lat, lon in points) / len(points)
-    return [avg_lat, avg_lon]
-
-
-def get_starlink_coverage_zones() -> list[dict[str, Any]]:
+def get_starlink_coverage_zones() -> List[Dict[str, Any]]:
     """Get Starlink coverage zones for Brazil.
 
     This is currently a placeholder implementation that returns simulated coverage
@@ -47,62 +34,79 @@ def get_starlink_coverage_zones() -> list[dict[str, Any]]:
         - Satellite constellation coverage patterns
         - Known deployment priorities in Brazil
     """
-    coverage_zones = [
+    coverage_zones: list[dict[str, Any]] = [
         {
-            "name": "Central Brazil - High Coverage",
-            "coordinates": [[-15.0, -50.0], [-15.0, -45.0], [-17.0, -45.0], [-17.0, -50.0], [-15.0, -50.0]],
-            "coverage": "excellent",
-            "signal_strength": "excellent",
-            "radius": 350_000,
-            "color": "#00ff00",
-            "opacity": 0.3,
-            "description": "Primary coverage zone including Brasília region with optimal satellite visibility",
+            'name': 'Central Brazil - High Coverage',
+            'coordinates': [
+                [-15.0, -50.0],
+                [-15.0, -45.0],
+                [-17.0, -45.0],
+                [-17.0, -50.0],
+                [-15.0, -50.0]
+            ],
+            'signal_strength': 'excellent',
+            'color': '#00ff00',
+            'opacity': 0.3,
+            'description': 'Primary coverage zone including Brasília region with optimal satellite visibility'
         },
         {
-            "name": "Southeast Brazil - High Coverage",
-            "coordinates": [[-20.0, -48.0], [-20.0, -42.0], [-24.0, -42.0], [-24.0, -48.0], [-20.0, -48.0]],
-            "coverage": "excellent",
-            "signal_strength": "excellent",
-            "radius": 350_000,
-            "color": "#00ff00",
-            "opacity": 0.3,
-            "description": "São Paulo and Rio de Janeiro region with strong satellite coverage",
+            'name': 'Southeast Brazil - High Coverage',
+            'coordinates': [
+                [-20.0, -48.0],
+                [-20.0, -42.0],
+                [-24.0, -42.0],
+                [-24.0, -48.0],
+                [-20.0, -48.0]
+            ],
+            'signal_strength': 'excellent',
+            'color': '#00ff00',
+            'opacity': 0.3,
+            'description': 'São Paulo and Rio de Janeiro region with strong satellite coverage'
         },
         {
-            "name": "South Brazil - Good Coverage",
-            "coordinates": [[-24.0, -54.0], [-24.0, -48.0], [-30.0, -48.0], [-30.0, -54.0], [-24.0, -54.0]],
-            "coverage": "good",
-            "signal_strength": "good",
-            "radius": 300_000,
-            "color": "#ffff00",
-            "opacity": 0.25,
-            "description": "Southern states with reliable coverage (Paraná, Santa Catarina, Rio Grande do Sul)",
+            'name': 'South Brazil - Good Coverage',
+            'coordinates': [
+                [-24.0, -54.0],
+                [-24.0, -48.0],
+                [-30.0, -48.0],
+                [-30.0, -54.0],
+                [-24.0, -54.0]
+            ],
+            'signal_strength': 'good',
+            'color': '#ffff00',
+            'opacity': 0.25,
+            'description': 'Southern states with reliable coverage (Paraná, Santa Catarina, Rio Grande do Sul)'
         },
         {
-            "name": "Northeast Brazil - Developing Coverage",
-            "coordinates": [[-3.0, -42.0], [-3.0, -35.0], [-13.0, -35.0], [-13.0, -42.0], [-3.0, -42.0]],
-            "coverage": "good",
-            "signal_strength": "good",
-            "radius": 320_000,
-            "color": "#ffff00",
-            "opacity": 0.25,
-            "description": "Northeast coastal region with expanding coverage (Fortaleza, Salvador areas)",
+            'name': 'Northeast Brazil - Developing Coverage',
+            'coordinates': [
+                [-3.0, -42.0],
+                [-3.0, -35.0],
+                [-13.0, -35.0],
+                [-13.0, -42.0],
+                [-3.0, -42.0]
+            ],
+            'signal_strength': 'good',
+            'color': '#ffff00',
+            'opacity': 0.25,
+            'description': 'Northeast coastal region with expanding coverage (Fortaleza, Salvador areas)'
         },
         {
-            "name": "North Brazil - Expanding Coverage",
-            "coordinates": [[2.0, -62.0], [2.0, -50.0], [-8.0, -50.0], [-8.0, -62.0], [2.0, -62.0]],
-            "coverage": "moderate",
-            "signal_strength": "fair",
-            "radius": 450_000,
-            "color": "#ffa500",
-            "opacity": 0.2,
-            "description": "Amazon region - coverage expanding as part of 2026 rural connectivity initiative",
-        },
+            'name': 'North Brazil - Expanding Coverage',
+            'coordinates': [
+                [2.0, -62.0],
+                [2.0, -50.0],
+                [-8.0, -50.0],
+                [-8.0, -62.0],
+                [2.0, -62.0]
+            ],
+            'signal_strength': 'fair',
+            'color': '#ffa500',
+            'opacity': 0.2,
+            'description': 'Amazon region - coverage expanding as part of 2026 rural connectivity initiative'
+        }
     ]
-
-    for zone in coverage_zones:
-        zone["center"] = _compute_center(cast(list[list[float]], zone["coordinates"]))
-
+    
     logger.info(f"Generated {len(coverage_zones)} Starlink coverage zones for Brazil")
     return coverage_zones
 

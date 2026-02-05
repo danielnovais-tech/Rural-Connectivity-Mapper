@@ -1,6 +1,7 @@
 """Confidence score calculation for measurements."""
 
-from datetime import UTC, datetime
+from datetime import UTC, datetime, timezone
+from typing import Dict, Optional, cast
 
 from src.schemas import ConfidenceBreakdown, MeasurementSchema, SourceType
 
@@ -11,15 +12,30 @@ class SourceReliabilityWeights:
     Higher weight = more reliable source.
     """
 
-    WEIGHTS: dict[SourceType, float] = {
-        SourceType.ANATEL: 0.95,  # Official regulatory data - highest trust
-        SourceType.IBGE: 0.90,  # Government statistical data
-        SourceType.STARLINK: 0.85,  # Direct from provider
-        SourceType.SPEEDTEST: 0.75,  # Established testing platform
-        SourceType.CROWDSOURCE: 0.60,  # Community data - variable quality
-        SourceType.MANUAL: 0.50,  # Manual entry - needs verification
-        SourceType.OTHER: 0.40,  # Unknown source - lowest trust
-    }
+    # Avoid hard dependency on specific enum members: repositories may define
+    # SourceType values with different casing/names. Populate weights only for
+    # members that exist.
+    WEIGHTS: Dict[SourceType, float] = {}
+
+    @staticmethod
+    def _register(weight: float, *member_names: str) -> None:
+        """Register a weight for the first SourceType member that exists."""
+        for name in member_names:
+            member = getattr(SourceType, name, None)
+            if member is not None:
+                SourceReliabilityWeights.WEIGHTS[cast(SourceType, member)] = weight
+                return
+
+    # Common/expected source types (support both lower/upper-case variants)
+    _register(0.95, "anatel", "ANATEL")        # Official regulatory data - highest trust
+    _register(0.90, "ibge", "IBGE")            # Government statistical data
+    _register(0.75, "speedtest", "SPEEDTEST")  # Established testing platform
+    _register(0.60, "crowdsource", "CROWDSOURCE")  # Community data - variable quality
+    _register(0.50, "manual", "MANUAL")        # Manual entry - needs verification
+    _register(0.40, "other", "OTHER")          # Unknown source - lowest trust
+
+    # Optional/legacy source types
+    _register(0.85, "starlink", "STARLINK")    # Direct from provider
 
     @classmethod
     def get_weight(cls, source: SourceType) -> float:
@@ -57,7 +73,9 @@ class ConfidenceCalculator:
 
     @classmethod
     def calculate(
-        cls, measurement: MeasurementSchema, current_time: datetime | None = None
+        cls,
+        measurement: MeasurementSchema,
+        current_time: Optional[datetime] = None
     ) -> tuple[float, ConfidenceBreakdown]:
         """Calculate confidence score and breakdown for a measurement.
 
@@ -69,8 +87,8 @@ class ConfidenceCalculator:
             Tuple of (overall_score, breakdown)
         """
         if current_time is None:
-            current_time = datetime.now(UTC)
-
+            current_time = datetime.now(timezone.utc)
+        
         # Calculate component scores
         recency_score = cls._calculate_recency_score(measurement.timestamp_utc, current_time)
         source_score = cls._calculate_source_score(measurement.source)
@@ -104,8 +122,8 @@ class ConfidenceCalculator:
         if timestamp.tzinfo is None:
             timestamp = timestamp.replace(tzinfo=UTC)
         if current_time.tzinfo is None:
-            current_time = current_time.replace(tzinfo=UTC)
-
+            current_time = current_time.replace(tzinfo=timezone.utc)
+        
         age_days = (current_time - timestamp).total_seconds() / 86400
 
         if age_days < 0:
