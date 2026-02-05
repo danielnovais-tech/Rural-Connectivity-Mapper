@@ -3,8 +3,9 @@
 import random
 import uuid
 from datetime import UTC, datetime, timedelta
+from typing import List
 
-from src.schemas import MeasurementSchema, SourceType, TechnologyType
+from src.schemas import ConfidenceBreakdown, MeasurementSchema, SourceType, TechnologyType
 
 from .base import DataSource
 
@@ -24,8 +25,8 @@ class MockSpeedtestSource(DataSource):
         """
         super().__init__("mock_speedtest")
         self.num_samples = num_samples
-
-    def fetch(self) -> list[MeasurementSchema]:
+    
+    def fetch(self) -> List[MeasurementSchema]:
         """Fetch mock speedtest measurements.
 
         Generates realistic sample data with higher quality and completeness
@@ -41,8 +42,8 @@ class MockSpeedtestSource(DataSource):
         # Using realistic coordinate ranges for rural areas
         lat_range = (30.0, 48.0)  # Southern to Northern US (excluding Alaska)
         lon_range = (-120.0, -75.0)  # Western to Eastern US
-
-        for _i in range(self.num_samples):
+        
+        for i in range(self.num_samples):
             # Generate random location
             lat = random.uniform(*lat_range)
             lon = random.uniform(*lon_range)
@@ -52,7 +53,7 @@ class MockSpeedtestSource(DataSource):
             days_ago = random.randint(0, 30)
             hours_ago = random.randint(0, 23)
             timestamp = datetime.now(UTC) - timedelta(days=days_ago, hours=hours_ago)
-
+            
             # Generate realistic speed measurements
             # Speedtest platform typically has better connection types
             tech_choice = random.choice(
@@ -110,6 +111,25 @@ class MockSpeedtestSource(DataSource):
             else:
                 region = random.choice(["CO", "NE", "KS", "MO", "IL", "IN"])
 
+            # Confidence/quality metadata (optional in schema but included for completeness)
+            completeness = (
+                (1.0 if download is not None else 0.0)
+                + (1.0 if upload is not None else 0.0)
+                + (1.0 if latency is not None else 0.0)
+            ) / 3.0
+            recency = max(0.0, 1.0 - (days_ago / 30.0))
+            # Speedtest platform is generally reliable
+            source_reliability = 0.9
+            confidence_score = round(((0.4 * completeness) + (0.4 * recency) + (0.2 * source_reliability)) * 100.0, 2)
+            confidence_breakdown = ConfidenceBreakdown(
+                recency_score=round(recency * 100.0, 2),
+                source_reliability_score=round(source_reliability * 100.0, 2),
+                consistency_score=90.0,
+                completeness_score=round(completeness * 100.0, 2),
+            )
+
+            h3_index = f"mock_h3_{round(lat, 3)}_{round(lon, 3)}"
+
             # Create measurement
             measurement = MeasurementSchema(
                 id=f"speedtest_{uuid.uuid4().hex[:12]}",
@@ -119,14 +139,14 @@ class MockSpeedtestSource(DataSource):
                 download_mbps=round(download, 2),
                 upload_mbps=round(upload, 2) if upload is not None else None,
                 latency_ms=round(latency, 2) if latency is not None else None,
+                confidence_score=confidence_score,
+                confidence_breakdown=confidence_breakdown,
                 technology=tech_choice,
                 source=SourceType.SPEEDTEST,
                 provider=provider,
-                confidence_score=None,
-                confidence_breakdown=None,
                 country="US",
                 region=region,
-                h3_index=None,
+                h3_index=h3_index,
                 metadata={
                     "server_id": f"server_{random.randint(1000, 9999)}",
                     "test_id": f"test_{uuid.uuid4().hex[:16]}",

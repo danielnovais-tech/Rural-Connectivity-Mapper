@@ -149,7 +149,7 @@ def test_generate_map_coverage_layer_enabled(sample_data, tmp_path):
 
     # Verify HTML content includes coverage layer
 
-    with open(map_path, encoding="utf-8") as f:
+    with open(map_path, 'r', encoding='utf-8') as f:
         content = f.read()
 
     # Should contain layer control for toggling coverage
