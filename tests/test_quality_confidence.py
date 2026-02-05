@@ -1,6 +1,7 @@
 """Unit tests for quality and confidence scoring."""
 
 from datetime import UTC, datetime, timedelta
+from typing import Any, Optional
 
 from src.quality import ConfidenceCalculator, SourceReliabilityWeights
 from src.schemas import MeasurementSchema, SourceType, TechnologyType
@@ -41,16 +42,16 @@ class TestConfidenceCalculator:
         self,
         days_old: int = 0,
         source: SourceType = SourceType.ANATEL,
-        download: float = 100.0,
-        upload: float = 20.0,
-        latency: float = 25.0,
+        download: Optional[float] = 100.0,
+        upload: Optional[float] = 20.0,
+        latency: Optional[float] = 25.0,
         technology: TechnologyType = TechnologyType.FIBER,
-        provider: str = "Test Provider",
-        metadata: dict = None,
+        provider: Optional[str] = "Test Provider",
+        metadata: Optional[dict[str, Any]] = None,
     ) -> MeasurementSchema:
         """Helper to create test measurements."""
         timestamp = datetime.now(UTC) - timedelta(days=days_old)
-
+        
         return MeasurementSchema(
             id=f"test_{days_old}",
             lat=-15.7801,
@@ -62,7 +63,12 @@ class TestConfidenceCalculator:
             technology=technology,
             source=source,
             provider=provider,
+            confidence_score=None,
+            confidence_breakdown=None,
             metadata=metadata or {},
+            country="BR",
+            region="BR",
+            h3_index="test_h3",
         )
 
     def test_fresh_data_high_recency_score(self):
@@ -213,7 +219,15 @@ class TestConfidenceCalculator:
             lon=-47.9292,
             timestamp_utc=future_time,
             download_mbps=100.0,
+            upload_mbps=20.0,
+            latency_ms=25.0,
             source=SourceType.ANATEL,
+            provider="Test Provider",
+            confidence_score=None,
+            confidence_breakdown=None,
+            country="BR",
+            region="BR",
+            h3_index="test_h3",
         )
 
         _, breakdown = ConfidenceCalculator.calculate(measurement)
@@ -232,7 +246,15 @@ class TestConfidenceBreakdown:
             lon=-47.9292,
             timestamp_utc=datetime.now(UTC),
             download_mbps=100.0,
+            upload_mbps=20.0,
+            latency_ms=25.0,
             source=SourceType.ANATEL,
+            provider="Test Provider",
+            confidence_score=None,
+            confidence_breakdown=None,
+            country="BR",
+            region="BR",
+            h3_index="test_h3",
         )
 
         _, breakdown = ConfidenceCalculator.calculate(measurement)

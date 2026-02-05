@@ -3,8 +3,9 @@
 import random
 import uuid
 from datetime import UTC, datetime, timedelta
+from typing import List
 
-from src.schemas import MeasurementSchema, SourceType, TechnologyType
+from src.schemas import ConfidenceBreakdown, MeasurementSchema, SourceType, TechnologyType
 
 from .base import DataSource
 
@@ -24,8 +25,8 @@ class MockCrowdsourceSource(DataSource):
         """
         super().__init__("mock_crowdsource")
         self.num_samples = num_samples
-
-    def fetch(self) -> list[MeasurementSchema]:
+    
+    def fetch(self) -> List[MeasurementSchema]:
         """Fetch mock crowdsource measurements.
 
         Generates realistic sample data with various quality levels,
@@ -49,7 +50,7 @@ class MockCrowdsourceSource(DataSource):
             # Generate random timestamp within last 90 days
             days_ago = random.randint(0, 90)
             timestamp = datetime.now(UTC) - timedelta(days=days_ago)
-
+            
             # Generate realistic speed measurements
             # Simulating various connection types in rural areas
             tech_choice = random.choice(
@@ -95,6 +96,32 @@ class MockCrowdsourceSource(DataSource):
             providers = ["Vivo", "TIM", "Claro", "Oi", "Starlink", "Local ISP", "Community Network", None]
             provider = random.choice(providers)
 
+            # Confidence/quality metadata (required by schema)
+            completeness = (
+                (1.0 if download is not None else 0.0)
+                + (1.0 if upload is not None else 0.0)
+                + (1.0 if latency is not None else 0.0)
+            ) / 3.0
+            recency = max(0.0, 1.0 - (days_ago / 90.0))
+            tech_weight = {
+                TechnologyType.FIXED_WIRELESS: 0.75,
+                TechnologyType.MOBILE_4G: 0.7,
+                TechnologyType.DSL: 0.6,
+                TechnologyType.SATELLITE: 0.5,
+            }.get(tech_choice, 0.6)
+            confidence_score = round(((0.5 * completeness) + (0.3 * recency) + (0.2 * tech_weight)) * 100.0, 2)
+            # Map our internal components onto the canonical ConfidenceBreakdown schema.
+            confidence_breakdown = ConfidenceBreakdown(
+                recency_score=round(recency * 100.0, 2),
+                source_reliability_score=round(tech_weight * 100.0, 2),
+                consistency_score=80.0,
+                completeness_score=round(completeness * 100.0, 2),
+            )
+
+            # Region/H3 placeholders for mock data (required by schema)
+            region = "BR"
+            h3_index = f"mock_h3_{round(lat, 3)}_{round(lon, 3)}"
+
             # Create measurement
             measurement = MeasurementSchema(
                 id=f"crowdsource_{uuid.uuid4().hex[:12]}",
@@ -104,14 +131,14 @@ class MockCrowdsourceSource(DataSource):
                 download_mbps=round(download, 2) if download is not None else None,
                 upload_mbps=round(upload, 2) if upload is not None else None,
                 latency_ms=round(latency, 2) if latency is not None else None,
+                confidence_score=confidence_score,
+                confidence_breakdown=confidence_breakdown,
                 technology=tech_choice,
                 source=SourceType.CROWDSOURCE,
                 provider=provider,
-                confidence_score=None,
-                confidence_breakdown=None,
                 country="BR",
-                region="BR",
-                h3_index=None,
+                region=region,
+                h3_index=h3_index,
                 metadata={
                     "device_type": random.choice(["android", "ios", "web"]),
                     "app_version": "1.0.0",
