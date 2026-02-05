@@ -26,21 +26,20 @@ class SourceReliabilityWeights:
                 SourceReliabilityWeights.WEIGHTS[cast(SourceType, member)] = weight
                 return
 
-    # Common/expected source types (support both lower/upper-case variants)
-    _register(0.95, "anatel", "ANATEL")        # Official regulatory data - highest trust
-    _register(0.90, "ibge", "IBGE")            # Government statistical data
-    _register(0.75, "speedtest", "SPEEDTEST")  # Established testing platform
-    _register(0.60, "crowdsource", "CROWDSOURCE")  # Community data - variable quality
-    _register(0.50, "manual", "MANUAL")        # Manual entry - needs verification
-    _register(0.40, "other", "OTHER")          # Unknown source - lowest trust
-
-    # Optional/legacy source types
-    _register(0.85, "starlink", "STARLINK")    # Direct from provider
-
     @classmethod
     def get_weight(cls, source: SourceType) -> float:
         """Get reliability weight for a source type."""
         return cls.WEIGHTS.get(source, 0.40)
+
+
+# Populate weights after class definition (avoids NameError during class body exec)
+SourceReliabilityWeights._register(0.95, "anatel", "ANATEL")
+SourceReliabilityWeights._register(0.90, "ibge", "IBGE")
+SourceReliabilityWeights._register(0.75, "speedtest", "SPEEDTEST")
+SourceReliabilityWeights._register(0.60, "crowdsource", "CROWDSOURCE")
+SourceReliabilityWeights._register(0.50, "manual", "MANUAL")
+SourceReliabilityWeights._register(0.40, "other", "OTHER")
+SourceReliabilityWeights._register(0.85, "starlink", "STARLINK")
 
 
 class ConfidenceCalculator:
