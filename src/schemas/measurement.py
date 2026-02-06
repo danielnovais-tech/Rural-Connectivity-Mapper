@@ -1,19 +1,10 @@
 """Canonical schema for connectivity measurements."""
 
 from datetime import datetime
-from enum import Enum
+from enum import StrEnum
 from typing import Any
 
 from pydantic import BaseModel, ConfigDict, Field, field_validator
-
-# Python 3.11+ provides enum.StrEnum. Provide a fallback for older runtimes.
-try:  # pragma: no cover
-    from enum import StrEnum  # type: ignore
-except ImportError:  # pragma: no cover
-    class StrEnum(str, Enum):
-        """Fallback StrEnum for Python < 3.11."""
-
-        pass
 
 
 class SourceType(StrEnum):

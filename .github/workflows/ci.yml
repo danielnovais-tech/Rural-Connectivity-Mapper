@@ -9,114 +9,55 @@ on:
 
 jobs:
   test:
-    name: test (3.12)
-    runs-on: ubuntu-latest
+    name: test (${{ matrix.os }}, py${{ matrix.python-version }})
+    runs-on: ${{ matrix.os }}
     permissions:
       contents: read
     env:
       PYTHONPATH: ${{ github.workspace }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+        python-version: ['3.12']
     steps:
-    - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-    - name: Show revision + key files
-      run: |
-        git rev-parse HEAD
-        git --no-pager log -1 --oneline
-        python -c "import pathlib; p=pathlib.Path('requirements-ci.txt'); print('requirements-ci.txt exists:', p.exists()); print(p.read_text(encoding='utf-8')[:400] if p.exists() else '')"
+      - name: Show revision + key files
+        run: |
+          git rev-parse HEAD
+          git --no-pager log -1 --oneline
+          python -c "import pathlib; p=pathlib.Path('requirements-ci.txt'); print('requirements-ci.txt exists:', p.exists()); print(p.read_text(encoding='utf-8')[:400] if p.exists() else '')"
 
-    - name: Set up Python 3.12
-      uses: actions/setup-python@v5
-      with:
-        python-version: '3.12'
-        cache: 'pip'
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: 'pip'
 
-    - name: Install dependencies
-      run: |
-        python -m pip install --upgrade pip
-        pip install -r requirements-ci.txt
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements-ci.txt
 
-    - name: Show SpeedTest import path + weights
-      run: |
-        python - <<'PY'
-        from __future__ import annotations
+      - name: Show SpeedTest import path + weights
+        run: |
+          python -c "import sys; from src.models import SpeedTest; import src.models.SpeedTest as st_mod; print('Python:', sys.version); print('SpeedTest module file:', getattr(st_mod, '__file__', None)); print('Weights:', SpeedTest.JITTER_WEIGHT, SpeedTest.PACKET_LOSS_WEIGHT, SpeedTest.OBSTRUCTION_WEIGHT); st=SpeedTest(download=150.0, upload=20.0, latency=25.0, jitter=3.0, packet_loss=0.1, obstruction=5.0); print('Example stability (jitter=3, loss=0.1, obstruction=5):', st.stability)"
 
-        import sys
+      - name: Run tests
+        run: |
+          python -m pytest tests/ -v
 
-        from src.models import SpeedTest
-        import src.models.SpeedTest as st_mod
+      - name: Generate coverage report
+        run: |
+          python -m pytest tests/ --cov=src --cov-report=xml --cov-report=html --cov-report=term
 
-        print("Python:", sys.version)
-        print("SpeedTest module file:", getattr(st_mod, "__file__", None))
-        print(
-            "Weights:",
-            SpeedTest.JITTER_WEIGHT,
-            SpeedTest.PACKET_LOSS_WEIGHT,
-            SpeedTest.OBSTRUCTION_WEIGHT,
-        )
-        st = SpeedTest(
-            download=150.0,
-            upload=20.0,
-            latency=25.0,
-            jitter=3.0,
-            packet_loss=0.1,
-            obstruction=5.0,
-        )
-        print("Example stability (jitter=3, loss=0.1, obstruction=5):", st.stability)
-        PY
-
-    - name: Run tests
-      run: |
-        python -m pytest tests/ -v
-
-    - name: Generate coverage report
-      run: |
-        python -m pytest tests/ --cov=src --cov-report=xml --cov-report=html --cov-report=term
-
-    - name: Upload coverage to artifacts
-      uses: actions/upload-artifact@v4
-      with:
-        name: coverage-report-ubuntu
-        path: |
-          coverage.xml
-          htmlcov/
-        retention-days: 30
-        if-no-files-found: warn
-
-  test-windows:
-    name: test-windows (3.12)
-    runs-on: windows-latest
-    permissions:
-      contents: read
-    env:
-      PYTHONPATH: ${{ github.workspace }}
-    steps:
-    - uses: actions/checkout@v4
-
-    - name: Set up Python 3.12
-      uses: actions/setup-python@v5
-      with:
-        python-version: '3.12'
-        cache: 'pip'
-
-    - name: Install dependencies
-      run: |
-        python -m pip install --upgrade pip
-        pip install -r requirements-ci.txt
-
-    - name: Run tests
-      run: |
-        python -m pytest tests/ -v
-
-    - name: Generate coverage report
-      run: |
-        python -m pytest tests/ --cov=src --cov-report=xml --cov-report=html --cov-report=term
-
-    - name: Upload coverage to artifacts
-      uses: actions/upload-artifact@v4
-      with:
-        name: coverage-report-windows
-        path: |
-          coverage.xml
-          htmlcov/
-        retention-days: 30
-        if-no-files-found: warn
+      - name: Upload coverage to artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-report-${{ matrix.os }}
+          path: |
+            coverage.xml
+            htmlcov/
+          retention-days: 30
+          if-no-files-found: warn
