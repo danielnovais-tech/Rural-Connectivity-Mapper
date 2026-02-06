@@ -8,12 +8,15 @@ from pydantic import BaseModel, ConfigDict, Field, field_validator
 
 # Python 3.11+ provides enum.StrEnum. Provide a fallback for older runtimes.
 try:  # pragma: no cover
-    from enum import StrEnum  # type: ignore
+    from enum import StrEnum as _StrEnum
 except ImportError:  # pragma: no cover
-    class StrEnum(str, Enum):
+
+    class _StrEnum(str, Enum):
         """Fallback StrEnum for Python < 3.11."""
 
         pass
+
+StrEnum = _StrEnum
 
 
 class SourceType(StrEnum):
