@@ -12,47 +12,47 @@ jobs:
       contents: write
     
     steps:
-    - uses: actions/checkout@v4
-    
-    - name: Set up Python
-      uses: actions/setup-python@v5
-      with:
-        python-version: '3.12'
-        cache: 'pip'
-    
-    - name: Install dependencies
-      run: |
-        python -m pip install --upgrade pip
-        pip install -r requirements-ci.txt
-    
-    - name: Run tests
-      run: |
-        python -m pytest tests/ -v
-    
-    - name: Generate coverage report
-      run: |
-        python -m pytest tests/ --cov=src --cov-report=html --cov-report=term
-    
-    - name: Create Release Notes
-      id: release_notes
-      run: |
-        echo "## Release Notes" > release_notes.md
-        echo "" >> release_notes.md
-        echo "### Test Results" >> release_notes.md
-        echo "- All tests passing ✅" >> release_notes.md
-        echo "- Code coverage: 83%+" >> release_notes.md
-        echo "" >> release_notes.md
-        echo "### Features" >> release_notes.md
-        echo "- Python-based tool to map and analyze rural internet connectivity" >> release_notes.md
-        echo "- 36 comprehensive tests with pytest" >> release_notes.md
-        echo "- Interactive Folium maps with quality markers" >> release_notes.md
-        echo "- Multi-format reporting (JSON, CSV, TXT, HTML)" >> release_notes.md
-    
-    - name: Create GitHub Release
-      uses: softprops/action-gh-release@9d7c94cfd0a1f3ed45544c887983e9fa900f0564
-      with:
-        body_path: release_notes.md
-        draft: false
-        prerelease: false
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - uses: actions/checkout@v4
+      
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: 'pip'
+      
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements-ci.txt
+      
+      - name: Run tests
+        run: |
+          python -m pytest tests/ -v
+      
+      - name: Generate coverage report
+        run: |
+          python -m pytest tests/ --cov=src --cov-report=html --cov-report=term
+      
+      - name: Create Release Notes
+        id: release_notes
+        run: |
+          echo "## Release Notes" > release_notes.md
+          echo "" >> release_notes.md
+          echo "### Test Results" >> release_notes.md
+          echo "- All tests passing ✅" >> release_notes.md
+          echo "- Code coverage: 83%+" >> release_notes.md
+          echo "" >> release_notes.md
+          echo "### Features" >> release_notes.md
+          echo "- Python-based tool to map and analyze rural internet connectivity" >> release_notes.md
+          echo "- 36 comprehensive tests with pytest" >> release_notes.md
+          echo "- Interactive Folium maps with quality markers" >> release_notes.md
+          echo "- Multi-format reporting (JSON, CSV, TXT, HTML)" >> release_notes.md
+      
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@9d7c94cfd0a1f3ed45544c887983e9fa900f0564
+        with:
+          body_path: release_notes.md
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
