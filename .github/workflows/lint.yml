@@ -2,9 +2,13 @@ name: Lint
 
 on:
   push:
-    branches: [ main, develop ]
+    branches:
+      - main
+      - develop
   pull_request:
-    branches: [ main, develop ]
+    branches:
+      - main
+      - develop
 
 jobs:
   lint:
@@ -74,7 +78,7 @@ jobs:
               sys.exit(1)
           print("No merge conflict markers found.")
           PY
-      
+
       - name: Ruff + mypy
         run: |
           python scripts/run_linting.py

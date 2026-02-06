@@ -2,9 +2,13 @@ name: CI
 
 on:
   push:
-    branches: [ main, develop ]
+    branches:
+      - main
+      - develop
   pull_request:
-    branches: [ main, develop ]
+    branches:
+      - main
+      - develop
   workflow_dispatch:
 
 jobs:
@@ -18,8 +22,11 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest, windows-latest]
-        python-version: ['3.12']
+        os:
+          - ubuntu-latest
+          - windows-latest
+        python-version:
+          - "3.12"
     steps:
       - uses: actions/checkout@v4
 
