@@ -53,10 +53,9 @@ def test_run_ai_application_with_accelerator():
     soc = sim.SoC(num_cores=4, memory_size=1024, accelerator_present=True)
     input_data = np.random.rand(10, 10)
     app = sim.AIApplication(task='test', input_data=input_data)
-    
-    initial_memory = soc.memory[0]
+
     sim.run_ai_application(soc, app)
-    
+
     assert app.output is not None
     # Memory should be modified (output is stored at memory[0])
     assert isinstance(soc.memory[0], (int, np.integer))
