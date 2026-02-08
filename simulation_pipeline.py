@@ -109,28 +109,35 @@ def _enforce_gauss_constraints(
     bz_hat = np.fft.fftn(b_field[2])
     rho_hat = np.fft.fftn(rho)
 
-    # Divergence errors in Fourier space:
-    # div_hat = i k·F_hat
-    div_e_err_hat = 1j * (kx * ex_hat + ky * ey_hat + kz * ez_hat) - rho_hat
-    div_b_err_hat = 1j * (kx * bx_hat + ky * by_hat + kz * bz_hat)
+    # Enforce constraints in Fourier space by removing/setting the longitudinal
+    # component along k.
+    #
+    # With numpy FFT conventions, spectral divergence is:
+    #   div_hat = i * (k·F_hat)
+    # so Gauss's law div(E) = rho becomes:
+    #   k·E_hat = -i * rho_hat
 
-    # Solve -k^2 phi_hat = div_err_hat  => phi_hat = -div_err_hat / k^2.
-    phi_e_hat = np.zeros_like(div_e_err_hat)
-    phi_b_hat = np.zeros_like(div_b_err_hat)
+    k_dot_e = kx * ex_hat + ky * ey_hat + kz * ez_hat
+    k_dot_b = kx * bx_hat + ky * by_hat + kz * bz_hat
+
+    target_k_dot_e = -1j * rho_hat
+
+    delta_e = k_dot_e - target_k_dot_e
+    delta_b = k_dot_b
 
     mask = k2 != 0.0
-    phi_e_hat[mask] = -div_e_err_hat[mask] / k2[mask]
-    phi_b_hat[mask] = -div_b_err_hat[mask] / k2[mask]
+    scale_e = np.zeros_like(delta_e)
+    scale_b = np.zeros_like(delta_b)
+    scale_e[mask] = delta_e[mask] / k2[mask]
+    scale_b[mask] = delta_b[mask] / k2[mask]
 
-    # Correct: E <- E - ∇phi, B <- B - ∇phi.
-    # In Fourier: grad_hat = i k phi_hat
-    ex_hat = ex_hat - 1j * kx * phi_e_hat
-    ey_hat = ey_hat - 1j * ky * phi_e_hat
-    ez_hat = ez_hat - 1j * kz * phi_e_hat
+    ex_hat = ex_hat - kx * scale_e
+    ey_hat = ey_hat - ky * scale_e
+    ez_hat = ez_hat - kz * scale_e
 
-    bx_hat = bx_hat - 1j * kx * phi_b_hat
-    by_hat = by_hat - 1j * ky * phi_b_hat
-    bz_hat = bz_hat - 1j * kz * phi_b_hat
+    bx_hat = bx_hat - kx * scale_b
+    by_hat = by_hat - ky * scale_b
+    bz_hat = bz_hat - kz * scale_b
 
     e_corr = np.stack(
         [
