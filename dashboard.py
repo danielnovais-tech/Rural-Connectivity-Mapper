@@ -22,11 +22,11 @@ from src.utils import (
 )
 
 # Configuration constants
-DATA_PATH = 'src/data/pontos.json'
+DATA_PATH = "src/data/pontos.json"
 MAP_HEIGHT = 600  # Height in pixels for embedded maps
-DOWNLOAD_MBPS_LABEL = 'Download (Mbps)'
-UPLOAD_MBPS_LABEL = 'Upload (Mbps)'
-COVERAGE_PERCENTAGE_LABEL = 'Coverage %'
+DOWNLOAD_MBPS_LABEL = "Download (Mbps)"
+UPLOAD_MBPS_LABEL = "Upload (Mbps)"
+COVERAGE_PERCENTAGE_LABEL = "Coverage %"
 
 
 """Streamlit dashboard for Rural Connectivity Mapper 2026.
@@ -317,7 +317,7 @@ def visualize_map(data):
             map_path = generate_map(data, tmp.name)
 
             # Read and display the HTML map
-            with open(map_path, encoding='utf-8') as f:
+            with open(map_path, encoding="utf-8") as f:
                 map_html = f.read()
 
             components.html(map_html, height=MAP_HEIGHT, scrolling=True)
@@ -338,7 +338,7 @@ def generate_reports(data):
 
     with col1:
         if st.button("JSON Report"):
-            report_path = generate_report(data, 'json', 'dashboard_report.json')
+            report_path = generate_report(data, "json", "dashboard_report.json")
             with open(report_path) as f:
                 st.download_button(
                     "Download JSON", f.read(), file_name="connectivity_report.json", mime="application/json"
@@ -346,36 +346,21 @@ def generate_reports(data):
 
     with col2:
         if st.button("CSV Report"):
-            report_path = generate_report(data, 'csv', 'dashboard_report.csv')
+            report_path = generate_report(data, "csv", "dashboard_report.csv")
             with open(report_path) as f:
-                st.download_button(
-                    "Download CSV",
-                    f.read(),
-                    file_name='connectivity_report.csv',
-                    mime='text/csv'
-                )
-    
+                st.download_button("Download CSV", f.read(), file_name="connectivity_report.csv", mime="text/csv")
+
     with col3:
         if st.button("TXT Report"):
-            report_path = generate_report(data, 'txt', 'dashboard_report.txt')
+            report_path = generate_report(data, "txt", "dashboard_report.txt")
             with open(report_path) as f:
-                st.download_button(
-                    "Download TXT",
-                    f.read(),
-                    file_name='connectivity_report.txt',
-                    mime='text/plain'
-                )
-    
+                st.download_button("Download TXT", f.read(), file_name="connectivity_report.txt", mime="text/plain")
+
     with col4:
         if st.button("HTML Report"):
-            report_path = generate_report(data, 'html', 'dashboard_report.html')
+            report_path = generate_report(data, "html", "dashboard_report.html")
             with open(report_path) as f:
-                st.download_button(
-                    "Download HTML",
-                    f.read(),
-                    file_name='connectivity_report.html',
-                    mime='text/html'
-                )
+                st.download_button("Download HTML", f.read(), file_name="connectivity_report.html", mime="text/html")
 
 
 def simulate_improvements(data):

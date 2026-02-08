@@ -89,7 +89,7 @@ def main():
     avg_icr = sum(icr_values) / len(icr_values)
     min_icr = min(icr_values)
     max_icr = max(icr_values)
-    
+
     print("\n  ICR Statistics:")
     print(f"    - Average: {avg_icr:.2f}")
     print(f"    - Minimum: {min_icr:.2f}")

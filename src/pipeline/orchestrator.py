@@ -50,7 +50,7 @@ class PipelineOrchestrator:
         self.fusion = FusionEngine(self.bronze_dir, self.silver_dir)
         self.silver = SilverLayer(self.silver_dir)
         self.gold = GoldLayer(self.gold_dir)
-    
+
     def run(self, sources: list[DataSource]) -> None:
         """Run the complete pipeline with the given sources.
 

@@ -60,12 +60,7 @@ def _validate_coordinates(latitude: float, longitude: float) -> bool:
         return False
 
 
-def geocode_coordinates(
-    latitude: float,
-    longitude: float,
-    timeout: Any = 10,
-    max_retries: int = 3
-) -> str | None:
+def geocode_coordinates(latitude: float, longitude: float, timeout: Any = 10, max_retries: int = 3) -> str | None:
     """Convert coordinates to a human-readable address (reverse geocoding).
 
     Args:
@@ -85,13 +80,9 @@ def geocode_coordinates(
     for attempt in range(max_retries):
         try:
             _wait_for_rate_limit()
-            
-            location = cast(Location | None, geolocator.reverse(
-                coords,
-                timeout=timeout,
-                exactly_one=True
-            ))
-            
+
+            location = cast(Location | None, geolocator.reverse(coords, timeout=timeout, exactly_one=True))
+
             if location and location.address:
                 logger.info(f"Reverse geocoded {coords} to: {location.address}")
                 return location.address
@@ -123,11 +114,7 @@ def geocode_coordinates(
     return None
 
 
-def geocode_address(
-    address: str,
-    timeout: Any = 10,
-    max_retries: int = 3
-) -> tuple[float, float] | None:
+def geocode_address(address: str, timeout: Any = 10, max_retries: int = 3) -> tuple[float, float] | None:
     """Convert an address to coordinates (forward geocoding).
 
     Args:
@@ -147,13 +134,9 @@ def geocode_address(
     for attempt in range(max_retries):
         try:
             _wait_for_rate_limit()
-            
-            location = cast(Location | None, geolocator.geocode(
-                address,
-                timeout=timeout,
-                exactly_one=True
-            ))
-            
+
+            location = cast(Location | None, geolocator.geocode(address, timeout=timeout, exactly_one=True))
+
             if location:
                 coords = (location.latitude, location.longitude)
                 logger.info(f"Geocoded '{address}' to: {coords}")

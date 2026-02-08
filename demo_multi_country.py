@@ -84,13 +84,7 @@ def main():
 
     # UK sample
     uk_speed = SpeedTest(download=145.2, upload=19.5, latency=32.4, jitter=4.1, packet_loss=0.2)
-    uk_point = ConnectivityPoint(
-        latitude=51.5074,
-        longitude=-0.1278,
-        provider="BT",
-        speed_test=uk_speed,
-        country="GB"
-    )
+    uk_point = ConnectivityPoint(latitude=51.5074, longitude=-0.1278, provider="BT", speed_test=uk_speed, country="GB")
     print("\nUnited Kingdom (London):")
     print(f"  Provider: {uk_point.provider}")
     print(f"  Quality Score: {uk_point.quality_score.overall_score:.1f}/100 ({uk_point.quality_score.rating})")

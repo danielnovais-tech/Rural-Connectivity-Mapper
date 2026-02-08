@@ -28,8 +28,8 @@ def load_data(filepath: str) -> list[dict]:
         if not path.exists():
             logger.warning(f"File not found: {filepath}. Returning empty list.")
             return []
-        
-        with open(path, encoding='utf-8') as f:
+
+        with open(path, encoding="utf-8") as f:
             data = json.load(f)
 
         logger.info(f"Successfully loaded {len(data)} records from {filepath}")

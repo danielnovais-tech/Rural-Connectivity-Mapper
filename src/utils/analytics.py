@@ -77,7 +77,7 @@ def track_event(
     context: dict[str, Any] | None = None,
     metrics: dict[str, Any] | None = None,
     properties: dict[str, Any] | None = None,
-    geo: dict[str, float] | None = None
+    geo: dict[str, float] | None = None,
 ) -> None:
     """Track an analytics event by appending to events.jsonl.
 
@@ -124,7 +124,7 @@ def timed_event(
     session_id: str,
     context: dict[str, Any] | None = None,
     properties: dict[str, Any] | None = None,
-    geo: dict[str, float] | None = None
+    geo: dict[str, float] | None = None,
 ):
     """Context manager to track events with duration measurement.
 
@@ -183,7 +183,7 @@ def read_events(limit: int | None = None) -> list:
             return []
 
         events = []
-        with open(EVENTS_FILE, encoding='utf-8') as f:
+        with open(EVENTS_FILE, encoding="utf-8") as f:
             for line in f:
                 if line.strip():
                     events.append(json.loads(line))

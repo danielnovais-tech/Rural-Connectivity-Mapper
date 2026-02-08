@@ -61,7 +61,7 @@ class BronzeLayer:
         print(f"  → {filepath}")
 
         return filepath
-    
+
     def read_latest(self, source_name: str) -> list[MeasurementSchema]:
         """Read latest data file for a source.
 
@@ -87,7 +87,7 @@ class BronzeLayer:
         measurements = [MeasurementSchema.from_dict(m) for m in data.get("measurements", [])]
 
         return measurements
-    
+
     def read_all(self) -> list[MeasurementSchema]:
         """Read all bronze data from all sources.
 

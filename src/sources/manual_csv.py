@@ -70,9 +70,9 @@ class ManualCSVSource(DataSource):
 
         self.source_type = SourceType.MANUAL if source_type is None else source_type
         self._processed_files: set[str] = self._load_processed_files()
-        
+
         logger.info(f"Initialized ManualCSVSource watching {self.watch_dir}")
-    
+
     def _load_processed_files(self) -> set[str]:
         """Load the set of already processed file hashes.
 
@@ -92,11 +92,8 @@ class ManualCSVSource(DataSource):
 
     def _save_processed_files(self) -> None:
         """Save the set of processed file hashes to disk."""
-        data = {
-            "processed_hashes": list(self._processed_files),
-            "last_updated": datetime.now(UTC).isoformat()
-        }
-        
+        data = {"processed_hashes": list(self._processed_files), "last_updated": datetime.now(UTC).isoformat()}
+
         try:
             with open(self.processed_files_log, "w") as f:
                 json.dump(data, f, indent=2)
@@ -118,7 +115,7 @@ class ManualCSVSource(DataSource):
             for byte_block in iter(lambda: f.read(4096), b""):
                 sha256_hash.update(byte_block)
         return sha256_hash.hexdigest()
-    
+
     def _parse_technology(self, tech_str: str | None) -> TechnologyType:
         """Parse technology string to TechnologyType enum.
 
@@ -152,7 +149,7 @@ class ManualCSVSource(DataSource):
             return TechnologyType(TechnologyType.FIXED_WIRELESS)
         else:
             return TechnologyType(TechnologyType.OTHER)
-    
+
     def _parse_csv_row(self, row: dict[str, str], row_num: int, filename: str) -> MeasurementSchema | None:
         """Parse a single CSV row into a MeasurementSchema.
 
@@ -198,11 +195,13 @@ class ManualCSVSource(DataSource):
                         except ValueError:
                             continue
                     else:
-                        logger.warning(f"Row {row_num}: Could not parse timestamp '{timestamp_str}', using current time")
+                        logger.warning(
+                            f"Row {row_num}: Could not parse timestamp '{timestamp_str}', using current time"
+                        )
                         timestamp = datetime.now(UTC)
             else:
                 timestamp = datetime.now(UTC)
-            
+
             # Optional fields - handle '0' and '0.0' as valid values
             download_str = row_lower.get("download", row_lower.get("download_mbps", "")).strip()
             download = float(download_str) if download_str else None
@@ -262,7 +261,7 @@ class ManualCSVSource(DataSource):
         except (ValueError, KeyError) as e:
             logger.warning(f"Row {row_num} in {filename}: Invalid data - {e}")
             return None
-    
+
     def _process_csv_file(self, filepath: Path) -> list[MeasurementSchema]:
         """Process a single CSV file into measurements.
 
@@ -313,7 +312,7 @@ class ManualCSVSource(DataSource):
             logger.error(f"Error processing {filepath}: {e}")
 
         return measurements
-    
+
     def fetch(self) -> list[MeasurementSchema]:
         """Fetch measurements from unprocessed CSV files in the watch directory.
 

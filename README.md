@@ -70,6 +70,7 @@ Higher scores = more reliable data for decision-making.
 - **[Multi-Country Support](docs/MULTI_COUNTRY.md)** - International deployment
 - **[Crowdsourcing Guide](docs/CROWDSOURCING.md)** - Community data collection
 - **[Developer Setup (Windows-first)](docs/DEV_SETUP.md)** - VS Code tasks, environment setup, and daily workflow
+- **[Simulation Pipeline Spec](docs/SIMULATION_PIPELINE.md)** - Research-grade direction + CLI scaffold
 
 ## 🏗️ Architecture Overview
 

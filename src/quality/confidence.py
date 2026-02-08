@@ -72,9 +72,7 @@ class ConfidenceCalculator:
 
     @classmethod
     def calculate(
-        cls,
-        measurement: MeasurementSchema,
-        current_time: datetime | None = None
+        cls, measurement: MeasurementSchema, current_time: datetime | None = None
     ) -> tuple[float, ConfidenceBreakdown]:
         """Calculate confidence score and breakdown for a measurement.
 
@@ -87,7 +85,7 @@ class ConfidenceCalculator:
         """
         if current_time is None:
             current_time = datetime.now(UTC)
-        
+
         # Calculate component scores
         recency_score = cls._calculate_recency_score(measurement.timestamp_utc, current_time)
         source_score = cls._calculate_source_score(measurement.source)
@@ -122,7 +120,7 @@ class ConfidenceCalculator:
             timestamp = timestamp.replace(tzinfo=UTC)
         if current_time.tzinfo is None:
             current_time = current_time.replace(tzinfo=UTC)
-        
+
         age_days = (current_time - timestamp).total_seconds() / 86400
 
         if age_days < 0:

@@ -24,7 +24,7 @@ class MockCrowdsourceSource(DataSource):
         """
         super().__init__("mock_crowdsource")
         self.num_samples = num_samples
-    
+
     def fetch(self) -> list[MeasurementSchema]:
         """Fetch mock crowdsource measurements.
 
@@ -49,7 +49,7 @@ class MockCrowdsourceSource(DataSource):
             # Generate random timestamp within last 90 days
             days_ago = random.randint(0, 90)
             timestamp = datetime.now(UTC) - timedelta(days=days_ago)
-            
+
             # Generate realistic speed measurements
             # Simulating various connection types in rural areas
             tech_choice = random.choice(

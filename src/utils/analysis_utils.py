@@ -186,7 +186,6 @@ def analyze_temporal_evolution(data: list[dict], language: str = "en") -> dict:
         raise
 
 
-
 def cluster_connectivity_points(data: list[dict], n_clusters: int = 3) -> dict:
     """Cluster connectivity points using K-Means based on quality metrics.
 

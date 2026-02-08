@@ -54,15 +54,11 @@ def demo_starlink_api():
         # 3. Provider comparison
         print("\n3️⃣  Provider Comparison:")
         comparison = compare_with_competitors(lat, lon) or {}
-        
+
         print("\n   Provider Rankings:")
-        providers = comparison.get('providers', {})
-        sorted_providers = sorted(
-            providers.items(),
-            key=lambda x: x[1].get('quality_score', 0),
-            reverse=True
-        )
-        
+        providers = comparison.get("providers", {})
+        sorted_providers = sorted(providers.items(), key=lambda x: x[1].get("quality_score", 0), reverse=True)
+
         for i, (provider, data) in enumerate(sorted_providers, 1):
             emoji = "🥇" if i == 1 else "🥈" if i == 2 else "🥉"
             print(f"   {emoji} {provider.upper()}")

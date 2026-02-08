@@ -51,7 +51,7 @@ class TestConfidenceCalculator:
     ) -> MeasurementSchema:
         """Helper to create test measurements."""
         timestamp = datetime.now(UTC) - timedelta(days=days_old)
-        
+
         return MeasurementSchema(
             id=f"test_{days_old}",
             lat=-15.7801,

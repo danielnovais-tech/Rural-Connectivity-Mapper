@@ -401,7 +401,7 @@ def test_recommendation_endpoint_tracks_analytics(client, tmp_path, monkeypatch)
 
     # Verify analytics events were tracked
     assert events_file.exists()
-    
+
     with open(events_file) as f:
         events = [json.loads(line) for line in f if line.strip()]
 

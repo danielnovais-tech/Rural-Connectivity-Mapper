@@ -57,7 +57,7 @@ def _add_starlink_coverage_layer(m: "folium.Map") -> None:
     folium.LayerControl(position="topright", collapsed=False).add_to(m)
 
 
-def _add_connectivity_markers(m: 'folium.Map', data: list[dict]) -> None:
+def _add_connectivity_markers(m: "folium.Map", data: list[dict]) -> None:
     """Add connectivity data markers to the map."""
     connectivity_group = folium.FeatureGroup(name="Connectivity Points", show=True)
 
@@ -73,7 +73,7 @@ def _add_connectivity_markers(m: 'folium.Map', data: list[dict]) -> None:
     connectivity_group.add_to(m)
 
 
-def _add_single_marker(group: 'folium.FeatureGroup', point: dict, lat: float, lon: float) -> None:
+def _add_single_marker(group: "folium.FeatureGroup", point: dict, lat: float, lon: float) -> None:
     """Add a single connectivity marker to the feature group."""
     qs = point.get("quality_score", {})
     overall_score = qs.get("overall_score", 0)
@@ -185,11 +185,11 @@ def _add_legend(m: "folium.Map", include_starlink_coverage: bool) -> None:
 
 def get_starlink_coverage_zones():
     """Get Starlink coverage zones for Brazil.
-    
+
     Returns simulated Starlink coverage data based on known deployment patterns.
     In production, this could be replaced with actual API calls to Starlink's
     availability service or public coverage maps.
-    
+
     Returns:
         List of coverage zone dictionaries with coordinates and coverage quality
     """
@@ -198,77 +198,82 @@ def get_starlink_coverage_zones():
     coverage_zones = [
         # High coverage - Major urban areas
         {
-            'name': 'Southeast Region (SP/RJ)',
-            'center': [-23.0, -46.0],
-            'radius': 300000,  # 300km radius
-            'coverage': 'excellent',
-            'color': '#00FF00',
-            'opacity': 0.15
+            "name": "Southeast Region (SP/RJ)",
+            "center": [-23.0, -46.0],
+            "radius": 300000,  # 300km radius
+            "coverage": "excellent",
+            "color": "#00FF00",
+            "opacity": 0.15,
         },
         {
-            'name': 'Brasília & Central-West',
-            'center': [-15.7801, -47.9292],
-            'radius': 250000,
-            'coverage': 'excellent',
-            'color': '#00FF00',
-            'opacity': 0.15
+            "name": "Brasília & Central-West",
+            "center": [-15.7801, -47.9292],
+            "radius": 250000,
+            "coverage": "excellent",
+            "color": "#00FF00",
+            "opacity": 0.15,
         },
         # Good coverage - Northeast coastal areas
         {
-            'name': 'Salvador & Bahia Coast',
-            'center': [-12.9714, -38.5014],
-            'radius': 200000,
-            'coverage': 'good',
-            'color': '#90EE90',
-            'opacity': 0.12
+            "name": "Salvador & Bahia Coast",
+            "center": [-12.9714, -38.5014],
+            "radius": 200000,
+            "coverage": "good",
+            "color": "#90EE90",
+            "opacity": 0.12,
         },
         {
-            'name': 'Fortaleza & Ceará',
-            'center': [-3.7172, -38.5433],
-            'radius': 200000,
-            'coverage': 'good',
-            'color': '#90EE90',
-            'opacity': 0.12
+            "name": "Fortaleza & Ceará",
+            "center": [-3.7172, -38.5433],
+            "radius": 200000,
+            "coverage": "good",
+            "color": "#90EE90",
+            "opacity": 0.12,
         },
         {
-            'name': 'Recife & Pernambuco',
-            'center': [-8.0476, -34.8770],
-            'radius': 180000,
-            'coverage': 'good',
-            'color': '#90EE90',
-            'opacity': 0.12
+            "name": "Recife & Pernambuco",
+            "center": [-8.0476, -34.8770],
+            "radius": 180000,
+            "coverage": "good",
+            "color": "#90EE90",
+            "opacity": 0.12,
         },
         # Moderate coverage - Rural expansion zones
         {
-            'name': 'Amazon Region',
-            'center': [-3.1190, -60.0217],
-            'radius': 400000,
-            'coverage': 'moderate',
-            'color': '#FFFF00',
-            'opacity': 0.10
+            "name": "Amazon Region",
+            "center": [-3.1190, -60.0217],
+            "radius": 400000,
+            "coverage": "moderate",
+            "color": "#FFFF00",
+            "opacity": 0.10,
         },
         {
-            'name': 'South Region (PR/SC/RS)',
-            'center': [-25.5, -50.0],
-            'radius': 280000,
-            'coverage': 'good',
-            'color': '#90EE90',
-            'opacity': 0.12
+            "name": "South Region (PR/SC/RS)",
+            "center": [-25.5, -50.0],
+            "radius": 280000,
+            "coverage": "good",
+            "color": "#90EE90",
+            "opacity": 0.12,
         },
         {
-            'name': 'Mato Grosso Agricultural',
-            'center': [-12.5, -55.5],
-            'radius': 300000,
-            'coverage': 'moderate',
-            'color': '#FFFF00',
-            'opacity': 0.10
+            "name": "Mato Grosso Agricultural",
+            "center": [-12.5, -55.5],
+            "radius": 300000,
+            "coverage": "moderate",
+            "color": "#FFFF00",
+            "opacity": 0.10,
         },
     ]
-    
+
     return coverage_zones
 
 
-def generate_map(data: list[dict], output_path: str | None = None, include_starlink_coverage: bool = True, country_code: str | None = None) -> str:
+def generate_map(
+    data: list[dict],
+    output_path: str | None = None,
+    include_starlink_coverage: bool = True,
+    country_code: str | None = None,
+) -> str:
     """Generate interactive Folium map from connectivity data.
 
     Args:

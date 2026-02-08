@@ -182,6 +182,26 @@
       "problemMatcher": []
     },
     {
+      "label": "Simulation: Run (smoke)",
+      "type": "process",
+      "command": ".\\.venv\\Scripts\\python.exe",
+      "args": ["scripts/run_simulation.py", "--preset", "smoke"],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "Simulation: Run (heavy)",
+      "type": "process",
+      "command": ".\\.venv\\Scripts\\python.exe",
+      "args": ["scripts/run_simulation.py", "--preset", "heavy"],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "problemMatcher": []
+    },
+    {
       "label": "ANATEL: Show priority",
       "type": "process",
       "command": ".\\.venv\\Scripts\\python.exe",

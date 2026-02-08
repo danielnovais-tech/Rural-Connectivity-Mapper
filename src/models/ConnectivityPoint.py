@@ -30,7 +30,7 @@ class ConnectivityPoint:
         quality_score: QualityScore | None = None,
         timestamp: str | None = None,
         point_id: str | None = None,
-        country: str = "BR"
+        country: str = "BR",
     ):
         """Initialize ConnectivityPoint instance.
 
@@ -52,7 +52,7 @@ class ConnectivityPoint:
         self.timestamp = timestamp if timestamp else datetime.now().isoformat()
         self.id = point_id if point_id else str(uuid.uuid4())
         self.country = country.upper() if country else "BR"
-    
+
     def to_dict(self) -> dict:
         """Convert ConnectivityPoint to dictionary representation.
 
@@ -71,7 +71,7 @@ class ConnectivityPoint:
         }
 
     @classmethod
-    def from_dict(cls, data: dict) -> 'ConnectivityPoint':
+    def from_dict(cls, data: dict) -> "ConnectivityPoint":
         """Create ConnectivityPoint instance from dictionary.
 
         Args:

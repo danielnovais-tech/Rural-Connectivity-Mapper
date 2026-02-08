@@ -40,7 +40,7 @@ def load_country_config(config_path: str | Path | None = None) -> dict:
     config_file = config_path if isinstance(config_path, Path) else Path(config_path)
 
     try:
-        with open(config_file, encoding='utf-8') as f:
+        with open(config_file, encoding="utf-8") as f:
             config = json.load(f)
 
         # Cache the config
@@ -68,10 +68,8 @@ def load_country_config(config_path: str | Path | None = None) -> dict:
 
     except json.JSONDecodeError as e:
         logger.error(f"Error parsing country configuration: {e}")
- 
 
         raise
-
 
 
 def get_country_info(country_code: str, config: dict | None = None) -> dict:

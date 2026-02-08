@@ -124,9 +124,9 @@ class TestTrackEvent:
     def test_track_event_writes_valid_json(self, mock_analytics_path):
         """Test that tracked events are valid JSON."""
         session_id = str(uuid.uuid4())
-        
-        track_event('test_event', session_id)
-        
+
+        track_event("test_event", session_id)
+
         with open(mock_analytics_path) as f:
             line = f.readline()
             event = json.loads(line)
@@ -153,7 +153,7 @@ class TestTrackEvent:
             properties=properties,
             geo=geo,
         )
-        
+
         with open(mock_analytics_path) as f:
             event = json.loads(f.readline())
 
@@ -165,11 +165,11 @@ class TestTrackEvent:
     def test_track_event_appends_multiple_events(self, mock_analytics_path):
         """Test that multiple events are appended to the file."""
         session_id = str(uuid.uuid4())
-        
-        track_event('event1', session_id)
-        track_event('event2', session_id)
-        track_event('event3', session_id)
-        
+
+        track_event("event1", session_id)
+        track_event("event2", session_id)
+        track_event("event3", session_id)
+
         with open(mock_analytics_path) as f:
             lines = f.readlines()
 
@@ -186,7 +186,7 @@ class TestTrackEvent:
         original_open = open
 
         def mock_open(*args, **kwargs):
-            if 'events.jsonl' in str(args[0]):
+            if "events.jsonl" in str(args[0]):
                 raise OSError("Mock error")
             return original_open(*args, **kwargs)
 
@@ -207,7 +207,7 @@ class TestTimedEvent:
 
         with timed_event("timed_test", session_id):
             time.sleep(0.05)  # Sleep for 50ms
-        
+
         with open(mock_analytics_path) as f:
             event = json.loads(f.readline())
 
@@ -224,7 +224,7 @@ class TestTimedEvent:
                 raise ValueError("Test error")
         except ValueError:
             pass
-        
+
         with open(mock_analytics_path) as f:
             event = json.loads(f.readline())
 
@@ -241,7 +241,7 @@ class TestTimedEvent:
 
         with timed_event("complex_timed", session_id, context=context, properties=properties, geo=geo):
             pass
-        
+
         with open(mock_analytics_path) as f:
             event = json.loads(f.readline())
 

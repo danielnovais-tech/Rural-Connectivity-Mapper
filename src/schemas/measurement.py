@@ -45,11 +45,8 @@ class ConfidenceBreakdown(BaseModel):
     consistency_score: float = Field(
         ge=0.0, le=100.0, description="Score based on measurement consistency/outlier detection (0-100)"
     )
-    completeness_score: float = Field(
-        ge=0.0, le=100.0,
-        description="Score based on metadata completeness (0-100)"
-    )
-    
+    completeness_score: float = Field(ge=0.0, le=100.0, description="Score based on metadata completeness (0-100)")
+
     def to_dict(self) -> dict[str, float]:
         """Convert to dictionary."""
         return {
@@ -83,17 +80,12 @@ class MeasurementSchema(BaseModel):
     download_mbps: float | None = Field(default=None, ge=0.0, description="Download speed in Mbps")
     upload_mbps: float | None = Field(default=None, ge=0.0, description="Upload speed in Mbps")
     latency_ms: float | None = Field(default=None, ge=0.0, description="Latency in milliseconds")
-    
+
     # Technology & Source
-    technology: TechnologyType = Field(
-        default=TechnologyType.UNKNOWN,
-        description="Connection technology type"
-    )
-    source: SourceType = Field(
-        description="Data source identifier"
-    )
+    technology: TechnologyType = Field(default=TechnologyType.UNKNOWN, description="Connection technology type")
+    source: SourceType = Field(description="Data source identifier")
     provider: str | None = Field(default=None, description="Internet service provider name")
-    
+
     # Quality & Confidence (populated in silver/gold layers)
     confidence_score: float | None = Field(
         default=None,
@@ -107,11 +99,8 @@ class MeasurementSchema(BaseModel):
     )
 
     # Additional metadata
-    metadata: dict[str, Any] = Field(
-        default_factory=dict,
-        description="Additional source-specific metadata"
-    )
-    
+    metadata: dict[str, Any] = Field(default_factory=dict, description="Additional source-specific metadata")
+
     # Optional fields
     country: str | None = Field(
         default=None,
@@ -125,8 +114,8 @@ class MeasurementSchema(BaseModel):
         default=None,
         description="H3 geospatial index for aggregation",
     )
-    
-    @field_validator('timestamp_utc', mode='before')
+
+    @field_validator("timestamp_utc", mode="before")
     @classmethod
     def parse_timestamp(cls, v):
         """Parse timestamp from various formats."""
@@ -146,7 +135,7 @@ class MeasurementSchema(BaseModel):
                     except ValueError:
                         continue
         raise ValueError(f"Unable to parse timestamp: {v}")
-    
+
     def to_dict(self) -> dict[str, Any]:
         """Convert to dictionary with proper serialization."""
         data = self.model_dump()

@@ -24,7 +24,7 @@ class MockSpeedtestSource(DataSource):
         """
         super().__init__("mock_speedtest")
         self.num_samples = num_samples
-    
+
     def fetch(self) -> list[MeasurementSchema]:
         """Fetch mock speedtest measurements.
 
@@ -41,7 +41,7 @@ class MockSpeedtestSource(DataSource):
         # Using realistic coordinate ranges for rural areas
         lat_range = (30.0, 48.0)  # Southern to Northern US (excluding Alaska)
         lon_range = (-120.0, -75.0)  # Western to Eastern US
-        
+
         for _i in range(self.num_samples):
             # Generate random location
             lat = random.uniform(*lat_range)
@@ -52,7 +52,7 @@ class MockSpeedtestSource(DataSource):
             days_ago = random.randint(0, 30)
             hours_ago = random.randint(0, 23)
             timestamp = datetime.now(UTC) - timedelta(days=days_ago, hours=hours_ago)
-            
+
             # Generate realistic speed measurements
             # Speedtest platform typically has better connection types
             tech_choice = random.choice(

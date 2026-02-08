@@ -202,7 +202,7 @@ class TestAnatelSmartConnector:
         assert len(report_files) >= 1
 
         # Verify report content
-        with open(report_files[0], encoding='utf-8') as f:
+        with open(report_files[0], encoding="utf-8") as f:
             report = json.load(f)
 
         assert "metadata" in report

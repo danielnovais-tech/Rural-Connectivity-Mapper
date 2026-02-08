@@ -28,7 +28,7 @@ class SilverLayer:
         """
         self.silver_dir = Path(silver_dir)
         self.silver_dir.mkdir(parents=True, exist_ok=True)
-    
+
     def process(self, bronze_measurements: list[MeasurementSchema]) -> list[MeasurementSchema]:
         """Process bronze data into silver layer.
 
@@ -51,12 +51,12 @@ class SilverLayer:
         # Step 3: Enrich with confidence scores and H3 index
         enriched = self._enrich(validated)
         print("  ✓ Enriched with confidence scores and H3 indexing")
-        
+
         # Step 4: Save to silver
         self._save(enriched)
 
         return enriched
-    
+
     def _deduplicate(self, measurements: list[MeasurementSchema]) -> list[MeasurementSchema]:
         """Remove duplicate measurements.
 
@@ -87,7 +87,7 @@ class SilverLayer:
                 deduplicated.append(measurement)
 
         return deduplicated
-    
+
     def _validate(self, measurements: list[MeasurementSchema]) -> list[MeasurementSchema]:
         """Validate measurements and filter invalid ones.
 
@@ -115,7 +115,7 @@ class SilverLayer:
             validated.append(measurement)
 
         return validated
-    
+
     def _enrich(self, measurements: list[MeasurementSchema]) -> list[MeasurementSchema]:
         """Enrich measurements with confidence scores and H3 indexing.
 
@@ -144,7 +144,7 @@ class SilverLayer:
             enriched.append(measurement)
 
         return enriched
-    
+
     def _save(self, measurements: list[MeasurementSchema]) -> Path:
         """Save enriched measurements to silver layer.
 
@@ -170,7 +170,7 @@ class SilverLayer:
         print(f"  → {filepath}")
 
         return filepath
-    
+
     def read_latest(self) -> list[MeasurementSchema]:
         """Read latest silver data.
 
@@ -180,7 +180,7 @@ class SilverLayer:
         files = sorted(self.silver_dir.glob("silver_*.json"), reverse=True)
         if not files:
             return []
-        
+
         with open(files[0]) as f:
             data = json.load(f)
 
