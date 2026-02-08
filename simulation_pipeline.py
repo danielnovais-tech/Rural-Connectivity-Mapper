@@ -57,6 +57,19 @@ def _k_grids(shape: tuple[int, ...]) -> tuple[np.ndarray, np.ndarray, np.ndarray
     ky_1d = 2.0 * np.pi * np.fft.fftfreq(ny, d=1.0)
     kz_1d = 2.0 * np.pi * np.fft.fftfreq(nz, d=1.0)
 
+    # For even-sized real grids, the Nyquist mode is self-conjugate and must have
+    # a purely real FFT coefficient. Multiplying it by i*k to form a first
+    # derivative would yield a purely imaginary coefficient, which cannot
+    # correspond to a real-valued field on the grid. The discrete sampled
+    # derivative of the Nyquist cosine mode is identically zero at grid points,
+    # so we zero the Nyquist wavenumber for *first-derivative* operators.
+    if nx % 2 == 0:
+        kx_1d[nx // 2] = 0.0
+    if ny % 2 == 0:
+        ky_1d[ny // 2] = 0.0
+    if nz % 2 == 0:
+        kz_1d[nz // 2] = 0.0
+
     kx, ky, kz = np.meshgrid(kx_1d, ky_1d, kz_1d, indexing="ij")
     k2 = (kx**2 + ky**2 + kz**2).astype(np.float64)
 
