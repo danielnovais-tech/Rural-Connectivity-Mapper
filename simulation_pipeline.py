@@ -27,6 +27,7 @@ LOGGER = logging.getLogger(__name__)
 
 
 _K_CACHE: dict[tuple[int, int, int], tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]] = {}
+_K_CACHE_EM: dict[tuple[int, int, int], tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]] = {}
 
 
 def _shape3(shape: tuple[int, ...]) -> tuple[int, int, int]:
@@ -64,6 +65,38 @@ def _k_grids(shape: tuple[int, ...]) -> tuple[np.ndarray, np.ndarray, np.ndarray
     return kx, ky, kz, k2
 
 
+def _k_grids_em(shape: tuple[int, ...]) -> tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
+    """Return spectral wave-number grids for EM constraint projection.
+
+    For *real-valued* periodic fields on an even grid, the Nyquist mode corresponds
+    to a pure cosine (e.g. (-1)^j) whose derivative samples to zero at grid points.
+    To keep spectral derivatives consistent with real collocation (and to preserve
+    real-valued corrected fields), we set the Nyquist derivative multipliers to 0.
+    """
+
+    shape3 = _shape3(shape)
+    if shape3 in _K_CACHE_EM:
+        return _K_CACHE_EM[shape3]
+
+    nx, ny, nz = shape3
+    kx_1d = 2.0 * np.pi * np.fft.fftfreq(nx, d=1.0)
+    ky_1d = 2.0 * np.pi * np.fft.fftfreq(ny, d=1.0)
+    kz_1d = 2.0 * np.pi * np.fft.fftfreq(nz, d=1.0)
+
+    if nx % 2 == 0:
+        kx_1d[nx // 2] = 0.0
+    if ny % 2 == 0:
+        ky_1d[ny // 2] = 0.0
+    if nz % 2 == 0:
+        kz_1d[nz // 2] = 0.0
+
+    kx, ky, kz = np.meshgrid(kx_1d, ky_1d, kz_1d, indexing="ij")
+    k2 = (kx**2 + ky**2 + kz**2).astype(np.float64)
+
+    _K_CACHE_EM[shape3] = (kx, ky, kz, k2)
+    return kx, ky, kz, k2
+
+
 def _project_rho_for_gauss(rho: np.ndarray) -> np.ndarray:
     """Project rho onto a compatible subspace for periodic Gauss constraint.
 
@@ -80,15 +113,13 @@ def _project_rho_for_gauss(rho: np.ndarray) -> np.ndarray:
     rho0 = rho0 - float(np.mean(rho0))
 
     shape = _shape3(tuple(int(v) for v in rho0.shape))
-    nx, ny, nz = shape
+    _kx, _ky, _kz, k2 = _k_grids_em(shape)
 
     rho_hat = np.fft.fftn(rho0)
 
-    ix = [0] + ([nx // 2] if nx % 2 == 0 else [])
-    iy = [0] + ([ny // 2] if ny % 2 == 0 else [])
-    iz = [0] + ([nz // 2] if nz % 2 == 0 else [])
-
-    rho_hat[np.ix_(ix, iy, iz)] = 0.0
+    # Remove any components in the nullspace of the EM divergence operator.
+    # This includes the mean and the self-conjugate corner modes on even grids.
+    rho_hat[k2 == 0.0] = 0.0
     return np.fft.ifftn(rho_hat).real.astype(np.float64)
 
 
@@ -96,7 +127,7 @@ def _divergence_spectral(vec_field: np.ndarray) -> np.ndarray:
     """Spectral divergence of a 3-vector field with shape (3, Nx, Ny, Nz)."""
 
     shape = tuple(int(v) for v in vec_field.shape[1:])
-    kx, ky, kz, _k2 = _k_grids(shape)
+    kx, ky, kz, _k2 = _k_grids_em(shape)
 
     fx_hat = np.fft.fftn(vec_field[0])
     fy_hat = np.fft.fftn(vec_field[1])
@@ -126,7 +157,7 @@ def _enforce_gauss_constraints(
     rho = _project_rho_for_gauss(rho)
 
     shape = tuple(int(v) for v in rho.shape)
-    kx, ky, kz, k2 = _k_grids(shape)
+    kx, ky, kz, k2 = _k_grids_em(shape)
 
     # FFTs
     ex_hat = np.fft.fftn(e_field[0])
