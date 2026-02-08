@@ -64,6 +64,34 @@ def _k_grids(shape: tuple[int, ...]) -> tuple[np.ndarray, np.ndarray, np.ndarray
     return kx, ky, kz, k2
 
 
+def _project_rho_for_gauss(rho: np.ndarray) -> np.ndarray:
+    """Project rho onto a compatible subspace for periodic Gauss constraint.
+
+    For a *real* periodic E-field, the spectral divergence operator cannot
+    represent arbitrary real rho at the self-conjugate Fourier corner modes
+    (0/Nyquist combinations). We therefore:
+    - remove the mean (net charge) and
+    - zero the self-conjugate corner modes in Fourier space.
+
+    This makes the constraint solve well-posed and keeps the corrected fields real.
+    """
+
+    rho0 = rho.astype(np.float64, copy=False)
+    rho0 = rho0 - float(np.mean(rho0))
+
+    shape = _shape3(tuple(int(v) for v in rho0.shape))
+    nx, ny, nz = shape
+
+    rho_hat = np.fft.fftn(rho0)
+
+    ix = [0] + ([nx // 2] if nx % 2 == 0 else [])
+    iy = [0] + ([ny // 2] if ny % 2 == 0 else [])
+    iz = [0] + ([nz // 2] if nz % 2 == 0 else [])
+
+    rho_hat[np.ix_(ix, iy, iz)] = 0.0
+    return np.fft.ifftn(rho_hat).real.astype(np.float64)
+
+
 def _divergence_spectral(vec_field: np.ndarray) -> np.ndarray:
     """Spectral divergence of a 3-vector field with shape (3, Nx, Ny, Nz)."""
 
@@ -93,9 +121,9 @@ def _enforce_gauss_constraints(
     via spectral Poisson solves.
     """
 
-    # Periodic domains cannot represent a non-zero net charge with a periodic E field.
-    # We therefore enforce neutrality by removing the mean charge density.
-    rho = rho - float(np.mean(rho))
+    # Periodic real-valued fields require rho to be projected into the representable
+    # subspace of the divergence operator.
+    rho = _project_rho_for_gauss(rho)
 
     shape = tuple(int(v) for v in rho.shape)
     kx, ky, kz, k2 = _k_grids(shape)

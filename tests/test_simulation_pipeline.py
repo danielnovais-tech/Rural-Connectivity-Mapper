@@ -65,7 +65,7 @@ def test_em_gauss_constraints_enforced_spectral():
     e0 = rng.standard_normal((3,) + grid).astype(np.float64)
     b0 = rng.standard_normal((3,) + grid).astype(np.float64)
     rho = rng.standard_normal(grid).astype(np.float64)
-    rho = rho - float(np.mean(rho))
+    rho_target = sim._project_rho_for_gauss(rho)
     j = np.zeros((3,) + grid, dtype=np.float64)
 
     e1, b1 = sim.update_em_fields(e0, b0, rho, j, dt=0.0)
@@ -73,5 +73,5 @@ def test_em_gauss_constraints_enforced_spectral():
     div_e = sim._divergence_spectral(e1)
     div_b = sim._divergence_spectral(b1)
 
-    assert float(np.max(np.abs(div_e - rho))) < 1e-10
+    assert float(np.max(np.abs(div_e - rho_target))) < 1e-10
     assert float(np.max(np.abs(div_b))) < 1e-10
