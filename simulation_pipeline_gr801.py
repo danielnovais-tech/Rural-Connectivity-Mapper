@@ -1,7 +1,9 @@
 # simulation_pipeline_gr801.py
 
+from typing import Any
+
 import numpy as np
-from typing import Dict, Any, List, Optional
+
 
 # --- Data Structures ---
 class SoC:
@@ -40,20 +42,20 @@ class SimulationState:
         self.faults_corrected = 0
 
 # --- Initialization ---
-def initialize_soc(config: Dict[str, Any]) -> SoC:
+def initialize_soc(config: dict[str, Any]) -> SoC:
     """Initialize the SoC with given configuration."""
     num_cores = config.get('num_cores', 4)
     memory_size = config.get('memory_size', 1024*1024)  # 1 MB
     accelerator = config.get('accelerator', True)
     return SoC(num_cores, memory_size, accelerator)
 
-def initialize_radiation_model(config: Dict[str, Any]) -> RadiationModel:
+def initialize_radiation_model(config: dict[str, Any]) -> RadiationModel:
     """Initialize the radiation model."""
     particle_flux = config.get('particle_flux', 1.0)  # particles/cm^2/s
     upset_rate = config.get('upset_rate', 1e-5)  # upsets per particle
     return RadiationModel(particle_flux, upset_rate)
 
-def initialize_ai_application(config: Dict[str, Any]) -> AIApplication:
+def initialize_ai_application(config: dict[str, Any]) -> AIApplication:
     """Initialize the AI application."""
     task = config.get('task', 'image_classification')
     input_data = config.get('input_data', np.random.rand(100, 100))
@@ -132,7 +134,7 @@ def update_radiation_model(radiation: RadiationModel, dt: float) -> None:
     # In a real simulation, we might change it based on orbit, solar activity, etc.
     pass
 
-def monitor_state(state: SimulationState) -> Dict[str, Any]:
+def monitor_state(state: SimulationState) -> dict[str, Any]:
     """Monitor the simulation state and collect metrics."""
     metrics = {
         'time': state.time,
@@ -144,7 +146,7 @@ def monitor_state(state: SimulationState) -> Dict[str, Any]:
     }
     return metrics
 
-def log_state(metrics: Dict[str, Any]) -> None:
+def log_state(metrics: dict[str, Any]) -> None:
     """Log the current state."""
     print(f"Time: {metrics['time']:.2f}s, Errors: {metrics['errors']}, Performance: {metrics['performance']:.2f}")
 
@@ -163,7 +165,7 @@ def trigger_safe_shutdown(state: SimulationState) -> None:
     # Save critical data, power down, etc.
 
 # --- Main Loop ---
-def run_simulation(time_steps: int, dt: float, config: Dict[str, Any]) -> List[Dict[str, Any]]:
+def run_simulation(time_steps: int, dt: float, config: dict[str, Any]) -> list[dict[str, Any]]:
     """
     Run the simulation for a given number of time steps.
     Returns a list of state metrics for each time step.

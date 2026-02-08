@@ -1,7 +1,6 @@
 """Tests for simulation_pipeline_gr801 module."""
 
 import numpy as np
-import pytest
 
 import simulation_pipeline_gr801 as sim
 
