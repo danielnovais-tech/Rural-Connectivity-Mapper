@@ -183,7 +183,7 @@ def safety_violation_detected(state: SimulationState, error_threshold: int = 100
 
 def trigger_safe_shutdown(state: SimulationState) -> None:
     """Trigger a safe shutdown of the system."""
-    LOGGER.error("Triggering safe shutdown")
+    LOGGER.warning("Triggering safe shutdown")
     # Save critical data, power down, etc.
 
 
