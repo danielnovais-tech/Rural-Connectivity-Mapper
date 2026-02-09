@@ -79,6 +79,26 @@ timestamp,latitude,longitude,download,upload
 2026-01-20T14:30:00,-15.7801,-47.9292,120.7,18.5
 ```
 
+### Basic Template (Recommended Starting Point)
+
+Copy/paste this as your CSV header + first row:
+
+```csv
+id,city,provider,latitude,longitude,download,upload,latency,jitter,packet_loss,timestamp
+1,Your City Name,Your ISP Name,-23.5505,-46.6333,100.0,15.0,30.0,5.0,0.5,2026-01-15T10:00:00
+```
+
+### Complete Template (Example Dataset)
+
+```csv
+id,city,provider,latitude,longitude,download,upload,latency,jitter,packet_loss,timestamp
+1,São Paulo,Starlink,-23.5505,-46.6333,165.4,22.8,28.5,3.2,0.1,2026-01-15T10:30:00
+2,Belo Horizonte,Claro,-19.9167,-43.9345,92.1,15.3,38.7,6.5,0.8,2026-01-15T11:00:00
+3,Curitiba,Vivo,-25.4284,-49.2733,110.5,18.2,32.1,4.8,0.3,2026-01-15T11:30:00
+4,Porto Alegre,TIM,-30.0346,-51.2177,88.7,14.1,42.3,7.2,1.1,2026-01-15T12:00:00
+5,Manaus,Viasat,-3.1190,-60.0217,75.3,9.8,68.2,15.7,2.5,2026-01-15T12:30:00
+```
+
 ### Complete Example (All Fields)
 
 See `example_speedtests.csv` for a complete example with all optional fields included.
@@ -292,5 +312,3 @@ For issues or questions:
 - Open an issue on GitHub if you need help
 
 ---
-
-**Made with ❤️ for improving rural connectivity in Brazil**
