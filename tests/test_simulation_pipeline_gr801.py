@@ -41,6 +41,7 @@ def test_ai_application_initialization():
 def test_run_ai_application_with_accelerator():
     """Test running AI application with accelerator."""
     soc = sim.SoC(num_cores=4, memory_size=1024, accelerator_present=True)
+    initial_memory = soc.memory[0]
     input_data = np.random.rand(10, 10)
     app = sim.AIApplication(task="test", input_data=input_data)
 
@@ -242,7 +243,6 @@ def test_update_radiation_model():
 def test_performance_metric_with_errors():
     """Test that performance decreases with errors."""
     soc = sim.SoC(num_cores=4, memory_size=1024, accelerator_present=True)
-    app = sim.AIApplication(task="test", input_data=np.random.rand(10, 10))
 
     
     # Without errors
