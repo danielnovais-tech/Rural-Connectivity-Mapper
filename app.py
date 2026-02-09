@@ -26,23 +26,20 @@ app = Flask(__name__)
 CORS(app)
 
 # Configure logging
-logging.basicConfig(
-    level=logging.INFO,
-    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
-)
+logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s")
 logger = logging.getLogger(__name__)
 
 # Data file path
-DATA_PATH = 'src/data/pontos.json'
+DATA_PATH = "src/data/pontos.json"
 
 
-@app.route('/')
+@app.route("/")
 def index():
     """Render main dashboard page."""
-    return render_template('index.html')
+    return render_template("index.html")
 
 
-@app.route('/api/data', methods=['GET'])
+@app.route("/api/data", methods=["GET"])
 def get_data():
     """Get all connectivity data points.
 
@@ -51,20 +48,13 @@ def get_data():
     """
     try:
         data = load_data(DATA_PATH)
-        return jsonify({
-            'success': True,
-            'data': data,
-            'total': len(data)
-        })
+        return jsonify({"success": True, "data": data, "total": len(data)})
     except (ValueError, KeyError, OSError) as e:
         logger.error("Error loading data: %s", e)
-        return jsonify({
-            'success': False,
-            'error': str(e)
-        }), 500
+        return jsonify({"success": False, "error": str(e)}), 500
 
 
-@app.route('/api/data/<point_id>', methods=['GET'])
+@app.route("/api/data/<point_id>", methods=["GET"])
 def get_data_point(point_id):
     """Get a specific connectivity data point.
 
@@ -76,27 +66,18 @@ def get_data_point(point_id):
     """
     try:
         data = load_data(DATA_PATH)
-        point = next((p for p in data if p.get('id') == point_id), None)
+        point = next((p for p in data if p.get("id") == point_id), None)
 
         if point:
-            return jsonify({
-                'success': True,
-                'data': point
-            })
+            return jsonify({"success": True, "data": point})
         else:
-            return jsonify({
-                'success': False,
-                'error': 'Data point not found'
-            }), 404
+            return jsonify({"success": False, "error": "Data point not found"}), 404
     except (ValueError, KeyError, OSError) as e:
         logger.error("Error loading data point: %s", e)
-        return jsonify({
-            'success': False,
-            'error': str(e)
-        }), 500
+        return jsonify({"success": False, "error": str(e)}), 500
 
 
-@app.route('/api/data', methods=['POST'])
+@app.route("/api/data", methods=["POST"])
 def add_data_point():
     """Add a new connectivity data point.
 
@@ -107,41 +88,35 @@ def add_data_point():
         data_json = request.get_json()
 
         # Validate required fields
-        required_fields = ['latitude', 'longitude', 'provider', 'download', 'upload', 'latency']
+        required_fields = ["latitude", "longitude", "provider", "download", "upload", "latency"]
         for field in required_fields:
             if field not in data_json:
-                return jsonify({
-                    'success': False,
-                    'error': f'Missing required field: {field}'
-                }), 400
+                return jsonify({"success": False, "error": f"Missing required field: {field}"}), 400
 
         # Validate coordinates
-        lat = float(data_json['latitude'])
-        lon = float(data_json['longitude'])
+        lat = float(data_json["latitude"])
+        lon = float(data_json["longitude"])
 
         if not validate_coordinates(lat, lon):
-            return jsonify({
-                'success': False,
-                'error': 'Invalid coordinates'
-            }), 400
+            return jsonify({"success": False, "error": "Invalid coordinates"}), 400
 
         # Create SpeedTest
         speed_test = SpeedTest(
-            download=float(data_json['download']),
-            upload=float(data_json['upload']),
-            latency=float(data_json['latency']),
-            jitter=float(data_json.get('jitter', 0)),
-            packet_loss=float(data_json.get('packet_loss', 0))
+            download=float(data_json["download"]),
+            upload=float(data_json["upload"]),
+            latency=float(data_json["latency"]),
+            jitter=float(data_json.get("jitter", 0)),
+            packet_loss=float(data_json.get("packet_loss", 0)),
         )
 
         # Create ConnectivityPoint
         point = ConnectivityPoint(
             latitude=lat,
             longitude=lon,
-            provider=data_json['provider'],
+            provider=data_json["provider"],
             speed_test=speed_test,
-            timestamp=data_json.get('timestamp', datetime.now().isoformat()),
-            point_id=data_json.get('id')
+            timestamp=data_json.get("timestamp", datetime.now().isoformat()),
+            point_id=data_json.get("id"),
         )
 
         # Load existing data and append new point
@@ -149,26 +124,16 @@ def add_data_point():
         data.append(point.to_dict())
         save_data(DATA_PATH, data)
 
-        return jsonify({
-            'success': True,
-            'data': point.to_dict(),
-            'message': 'Data point added successfully'
-        }), 201
+        return jsonify({"success": True, "data": point.to_dict(), "message": "Data point added successfully"}), 201
 
     except ValueError as e:
-        return jsonify({
-            'success': False,
-            'error': f'Invalid value: {str(e)}'
-        }), 400
-    except (KeyError, TypeError, OSError, IOError) as e:
+        return jsonify({"success": False, "error": f"Invalid value: {str(e)}"}), 400
+    except (KeyError, TypeError, OSError) as e:
         logger.error("Error adding data point: %s", e)
-        return jsonify({
-            'success': False,
-            'error': str(e)
-        }), 500
+        return jsonify({"success": False, "error": str(e)}), 500
 
 
-@app.route('/api/statistics', methods=['GET'])
+@app.route("/api/statistics", methods=["GET"])
 def get_statistics():
     """Get overall connectivity statistics.
 
@@ -179,57 +144,58 @@ def get_statistics():
         data = load_data(DATA_PATH)
 
         if not data:
-            return jsonify({
-                'success': True,
-                'statistics': {
-                    'total_points': 0,
-                    'avg_quality_score': 0,
-                    'avg_download': 0,
-                    'avg_upload': 0,
-                    'avg_latency': 0
+            return jsonify(
+                {
+                    "success": True,
+                    "statistics": {
+                        "total_points": 0,
+                        "avg_quality_score": 0,
+                        "avg_download": 0,
+                        "avg_upload": 0,
+                        "avg_latency": 0,
+                    },
                 }
-            })
+            )
 
         # Calculate statistics
         total_points = len(data)
-        avg_quality_score = sum(p['quality_score']['overall_score'] for p in data) / total_points
-        avg_download = sum(p['speed_test']['download'] for p in data) / total_points
-        avg_upload = sum(p['speed_test']['upload'] for p in data) / total_points
-        avg_latency = sum(p['speed_test']['latency'] for p in data) / total_points
+        avg_quality_score = sum(p["quality_score"]["overall_score"] for p in data) / total_points
+        avg_download = sum(p["speed_test"]["download"] for p in data) / total_points
+        avg_upload = sum(p["speed_test"]["upload"] for p in data) / total_points
+        avg_latency = sum(p["speed_test"]["latency"] for p in data) / total_points
 
         # Count by rating
         ratings = {}
         for point in data:
-            rating = point['quality_score']['rating']
+            rating = point["quality_score"]["rating"]
             ratings[rating] = ratings.get(rating, 0) + 1
 
         # Count by provider
         providers = {}
         for point in data:
-            provider = point['provider']
+            provider = point["provider"]
             providers[provider] = providers.get(provider, 0) + 1
 
-        return jsonify({
-            'success': True,
-            'statistics': {
-                'total_points': total_points,
-                'avg_quality_score': round(avg_quality_score, 2),
-                'avg_download': round(avg_download, 2),
-                'avg_upload': round(avg_upload, 2),
-                'avg_latency': round(avg_latency, 2),
-                'ratings': ratings,
-                'providers': providers
+        return jsonify(
+            {
+                "success": True,
+                "statistics": {
+                    "total_points": total_points,
+                    "avg_quality_score": round(avg_quality_score, 2),
+                    "avg_download": round(avg_download, 2),
+                    "avg_upload": round(avg_upload, 2),
+                    "avg_latency": round(avg_latency, 2),
+                    "ratings": ratings,
+                    "providers": providers,
+                },
             }
-        })
+        )
     except (ValueError, KeyError, TypeError, ZeroDivisionError, OSError) as e:
         logger.error("Error calculating statistics: %s", e)
-        return jsonify({
-            'success': False,
-            'error': str(e)
-        }), 500
+        return jsonify({"success": False, "error": str(e)}), 500
 
 
-@app.route('/api/analysis', methods=['GET'])
+@app.route("/api/analysis", methods=["GET"])
 def get_analysis():
     """Get temporal analysis of connectivity data.
 
@@ -240,19 +206,13 @@ def get_analysis():
         data = load_data(DATA_PATH)
         analysis = analyze_temporal_evolution(data)
 
-        return jsonify({
-            'success': True,
-            'analysis': analysis
-        })
+        return jsonify({"success": True, "analysis": analysis})
     except (ValueError, KeyError, TypeError, OSError) as e:
         logger.error("Error performing analysis: %s", e)
-        return jsonify({
-            'success': False,
-            'error': str(e)
-        }), 500
+        return jsonify({"success": False, "error": str(e)}), 500
 
 
-@app.route('/api/simulate', methods=['POST'])
+@app.route("/api/simulate", methods=["POST"])
 def simulate_improvement():
     """Simulate router impact on quality scores.
 
@@ -264,20 +224,13 @@ def simulate_improvement():
         improved_data = simulate_router_impact(data)
         save_data(DATA_PATH, improved_data)
 
-        return jsonify({
-            'success': True,
-            'message': 'Router impact simulation completed',
-            'data': improved_data
-        })
+        return jsonify({"success": True, "message": "Router impact simulation completed", "data": improved_data})
     except (ValueError, KeyError, OSError, TypeError) as e:
         logger.error("Error simulating improvement: %s", e)
-        return jsonify({
-            'success': False,
-            'error': str(e)
-        }), 500
+        return jsonify({"success": False, "error": str(e)}), 500
 
 
-@app.route('/api/report/<report_format>', methods=['GET'])
+@app.route("/api/report/<report_format>", methods=["GET"])
 def generate_report_api(report_format):
     """Generate report in specified format.
 
@@ -288,29 +241,19 @@ def generate_report_api(report_format):
         File download or JSON response
     """
     try:
-        if report_format not in ['json', 'csv', 'txt', 'html']:
-            return jsonify({
-                'success': False,
-                'error': 'Invalid format. Choose from: json, csv, txt, html'
-            }), 400
+        if report_format not in ["json", "csv", "txt", "html"]:
+            return jsonify({"success": False, "error": "Invalid format. Choose from: json, csv, txt, html"}), 400
 
         data = load_data(DATA_PATH)
-        report_path = generate_report(data, report_format, f'report.{report_format}')
+        report_path = generate_report(data, report_format, f"report.{report_format}")
 
-        return send_file(
-            report_path,
-            as_attachment=True,
-            download_name=f'connectivity_report.{report_format}'
-        )
-    except (ValueError, KeyError, OSError, IOError, TypeError) as e:
+        return send_file(report_path, as_attachment=True, download_name=f"connectivity_report.{report_format}")
+    except (ValueError, KeyError, OSError, TypeError) as e:
         logger.error("Error generating report: %s", e)
-        return jsonify({
-            'success': False,
-            'error': str(e)
-        }), 500
+        return jsonify({"success": False, "error": str(e)}), 500
 
 
-@app.route('/api/map', methods=['GET'])
+@app.route("/api/map", methods=["GET"])
 def get_map():
     """Generate interactive connectivity map.
 
@@ -321,13 +264,13 @@ def get_map():
         data = load_data(DATA_PATH)
 
         # Create a temporary file for the map
-        fd, temp_path = tempfile.mkstemp(suffix='.html', prefix='connectivity_map_')
+        fd, temp_path = tempfile.mkstemp(suffix=".html", prefix="connectivity_map_")
         os.close(fd)
 
         map_path = generate_map(data, temp_path)
 
         # Send file and delete after sending
-        response = send_file(map_path, mimetype='text/html')
+        response = send_file(map_path, mimetype="text/html")
 
         @response.call_on_close
         def cleanup():
@@ -338,34 +281,27 @@ def get_map():
                 pass
 
         return response
-    except (ValueError, KeyError, OSError, IOError, TypeError, ImportError) as e:
+    except (ValueError, KeyError, OSError, TypeError, ImportError) as e:
         logger.error("Error generating map: %s", e)
-        return jsonify({
-            'success': False,
-            'error': str(e)
-        }), 500
+        return jsonify({"success": False, "error": str(e)}), 500
 
 
-@app.route('/api/health', methods=['GET'])
+@app.route("/api/health", methods=["GET"])
 def health_check():
     """Health check endpoint.
 
     Returns:
         JSON: Health status
     """
-    return jsonify({
-        'success': True,
-        'status': 'healthy',
-        'timestamp': datetime.now().isoformat()
-    })
+    return jsonify({"success": True, "status": "healthy", "timestamp": datetime.now().isoformat()})
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     # Ensure data directory exists
-    Path('src/data').mkdir(parents=True, exist_ok=True)
+    Path("src/data").mkdir(parents=True, exist_ok=True)
 
     # Run Flask development server
     # Debug mode temporarily disabled due to auto-reload issues
-    port = int(os.environ.get('PORT', 5000))
+    port = int(os.environ.get("PORT", 5000))
     debug_mode = False  # Temporarily disabled
-    app.run(host='0.0.0.0', port=port, debug=debug_mode, use_reloader=False)
+    app.run(host="0.0.0.0", port=port, debug=debug_mode, use_reloader=False)

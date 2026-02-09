@@ -18,16 +18,16 @@ def main():
         MockCrowdsourceSource(num_samples=50),
         MockSpeedtestSource(num_samples=30),
     ]
-    
+
     # Initialize and run pipeline
     pipeline = PipelineOrchestrator()
     pipeline.run(sources)
-    
+
     print("✅ Pipeline execution completed successfully!")
     print("\nYou can now find the processed data in:")
-    print(f"  - Bronze (raw): data/bronze/")
-    print(f"  - Silver (enriched): data/silver/")
-    print(f"  - Gold (aggregated): data/gold/")
+    print("  - Bronze (raw): data/bronze/")
+    print("  - Silver (enriched): data/silver/")
+    print("  - Gold (aggregated): data/gold/")
 
 
 if __name__ == "__main__":

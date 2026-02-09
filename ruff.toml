@@ -16,3 +16,6 @@ select = [
 
 [lint.per-file-ignores]
 "__init__.py" = ["F401"]
+"src/models/ConnectivityPoint.py" = ["N999"]
+"src/models/QualityScore.py" = ["N999"]
+"src/models/SpeedTest.py" = ["N999"]

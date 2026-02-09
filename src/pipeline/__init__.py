@@ -1,9 +1,9 @@
 """Data pipeline orchestration for bronze/silver/gold layers."""
 
 from .bronze import BronzeLayer
-from .silver import SilverLayer
 from .gold import GoldLayer
 from .orchestrator import PipelineOrchestrator
+from .silver import SilverLayer
 
 __all__ = [
     "BronzeLayer",

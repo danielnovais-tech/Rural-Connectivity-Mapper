@@ -266,13 +266,13 @@ FORM_HTML = """
 """
 
 
-@app.route('/')
+@app.route("/")
 def index():
     """Serve the mobile-friendly submission form."""
     return render_template_string(FORM_HTML)
 
 
-@app.route('/api/submit', methods=['POST'])
+@app.route("/api/submit", methods=["POST"])
 def submit_data():
     """API endpoint to submit speedtest data.
 
@@ -293,53 +293,49 @@ def submit_data():
         data = request.get_json()
 
         # Validate required fields
-        required_fields = ['latitude', 'longitude', 'provider', 'download', 'upload', 'latency']
+        required_fields = ["latitude", "longitude", "provider", "download", "upload", "latency"]
         missing_fields = [f for f in required_fields if f not in data]
 
         if missing_fields:
             return make_response(
-                jsonify({'error': f'Missing required fields: {", ".join(missing_fields)}'}),
+                jsonify({"error": f"Missing required fields: {', '.join(missing_fields)}"}),
                 400,
             )
 
         # Convert string values to appropriate types
         try:
-            latitude = float(data['latitude'])
-            longitude = float(data['longitude'])
-            download = float(data['download'])
-            upload = float(data['upload'])
-            latency = float(data['latency'])
-            jitter = float(data.get('jitter', 0))
-            packet_loss = float(data.get('packet_loss', 0))
+            latitude = float(data["latitude"])
+            longitude = float(data["longitude"])
+            download = float(data["download"])
+            upload = float(data["upload"])
+            latency = float(data["latency"])
+            jitter = float(data.get("jitter", 0))
+            packet_loss = float(data.get("packet_loss", 0))
         except ValueError as e:
-            return make_response(jsonify({'error': f'Invalid numeric value: {str(e)}'}), 400)
+            return make_response(jsonify({"error": f"Invalid numeric value: {str(e)}"}), 400)
 
         # Validate coordinates
         if not validate_coordinates(latitude, longitude):
-            return make_response(jsonify({'error': 'Invalid coordinates'}), 400)
+            return make_response(jsonify({"error": "Invalid coordinates"}), 400)
 
         # Validate speed test values
         if download < 0 or upload < 0 or latency < 0:
-            return make_response(jsonify({'error': 'Speed test values must be non-negative'}), 400)
+            return make_response(jsonify({"error": "Speed test values must be non-negative"}), 400)
 
         if jitter < 0 or packet_loss < 0:
-            return make_response(jsonify({'error': 'Jitter and packet loss must be non-negative'}), 400)
+            return make_response(jsonify({"error": "Jitter and packet loss must be non-negative"}), 400)
 
         # Create speed test and connectivity point
         speed_test = SpeedTest(
-            download=download,
-            upload=upload,
-            latency=latency,
-            jitter=jitter,
-            packet_loss=packet_loss
+            download=download, upload=upload, latency=latency, jitter=jitter, packet_loss=packet_loss
         )
 
         point = ConnectivityPoint(
             latitude=latitude,
             longitude=longitude,
-            provider=data['provider'],
+            provider=data["provider"],
             speed_test=speed_test,
-            timestamp=datetime.now().isoformat()
+            timestamp=datetime.now().isoformat(),
         )
 
         # Load existing data, append new point, and save
@@ -347,24 +343,27 @@ def submit_data():
         existing_data.append(point.to_dict())
         save_data(DATA_FILE, existing_data)
 
-        logger.info(
-            "New data point submitted: %s from provider %s", point.id, point.provider
-        )
+        logger.info("New data point submitted: %s from provider %s", point.id, point.provider)
 
-        return make_response(jsonify({
-            'success': True,
-            'message': 'Data submitted successfully',
-            'point_id': point.id,
-            'quality_score': round(point.quality_score.overall_score, 2),
-            'rating': point.quality_score.rating
-        }), 201)
+        return make_response(
+            jsonify(
+                {
+                    "success": True,
+                    "message": "Data submitted successfully",
+                    "point_id": point.id,
+                    "quality_score": round(point.quality_score.overall_score, 2),
+                    "rating": point.quality_score.rating,
+                }
+            ),
+            201,
+        )
 
     except OSError as e:
         logger.error("Error processing submission: %s", str(e))
-        return make_response(jsonify({'error': 'Internal server error'}), 500)
+        return make_response(jsonify({"error": "Internal server error"}), 500)
 
 
-@app.route('/api/upload-csv', methods=['POST'])
+@app.route("/api/upload-csv", methods=["POST"])
 def upload_csv():
     """API endpoint to upload CSV file with multiple speedtest entries.
 
@@ -376,28 +375,26 @@ def upload_csv():
         JSON response with count of successfully imported points
     """
     try:
-        if 'file' not in request.files:
-            return make_response(jsonify({'error': 'No file provided'}), 400)
+        if "file" not in request.files:
+            return make_response(jsonify({"error": "No file provided"}), 400)
 
-        file = request.files['file']
+        file = request.files["file"]
 
-        if not file.filename or file.filename == '':
-            return make_response(jsonify({'error': 'No file selected'}), 400)
+        if not file.filename or file.filename == "":
+            return make_response(jsonify({"error": "No file selected"}), 400)
 
-        if not file.filename.endswith('.csv'):
-            return make_response(jsonify({'error': 'File must be a CSV'}), 400)
+        if not file.filename.endswith(".csv"):
+            return make_response(jsonify({"error": "File must be a CSV"}), 400)
 
         # Read CSV file
         stream = io.StringIO(file.stream.read().decode("UTF8"), newline=None)
         csv_reader = csv.DictReader(stream)
 
         # Validate CSV has required columns
-        required_cols = {'latitude', 'longitude', 'provider', 'download', 'upload', 'latency'}
+        required_cols = {"latitude", "longitude", "provider", "download", "upload", "latency"}
         fieldnames = csv_reader.fieldnames if csv_reader.fieldnames is not None else []
         if not required_cols.issubset(set(fieldnames)):
-            return make_response(jsonify({
-                'error': f'CSV must contain columns: {", ".join(required_cols)}'
-            }), 400)
+            return make_response(jsonify({"error": f"CSV must contain columns: {', '.join(required_cols)}"}), 400)
 
         # Process each row
         points = []
@@ -405,40 +402,37 @@ def upload_csv():
 
         for row_num, row in enumerate(csv_reader, start=2):  # Start at 2 (after header)
             try:
-                latitude = float(row['latitude'])
-                longitude = float(row['longitude'])
+                latitude = float(row["latitude"])
+                longitude = float(row["longitude"])
 
                 if not validate_coordinates(latitude, longitude):
-                    errors.append(f'Row {row_num}: Invalid coordinates')
+                    errors.append(f"Row {row_num}: Invalid coordinates")
                     continue
 
                 speed_test = SpeedTest(
-                    download=float(row['download']),
-                    upload=float(row['upload']),
-                    latency=float(row['latency']),
-                    jitter=float(row.get('jitter', 0)),
-                    packet_loss=float(row.get('packet_loss', 0))
+                    download=float(row["download"]),
+                    upload=float(row["upload"]),
+                    latency=float(row["latency"]),
+                    jitter=float(row.get("jitter", 0)),
+                    packet_loss=float(row.get("packet_loss", 0)),
                 )
 
                 point = ConnectivityPoint(
                     latitude=latitude,
                     longitude=longitude,
-                    provider=row['provider'],
+                    provider=row["provider"],
                     speed_test=speed_test,
-                    timestamp=row.get('timestamp', datetime.now().isoformat())
+                    timestamp=row.get("timestamp", datetime.now().isoformat()),
                 )
 
                 points.append(point.to_dict())
 
             except (ValueError, KeyError) as e:
-                errors.append(f'Row {row_num}: {str(e)}')
+                errors.append(f"Row {row_num}: {str(e)}")
                 continue
 
         if not points:
-            return make_response(jsonify({
-                'error': 'No valid data points in CSV',
-                'errors': errors
-            }), 400)
+            return make_response(jsonify({"error": "No valid data points in CSV", "errors": errors}), 400)
 
         # Append to existing data
         existing_data = load_data(DATA_FILE)
@@ -448,25 +442,25 @@ def upload_csv():
         logger.info("CSV upload: %s points imported, %s errors", len(points), len(errors))
 
         response = {
-            'success': True,
-            'imported': len(points),
-            'message': f'Successfully imported {len(points)} data points'
+            "success": True,
+            "imported": len(points),
+            "message": f"Successfully imported {len(points)} data points",
         }
 
         if errors:
-            response['warnings'] = errors
+            response["warnings"] = errors
 
         return make_response(jsonify(response), 201)
 
     except (UnicodeDecodeError, csv.Error) as e:
         logger.error("Error processing CSV file: %s", str(e))
-        return make_response(jsonify({'error': f'Invalid CSV file: {str(e)}'}), 400)
+        return make_response(jsonify({"error": f"Invalid CSV file: {str(e)}"}), 400)
     except OSError as e:
         logger.error("File I/O error during CSV upload: %s", str(e))
-        return make_response(jsonify({'error': 'Error reading or writing data file'}), 500)
+        return make_response(jsonify({"error": "Error reading or writing data file"}), 500)
 
 
-@app.route('/api/template')
+@app.route("/api/template")
 def download_template():
     """Download CSV template for bulk upload."""
     template_data = """latitude,longitude,provider,download,upload,latency,jitter,packet_loss,timestamp
@@ -474,31 +468,26 @@ def download_template():
 -15.7801,-47.9292,Vivo,85.0,12.0,45.0,8.0,1.2,2026-01-15T11:00:00"""  # noqa: E501
 
     output = io.BytesIO()
-    output.write(template_data.encode('utf-8'))
+    output.write(template_data.encode("utf-8"))
     output.seek(0)
 
-    return send_file(
-        output,
-        mimetype='text/csv',
-        as_attachment=True,
-        download_name='speedtest_template.csv'
-    )
+    return send_file(output, mimetype="text/csv", as_attachment=True, download_name="speedtest_template.csv")
 
 
-@app.route('/health')
+@app.route("/health")
 def health():
     """Health check endpoint."""
-    return jsonify({'status': 'healthy', 'timestamp': datetime.now().isoformat()})
+    return jsonify({"status": "healthy", "timestamp": datetime.now().isoformat()})
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     import os
 
     # Ensure data directory exists
     Path(DATA_FILE).parent.mkdir(parents=True, exist_ok=True)
 
     # Check if running in development mode (default to False for security)
-    debug_mode = os.environ.get('FLASK_DEBUG', 'False').lower() in ('true', '1', 'yes')
+    debug_mode = os.environ.get("FLASK_DEBUG", "False").lower() in ("true", "1", "yes")
 
     # Run server
     print("\n" + "=" * 70)
@@ -520,4 +509,4 @@ if __name__ == '__main__':
 
     print("\n" + "=" * 70 + "\n")
 
-    app.run(host='0.0.0.0', port=5000, debug=debug_mode)
+    app.run(host="0.0.0.0", port=5000, debug=debug_mode)
