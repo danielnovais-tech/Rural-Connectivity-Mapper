@@ -35,7 +35,7 @@ def main(api_url, search_query):
     packages = package_search(api_url, search_query)
     top_candidates = packages["results"][:5]  # Get top 5 candidates
     print("Top Candidates:", top_candidates)
-    report = {"timestamp": str(datetime.utcnow()), "top_candidates": top_candidates}
+    report = {"timestamp": str(datetime.now(datetime.UTC)), "top_candidates": top_candidates}
     output_path = Path("output.json")
     with output_path.open("w") as outfile:
         json.dump(report, outfile, indent=4)
