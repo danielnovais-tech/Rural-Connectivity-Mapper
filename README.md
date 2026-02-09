@@ -71,6 +71,7 @@ Higher scores = more reliable data for decision-making.
 - **[Crowdsourcing Guide](docs/CROWDSOURCING.md)** - Community data collection
 - **[Developer Setup (Windows-first)](docs/DEV_SETUP.md)** - VS Code tasks, environment setup, and daily workflow
 - **[Simulation Pipeline Spec](docs/SIMULATION_PIPELINE.md)** - Research-grade direction + CLI scaffold
+- **[GR801 SoC Simulation (Standalone)](docs/GR801_SIMULATION.md)** - Run the GR801 demo without touching the main pipeline
 
 ## 🏗️ Architecture Overview
 
