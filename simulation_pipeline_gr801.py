@@ -135,7 +135,6 @@ def inject_faults(soc: SoC, radiation: RadiationModel, dt: float) -> int:
     return faults
 
 
-def apply_fault_tolerance(soc: SoC) -> int:
 def apply_fault_tolerance(soc: SoC, correction_rate: float = 0.8) -> int:
     """
     Apply fault tolerance mechanisms to correct errors.
@@ -166,13 +165,9 @@ def monitor_state(state: SimulationState) -> dict[str, Any]:
         "performance": state.soc.performance,
         "faults_injected": state.faults_injected,
         "faults_corrected": state.faults_corrected,
+        "total_faults_injected": state.faults_injected,
+        "total_faults_corrected": state.faults_corrected,
         "application_accuracy": state.app.accuracy,
-        'time': state.time,
-        'errors': state.soc.errors,
-        'performance': state.soc.performance,
-        'total_faults_injected': state.faults_injected,
-        'total_faults_corrected': state.faults_corrected,
-        'application_accuracy': state.app.accuracy,
     }
     return metrics
 
@@ -181,7 +176,9 @@ def log_state(metrics: dict[str, Any]) -> None:
     """Log the current state."""
     LOGGER.info(
         "Time: %.2fs, Errors: %d, Performance: %.2f",
-        metrics['time'], metrics['errors'], metrics['performance']
+        metrics["time"],
+        metrics["errors"],
+        metrics["performance"],
     )
 
 
