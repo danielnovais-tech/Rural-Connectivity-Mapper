@@ -99,7 +99,7 @@ def main() -> int:
     steps = int(args.steps or preset_steps)
     dt = float(args.dt or preset_dt)
 
-    run_id = datetime.utcnow().strftime("%Y%m%dT%H%M%SZ")
+    run_id = datetime.now(datetime.UTC).strftime("%Y%m%dT%H%M%SZ")
     out_dir = Path(args.output_dir) / f"run_{run_id}_{args.preset}"
     out_dir.mkdir(parents=True, exist_ok=True)
 
