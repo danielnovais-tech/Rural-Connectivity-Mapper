@@ -9,8 +9,8 @@ geopy>=2.3.0
 h3>=3.7.0
 geohash2>=1.1
 
-# Heavier geospatial stack (may require native wheels on some platforms)
-geopandas>=0.14.0
+# Heavier geospatial stack (optional; may require native wheels on some platforms)
+# Install separately if you need GeoDataFrame workflows: `pip install -r requirements-geo.txt`
 
 ## Visualization / Dashboard
 folium>=0.14.0

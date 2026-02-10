@@ -1,0 +1,4 @@
+## Optional heavy geospatial stack
+## Install only if you need GeoDataFrame workflows / advanced spatial joins.
+
+geopandas>=0.14.0
