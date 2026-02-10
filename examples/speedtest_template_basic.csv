@@ -1,0 +1,2 @@
+id,city,provider,latitude,longitude,download,upload,latency,jitter,packet_loss,timestamp
+1,Your City Name,Your ISP Name,-23.5505,-46.6333,100.0,15.0,30.0,5.0,0.5,2026-01-15T10:00:00
