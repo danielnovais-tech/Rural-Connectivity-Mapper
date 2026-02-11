@@ -4,7 +4,7 @@ import json
 import os
 import re
 from dataclasses import dataclass
-from datetime import UTC, datetime
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
@@ -197,7 +197,7 @@ def _extract_flask_routes(py_path: Path) -> list[str]:
 
 
 def _render() -> str:
-    now = datetime.now(UTC).isoformat()
+    now = datetime.now(timezone.utc).isoformat()
     tasks_json = _read_json(REPO_ROOT / ".vscode" / "tasks.json")
     launch_json = _read_json(REPO_ROOT / ".vscode" / "launch.json")
 

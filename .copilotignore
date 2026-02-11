@@ -1,0 +1,39 @@
+# Reduce context size for GitHub Copilot (including coding agent runs)
+# Keep this focused on generated, vendored, or binary-heavy paths.
+
+# Python caches / local envs
+__pycache__/
+.mypy_cache/
+.pytest_cache/
+.ruff_cache/
+.venv/
+.venv*/
+
+# Coverage / build artifacts
+htmlcov/
+.coverage*
+coverage.xml
+build/
+dist/
+
+# Node vendored deps
+node_modules/
+
+# Large binaries
+*.vsix
+*.zip
+*.7z
+*.tar
+*.gz
+
+# Data artifacts (keep templates/docs tracked elsewhere)
+data/bronze/
+data/silver/
+data/gold/
+data/analytics/
+data/manual/raw_downloads/
+data/manual/processed/
+data/manual/outputs/
+
+# Large generated artifacts
+stress_artifacts/

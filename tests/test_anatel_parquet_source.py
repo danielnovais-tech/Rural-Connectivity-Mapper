@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from datetime import UTC, datetime
+from datetime import datetime, timezone
 from pathlib import Path
 
 import pandas as pd
@@ -17,7 +17,7 @@ def _write_parquet(df: pd.DataFrame, path: Path) -> None:
 
 def test_anatel_parquet_source_backhaul_best_effort(tmp_path: Path):
     parquet_dir = tmp_path / "bronze" / "anatel"
-    ts = datetime(2026, 2, 1, 12, 0, 0, tzinfo=UTC).isoformat()
+    ts = datetime(2026, 2, 1, 12, 0, 0, tzinfo=timezone.utc).isoformat()
 
     df = pd.DataFrame(
         [
@@ -71,7 +71,7 @@ def test_anatel_parquet_source_strict_missing_required_raises(tmp_path: Path):
                 # missing latitude/longitude
                 "operadora": "Vivo",
                 "capacidade_mbps": 200.0,
-                "_processamento_data": datetime.now(UTC).isoformat(),
+                "_processamento_data": datetime.now(timezone.utc).isoformat(),
                 "_dataset_tipo": "backhaul",
             }
         ]
@@ -94,7 +94,7 @@ def test_anatel_parquet_source_best_effort_skips_unsupported_dataset(tmp_path: P
                 "quantidade": 10,
                 "velocidade": "50 Mbps",
                 "tecnologia": "Fibra",
-                "_processamento_data": datetime.now(UTC).isoformat(),
+                "_processamento_data": datetime.now(timezone.utc).isoformat(),
                 "_dataset_tipo": "acesso_fixo",
             }
         ]

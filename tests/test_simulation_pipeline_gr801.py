@@ -67,12 +67,12 @@ def test_inject_faults():
     """Test fault injection mechanism with deterministic seeding."""
     # Seed the random number generator for reproducibility
     np.random.seed(42)
-    
+
     soc = sim.SoC(num_cores=4, memory_size=1024, accelerator_present=True)
     radiation = sim.RadiationModel(particle_flux=10.0, upset_rate=0.1)
 
     radiation = sim.RadiationModel(particle_flux=100.0, upset_rate=0.5)
-    
+
     # Run multiple times to ensure some faults are injected
     # With high flux and upset rate, we should consistently see faults
     total_faults = 0
@@ -81,7 +81,7 @@ def test_inject_faults():
         total_faults += faults
 
     # With high flux and upset rate, we should see some faults
-    
+
     # With these parameters (λ = 100*1*0.1 = 10 particles/step, 50% upset rate)
     # we expect ~50 faults over 10 iterations
     assert total_faults > 0
@@ -129,13 +129,13 @@ def test_monitor_state():
     assert metrics["faults_corrected"] == 40
     assert "performance" in metrics
     assert "application_accuracy" in metrics
-    
-    assert metrics['time'] == 1.5
-    assert metrics['errors'] == 0
-    assert metrics['total_faults_injected'] == 50
-    assert metrics['total_faults_corrected'] == 40
-    assert 'performance' in metrics
-    assert 'application_accuracy' in metrics
+
+    assert metrics["time"] == 1.5
+    assert metrics["errors"] == 0
+    assert metrics["total_faults_injected"] == 50
+    assert metrics["total_faults_corrected"] == 40
+    assert "performance" in metrics
+    assert "application_accuracy" in metrics
 
 
 def test_safety_violation_detected_high_errors():
@@ -244,7 +244,6 @@ def test_performance_metric_with_errors():
     """Test that performance decreases with errors."""
     soc = sim.SoC(num_cores=4, memory_size=1024, accelerator_present=True)
 
-    
     # Without errors
     soc.errors = 0
     soc.performance = 1.0 / (1.0 + soc.errors)

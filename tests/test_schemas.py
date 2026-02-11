@@ -1,11 +1,13 @@
 """Unit tests for schema validation and normalization."""
 
-from datetime import UTC, datetime
+from datetime import datetime, timezone
 
 import pytest
 from pydantic import ValidationError
 
 from src.schemas import ConfidenceBreakdown, MeasurementSchema, SourceType, TechnologyType
+
+UTC = timezone.utc
 
 
 class TestMeasurementSchema:

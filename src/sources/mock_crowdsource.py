@@ -2,7 +2,7 @@
 
 import random
 import uuid
-from datetime import UTC, datetime, timedelta
+from datetime import datetime, timedelta, timezone
 
 from src.schemas import ConfidenceBreakdown, MeasurementSchema, SourceType, TechnologyType
 
@@ -48,7 +48,7 @@ class MockCrowdsourceSource(DataSource):
 
             # Generate random timestamp within last 90 days
             days_ago = random.randint(0, 90)
-            timestamp = datetime.now(UTC) - timedelta(days=days_ago)
+            timestamp = datetime.now(timezone.utc) - timedelta(days=days_ago)
 
             # Generate realistic speed measurements
             # Simulating various connection types in rural areas

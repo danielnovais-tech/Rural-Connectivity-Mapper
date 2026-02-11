@@ -1,6 +1,6 @@
 """Confidence score calculation for measurements."""
 
-from datetime import UTC, datetime
+from datetime import datetime, timezone
 from typing import cast
 
 from src.schemas import ConfidenceBreakdown, MeasurementSchema, SourceType
@@ -17,13 +17,13 @@ class SourceReliabilityWeights:
     # members that exist.
     WEIGHTS: dict[SourceType, float] = {}
 
-    @staticmethod
-    def _register(weight: float, *member_names: str) -> None:
+    @classmethod
+    def _register(cls, weight: float, *member_names: str) -> None:
         """Register a weight for the first SourceType member that exists."""
         for name in member_names:
             member = getattr(SourceType, name, None)
             if member is not None:
-                SourceReliabilityWeights.WEIGHTS[cast(SourceType, member)] = weight
+                cls.WEIGHTS[cast(SourceType, member)] = weight
                 return
 
     @classmethod
@@ -32,7 +32,6 @@ class SourceReliabilityWeights:
         return cls.WEIGHTS.get(source, 0.40)
 
 
-# Populate weights after class definition (avoids NameError during class body exec)
 SourceReliabilityWeights._register(0.95, "anatel", "ANATEL")
 SourceReliabilityWeights._register(0.90, "ibge", "IBGE")
 SourceReliabilityWeights._register(0.75, "speedtest", "SPEEDTEST")
@@ -84,7 +83,7 @@ class ConfidenceCalculator:
             Tuple of (overall_score, breakdown)
         """
         if current_time is None:
-            current_time = datetime.now(UTC)
+            current_time = datetime.now(timezone.utc)
 
         # Calculate component scores
         recency_score = cls._calculate_recency_score(measurement.timestamp_utc, current_time)
@@ -117,9 +116,9 @@ class ConfidenceCalculator:
         """
         # Ensure both timestamps are timezone-aware
         if timestamp.tzinfo is None:
-            timestamp = timestamp.replace(tzinfo=UTC)
+            timestamp = timestamp.replace(tzinfo=timezone.utc)
         if current_time.tzinfo is None:
-            current_time = current_time.replace(tzinfo=UTC)
+            current_time = current_time.replace(tzinfo=timezone.utc)
 
         age_days = (current_time - timestamp).total_seconds() / 86400
 
