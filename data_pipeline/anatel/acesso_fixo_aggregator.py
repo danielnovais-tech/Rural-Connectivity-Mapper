@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import json
 from dataclasses import dataclass
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
@@ -71,12 +71,12 @@ def aggregate_acesso_fixo(
     group_by_technology: bool = False,
     strict: bool = False,
 ) -> AcessoFixoAggregateResult:
-    started_at = datetime.now(timezone.utc)
+    started_at = datetime.now(UTC)
 
     if df.empty:
         report = {
             "started_at": started_at.isoformat(),
-            "ended_at": datetime.now(timezone.utc).isoformat(),
+            "ended_at": datetime.now(UTC).isoformat(),
             "input_rows": 0,
             "output_rows_summary": 0,
             "output_rows_by_velocidade": 0,
@@ -152,7 +152,7 @@ def aggregate_acesso_fixo(
     else:
         by_tec_vel = None
 
-    ended_at = datetime.now(timezone.utc)
+    ended_at = datetime.now(UTC)
     report = {
         "started_at": started_at.isoformat(),
         "ended_at": ended_at.isoformat(),
@@ -186,7 +186,7 @@ def write_acesso_fixo_outputs(
     output_dir = Path(output_dir)
     output_dir.mkdir(parents=True, exist_ok=True)
 
-    ts = datetime.now(timezone.utc).strftime("%Y%m%d_%H%M%S")
+    ts = datetime.now(UTC).strftime("%Y%m%d_%H%M%S")
 
     written: dict[str, str] = {}
 

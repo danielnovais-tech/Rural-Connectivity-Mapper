@@ -1,6 +1,6 @@
 """Confidence score calculation for measurements."""
 
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from typing import cast
 
 from src.schemas import ConfidenceBreakdown, MeasurementSchema, SourceType
@@ -83,7 +83,7 @@ class ConfidenceCalculator:
             Tuple of (overall_score, breakdown)
         """
         if current_time is None:
-            current_time = datetime.now(timezone.utc)
+            current_time = datetime.now(UTC)
 
         # Calculate component scores
         recency_score = cls._calculate_recency_score(measurement.timestamp_utc, current_time)
@@ -116,9 +116,9 @@ class ConfidenceCalculator:
         """
         # Ensure both timestamps are timezone-aware
         if timestamp.tzinfo is None:
-            timestamp = timestamp.replace(tzinfo=timezone.utc)
+            timestamp = timestamp.replace(tzinfo=UTC)
         if current_time.tzinfo is None:
-            current_time = current_time.replace(tzinfo=timezone.utc)
+            current_time = current_time.replace(tzinfo=UTC)
 
         age_days = (current_time - timestamp).total_seconds() / 86400
 

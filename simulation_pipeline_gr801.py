@@ -182,11 +182,6 @@ def log_state(metrics: dict[str, Any]) -> None:
     )
 
 
-
-def safety_violation_detected(state: SimulationState) -> bool:
-    """Check for safety violations (e.g., too many errors)."""
-    # If errors exceed a threshold, trigger a shutdown.
-    error_threshold = 1000
 def safety_violation_detected(state: SimulationState, error_threshold: int = 1000) -> bool:
     """Check for safety violations (e.g., too many errors).
     
@@ -277,13 +272,6 @@ if __name__ == "__main__":
         "upset_rate": 1e-4,
         "task": "image_classification",
         "input_data": np.random.rand(100, 100),
-        'num_cores': 4,
-        'memory_size': 1024 * 1024,
-        'accelerator': True,
-        'particle_flux': 5.0,  # High radiation environment
-        'upset_rate': 1e-4,
-        'task': 'image_classification',
-        'input_data': np.random.rand(100, 100),
     }
 
     dt = 0.1  # 0.1 second per time step

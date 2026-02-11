@@ -13,7 +13,7 @@ from __future__ import annotations
 import argparse
 import json
 import sys
-from datetime import datetime
+from datetime import UTC, datetime
 from pathlib import Path
 
 # Add repo root to path
@@ -99,9 +99,8 @@ def main() -> int:
     steps = int(args.steps or preset_steps)
     dt = float(args.dt or preset_dt)
 
-    from datetime import timezone
 
-    run_id = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ")
+    run_id = datetime.now(UTC).strftime("%Y%m%dT%H%M%SZ")
     out_dir = Path(args.output_dir) / f"run_{run_id}_{args.preset}"
     out_dir.mkdir(parents=True, exist_ok=True)
 

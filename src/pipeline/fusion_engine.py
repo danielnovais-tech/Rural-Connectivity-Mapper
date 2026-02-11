@@ -9,7 +9,7 @@ This module is responsible for:
 
 import json
 import logging
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 
 try:
@@ -161,7 +161,7 @@ class FusionEngine:
             # Add fusion metadata
             if "fusion_metadata" not in measurement.metadata:
                 measurement.metadata["fusion_metadata"] = {
-                    "unified_at": datetime.now(timezone.utc).isoformat(),
+                    "unified_at": datetime.now(UTC).isoformat(),
                     "source": source,
                 }
 

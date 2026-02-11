@@ -1,7 +1,7 @@
 """Silver layer: normalized, validated, and deduplicated data."""
 
 import json
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 
 import h3
@@ -154,12 +154,12 @@ class SilverLayer:
         Returns:
             Path to saved file
         """
-        timestamp = datetime.now(timezone.utc).strftime("%Y%m%d_%H%M%S")
+        timestamp = datetime.now(UTC).strftime("%Y%m%d_%H%M%S")
         filename = f"silver_{timestamp}.json"
         filepath = self.silver_dir / filename
 
         data = {
-            "processed_timestamp": datetime.now(timezone.utc).isoformat(),
+            "processed_timestamp": datetime.now(UTC).isoformat(),
             "count": len(measurements),
             "measurements": [m.to_dict() for m in measurements],
         }

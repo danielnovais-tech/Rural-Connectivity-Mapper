@@ -1,7 +1,7 @@
 """Bronze layer: raw data ingestion and immutable storage."""
 
 import json
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 
 from src.schemas import MeasurementSchema
@@ -41,14 +41,14 @@ class BronzeLayer:
         source_dir.mkdir(parents=True, exist_ok=True)
 
         # Create filename with timestamp
-        timestamp = datetime.now(timezone.utc).strftime("%Y%m%d_%H%M%S")
+        timestamp = datetime.now(UTC).strftime("%Y%m%d_%H%M%S")
         filename = f"{source.source_name}_{timestamp}.json"
         filepath = source_dir / filename
 
         # Convert measurements to dictionaries
         data = {
             "source": source.source_name,
-            "ingestion_timestamp": datetime.now(timezone.utc).isoformat(),
+            "ingestion_timestamp": datetime.now(UTC).isoformat(),
             "count": len(measurements),
             "measurements": [m.to_dict() for m in measurements],
         }

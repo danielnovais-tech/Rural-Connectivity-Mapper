@@ -1,6 +1,6 @@
 """Unit tests for quality and confidence scoring."""
 
-from datetime import datetime, timedelta, timezone
+from datetime import UTC, datetime, timedelta
 from typing import Any
 
 from src.quality import ConfidenceCalculator, SourceReliabilityWeights
@@ -50,7 +50,7 @@ class TestConfidenceCalculator:
         metadata: dict[str, Any] | None = None,
     ) -> MeasurementSchema:
         """Helper to create test measurements."""
-        timestamp = datetime.now(timezone.utc) - timedelta(days=days_old)
+        timestamp = datetime.now(UTC) - timedelta(days=days_old)
 
         return MeasurementSchema(
             id=f"test_{days_old}",
@@ -212,7 +212,7 @@ class TestConfidenceCalculator:
 
     def test_future_timestamp_low_recency(self):
         """Future timestamps should get low recency score."""
-        future_time = datetime.now(timezone.utc) + timedelta(days=10)
+        future_time = datetime.now(UTC) + timedelta(days=10)
         measurement = MeasurementSchema(
             id="future_test",
             lat=-15.7801,
@@ -244,7 +244,7 @@ class TestConfidenceBreakdown:
             id="test",
             lat=-15.7801,
             lon=-47.9292,
-            timestamp_utc=datetime.now(timezone.utc),
+            timestamp_utc=datetime.now(UTC),
             download_mbps=100.0,
             upload_mbps=20.0,
             latency_ms=25.0,

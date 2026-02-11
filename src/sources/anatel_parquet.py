@@ -21,8 +21,9 @@ import json
 import logging
 from collections.abc import Iterable
 from dataclasses import dataclass
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from enum import Enum
+
 try:
     from enum import StrEnum
 except ImportError:  # Python < 3.11
@@ -124,7 +125,7 @@ class AnatelParquetSource(DataSource):
 
         payload = {
             "processed_hashes": sorted(self._processed_hashes),
-            "last_updated": datetime.now(timezone.utc).isoformat(),
+            "last_updated": datetime.now(UTC).isoformat(),
         }
         log_path.write_text(json.dumps(payload, ensure_ascii=False, indent=2), encoding="utf-8")
 
@@ -191,7 +192,7 @@ class AnatelParquetSource(DataSource):
         for key in ("_processamento_data", "timestamp", "timestamp_utc", "data", "data_instalacao"):
             if key in row and row[key] is not None and not (isinstance(row[key], float) and pd.isna(row[key])):
                 return MeasurementSchema.parse_timestamp(row[key])
-        return datetime.now(timezone.utc)
+        return datetime.now(UTC)
 
     def _map_backhaul_row(
         self,
