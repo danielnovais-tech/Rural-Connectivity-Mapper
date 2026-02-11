@@ -17,29 +17,32 @@ class SourceReliabilityWeights:
     # members that exist.
     WEIGHTS: dict[SourceType, float] = {}
 
-    @staticmethod
-    def _register(weight: float, *member_names: str) -> None:
+    def _register(
+        weight: float,
+        *member_names: str,
+        _weights: dict[SourceType, float] = WEIGHTS,
+    ) -> None:
         """Register a weight for the first SourceType member that exists."""
         for name in member_names:
             member = getattr(SourceType, name, None)
             if member is not None:
-                SourceReliabilityWeights.WEIGHTS[cast(SourceType, member)] = weight
+                _weights[cast(SourceType, member)] = weight
                 return
+
+    _register(0.95, "anatel", "ANATEL")
+    _register(0.90, "ibge", "IBGE")
+    _register(0.75, "speedtest", "SPEEDTEST")
+    _register(0.60, "crowdsource", "CROWDSOURCE")
+    _register(0.50, "manual", "MANUAL")
+    _register(0.40, "other", "OTHER")
+    _register(0.85, "starlink", "STARLINK")
+
+    _register = staticmethod(_register)
 
     @classmethod
     def get_weight(cls, source: SourceType) -> float:
         """Get reliability weight for a source type."""
         return cls.WEIGHTS.get(source, 0.40)
-
-
-# Populate weights after class definition (avoids NameError during class body exec)
-SourceReliabilityWeights._register(0.95, "anatel", "ANATEL")
-SourceReliabilityWeights._register(0.90, "ibge", "IBGE")
-SourceReliabilityWeights._register(0.75, "speedtest", "SPEEDTEST")
-SourceReliabilityWeights._register(0.60, "crowdsource", "CROWDSOURCE")
-SourceReliabilityWeights._register(0.50, "manual", "MANUAL")
-SourceReliabilityWeights._register(0.40, "other", "OTHER")
-SourceReliabilityWeights._register(0.85, "starlink", "STARLINK")
 
 
 class ConfidenceCalculator:
