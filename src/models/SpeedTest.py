@@ -70,7 +70,14 @@ class SpeedTest:
 
         # Reduce score based on obstruction (for satellite connections)
         # Obstruction penalty: configurable via OBSTRUCTION_WEIGHT
-        obstruction_penalty = self.obstruction * self.OBSTRUCTION_WEIGHT
+        # Some upstream sources provide obstruction as a fraction (0.0-1.0)
+        # while others provide a percent (0.0-100.0). Treat values in (0, 1]
+        # as a fraction and convert to percent.
+        obstruction = float(self.obstruction or 0.0)
+        if 0.0 < obstruction <= 1.0:
+            obstruction *= 100.0
+
+        obstruction_penalty = obstruction * self.OBSTRUCTION_WEIGHT
         score -= obstruction_penalty
 
         # Ensure score is between 0 and 100

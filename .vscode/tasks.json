@@ -12,6 +12,26 @@
       "problemMatcher": []
     },
     {
+      "label": "Bootstrap: Create .venv310 (py -3.10)",
+      "type": "shell",
+      "command": "py",
+      "args": ["-3.10", "-m", "venv", ".venv310"],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "Setup: Install CI deps (.venv310)",
+      "type": "process",
+      "command": ".\\.venv310\\Scripts\\python.exe",
+      "args": ["-m", "pip", "install", "-U", "pip", "-r", "requirements-ci.txt"],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "problemMatcher": []
+    },
+    {
       "label": "Setup: Install deps + quick checks",
       "type": "process",
       "command": ".\\.venv\\Scripts\\python.exe",
@@ -35,6 +55,32 @@
         "panel": "shared",
         "clear": true
       }
+    },
+    {
+      "label": "Pytest (py310, no capture)",
+      "type": "process",
+      "command": ".\\.venv310\\Scripts\\python.exe",
+      "args": [
+        "-m",
+        "pytest",
+        "tests",
+        "-v",
+        "--rootdir",
+        "${workspaceFolder}",
+        "-c",
+        "${workspaceFolder}/pytest.ini",
+        "--capture=no"
+      ],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "group": "test",
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared",
+        "clear": true
+      },
+      "problemMatcher": []
     },
     {
       "label": "Pytest (repo, no capture)",
