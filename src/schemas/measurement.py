@@ -1,7 +1,13 @@
 """Canonical schema for connectivity measurements."""
 
 from datetime import datetime
-from enum import StrEnum
+from enum import Enum
+
+try:
+    from enum import StrEnum
+except ImportError:  # Python < 3.11
+    class StrEnum(str, Enum):
+        pass
 from typing import Any
 
 from pydantic import BaseModel, ConfigDict, Field, field_validator

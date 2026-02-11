@@ -13,7 +13,7 @@ import hashlib
 import json
 import logging
 import uuid
-from datetime import UTC, datetime
+from datetime import datetime, timezone
 from pathlib import Path
 
 from src.schemas import MeasurementSchema, SourceType, TechnologyType
@@ -92,7 +92,7 @@ class ManualCSVSource(DataSource):
 
     def _save_processed_files(self) -> None:
         """Save the set of processed file hashes to disk."""
-        data = {"processed_hashes": list(self._processed_files), "last_updated": datetime.now(UTC).isoformat()}
+        data = {"processed_hashes": list(self._processed_files), "last_updated": datetime.now(timezone.utc).isoformat()}
 
         try:
             with open(self.processed_files_log, "w") as f:
@@ -190,7 +190,7 @@ class ManualCSVSource(DataSource):
                             timestamp = datetime.strptime(timestamp_str, fmt)
                             # Make timezone-aware if not already
                             if timestamp.tzinfo is None:
-                                timestamp = timestamp.replace(tzinfo=UTC)
+                                timestamp = timestamp.replace(tzinfo=timezone.utc)
                             break
                         except ValueError:
                             continue
@@ -198,9 +198,9 @@ class ManualCSVSource(DataSource):
                         logger.warning(
                             f"Row {row_num}: Could not parse timestamp '{timestamp_str}', using current time"
                         )
-                        timestamp = datetime.now(UTC)
+                        timestamp = datetime.now(timezone.utc)
             else:
-                timestamp = datetime.now(UTC)
+                timestamp = datetime.now(timezone.utc)
 
             # Optional fields - handle '0' and '0.0' as valid values
             download_str = row_lower.get("download", row_lower.get("download_mbps", "")).strip()

@@ -1,6 +1,6 @@
 """Confidence score calculation for measurements."""
 
-from datetime import UTC, datetime
+from datetime import datetime, timezone
 from typing import cast
 
 from src.schemas import ConfidenceBreakdown, MeasurementSchema, SourceType
@@ -17,32 +17,28 @@ class SourceReliabilityWeights:
     # members that exist.
     WEIGHTS: dict[SourceType, float] = {}
 
-    def _register(
-        weight: float,
-        *member_names: str,
-        _weights: dict[SourceType, float] = WEIGHTS,
-    ) -> None:
+    @classmethod
+    def _register(cls, weight: float, *member_names: str) -> None:
         """Register a weight for the first SourceType member that exists."""
         for name in member_names:
             member = getattr(SourceType, name, None)
             if member is not None:
-                _weights[cast(SourceType, member)] = weight
+                cls.WEIGHTS[cast(SourceType, member)] = weight
                 return
-
-    _register(0.95, "anatel", "ANATEL")
-    _register(0.90, "ibge", "IBGE")
-    _register(0.75, "speedtest", "SPEEDTEST")
-    _register(0.60, "crowdsource", "CROWDSOURCE")
-    _register(0.50, "manual", "MANUAL")
-    _register(0.40, "other", "OTHER")
-    _register(0.85, "starlink", "STARLINK")
-
-    _register = staticmethod(_register)
 
     @classmethod
     def get_weight(cls, source: SourceType) -> float:
         """Get reliability weight for a source type."""
         return cls.WEIGHTS.get(source, 0.40)
+
+
+SourceReliabilityWeights._register(0.95, "anatel", "ANATEL")
+SourceReliabilityWeights._register(0.90, "ibge", "IBGE")
+SourceReliabilityWeights._register(0.75, "speedtest", "SPEEDTEST")
+SourceReliabilityWeights._register(0.60, "crowdsource", "CROWDSOURCE")
+SourceReliabilityWeights._register(0.50, "manual", "MANUAL")
+SourceReliabilityWeights._register(0.40, "other", "OTHER")
+SourceReliabilityWeights._register(0.85, "starlink", "STARLINK")
 
 
 class ConfidenceCalculator:
@@ -87,7 +83,7 @@ class ConfidenceCalculator:
             Tuple of (overall_score, breakdown)
         """
         if current_time is None:
-            current_time = datetime.now(UTC)
+            current_time = datetime.now(timezone.utc)
 
         # Calculate component scores
         recency_score = cls._calculate_recency_score(measurement.timestamp_utc, current_time)
@@ -120,9 +116,9 @@ class ConfidenceCalculator:
         """
         # Ensure both timestamps are timezone-aware
         if timestamp.tzinfo is None:
-            timestamp = timestamp.replace(tzinfo=UTC)
+            timestamp = timestamp.replace(tzinfo=timezone.utc)
         if current_time.tzinfo is None:
-            current_time = current_time.replace(tzinfo=UTC)
+            current_time = current_time.replace(tzinfo=timezone.utc)
 
         age_days = (current_time - timestamp).total_seconds() / 86400
 
