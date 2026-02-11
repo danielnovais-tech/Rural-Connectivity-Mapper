@@ -23,6 +23,7 @@ Flask-CORS>=4.0.0
 ## ML / numeric (optional in app; some tests skip if unavailable)
 # numpy is widely available and used indirectly by pandas
 numpy>=1.24.0
+scikit-learn>=1.3.0,<2
 
 ## Utilities
 speedtest-cli>=2.1.3
