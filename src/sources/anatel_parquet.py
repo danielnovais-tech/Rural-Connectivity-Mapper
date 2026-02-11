@@ -23,12 +23,6 @@ from collections.abc import Iterable
 from dataclasses import dataclass
 from datetime import UTC, datetime
 from enum import Enum
-
-try:
-    from enum import StrEnum
-except ImportError:  # Python < 3.11
-    class StrEnum(str, Enum):
-        pass
 from pathlib import Path
 from typing import Any
 
@@ -39,6 +33,10 @@ from src.schemas import MeasurementSchema, SourceType, TechnologyType
 from .base import DataSource
 
 logger = logging.getLogger(__name__)
+
+
+class StrEnum(str, Enum):
+    pass
 
 
 class AnatelParquetMode(StrEnum):
