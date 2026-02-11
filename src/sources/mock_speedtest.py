@@ -2,7 +2,7 @@
 
 import random
 import uuid
-from datetime import UTC, datetime, timedelta
+from datetime import datetime, timedelta, timezone
 
 from src.schemas import ConfidenceBreakdown, MeasurementSchema, SourceType, TechnologyType
 
@@ -51,7 +51,7 @@ class MockSpeedtestSource(DataSource):
             # Speedtest data is typically fresher
             days_ago = random.randint(0, 30)
             hours_ago = random.randint(0, 23)
-            timestamp = datetime.now(UTC) - timedelta(days=days_ago, hours=hours_ago)
+            timestamp = datetime.now(timezone.utc) - timedelta(days=days_ago, hours=hours_ago)
 
             # Generate realistic speed measurements
             # Speedtest platform typically has better connection types
