@@ -38,7 +38,9 @@ jobs:
           import pathlib
           import sys
 
-          markers = ("<<<<<<<", "=======", ">>>>>>>")
+          # Only flag real git conflict marker lines.
+          # In particular, don't treat long doc separators like "=====" as conflicts.
+          START_MARKERS = ("<<<<<<<", ">>>>>>>", "|||||||")
           matches: list[tuple[str, int, str]] = []
 
           allowed_suffixes = {".py", ".yml", ".yaml", ".md"}
@@ -66,8 +68,9 @@ jobs:
                   continue
               for i, line in enumerate(text, start=1):
                   stripped = line.lstrip()
-                  if stripped.startswith(markers):
-                      matches.append((str(path), i, stripped.strip()))
+                  cleaned = stripped.strip()
+                  if cleaned.startswith(START_MARKERS) or cleaned == "=======":
+                      matches.append((str(path), i, cleaned))
 
           if matches:
               print("Found git merge conflict markers in tracked sources:")
