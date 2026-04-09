@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="{{ lang }}">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#1a6b3c">
+<meta name="description" content="{{ t('hero_sub') }}">
+<link rel="manifest" href="/manifest.json">
+<title>{{ t('site_title') }}</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--c:#1a6b3c;--bg:#f8f9fa;--card:#fff;--txt:#222;--mute:#666;--border:#ddd;--ok:#16a34a;--warn:#d97706;--err:#dc2626;--info:#2563eb}
+body{font:16px/1.5 -apple-system,system-ui,sans-serif;background:var(--bg);color:var(--txt)}
+a{color:var(--c);text-decoration:none}
+a:hover{text-decoration:underline}
+nav{background:var(--c);color:#fff;padding:.5rem 1rem;display:flex;align-items:center;flex-wrap:wrap;gap:.5rem}
+nav .brand{font-weight:700;font-size:1.1rem;margin-right:auto}
+nav a{color:#fff;padding:.25rem .5rem;border-radius:4px;font-size:.95rem}
+nav a:hover,nav a.active{background:rgba(255,255,255,.2);text-decoration:none}
+.wrap{max-width:960px;margin:0 auto;padding:.75rem}
+.hero{text-align:center;padding:1.5rem .5rem;border-bottom:1px solid var(--border)}
+.hero h1{font-size:1.5rem;color:var(--c)}
+.hero p{color:var(--mute);font-size:.95rem;margin-top:.25rem}
+.grid{display:grid;gap:.75rem;margin:.75rem 0}
+.g2{grid-template-columns:repeat(auto-fit,minmax(140px,1fr))}
+.g3{grid-template-columns:repeat(auto-fit,minmax(200px,1fr))}
+.card{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:1rem}
+.card h2{font-size:1.05rem;color:var(--c);margin-bottom:.5rem}
+.kpi{text-align:center}
+.kpi .v{font-size:1.8rem;font-weight:700;color:var(--c)}
+.kpi .l{font-size:.8rem;text-transform:uppercase;color:var(--mute);letter-spacing:.5px}
+table{width:100%;border-collapse:collapse;font-size:.9rem}
+th{text-align:left;background:var(--c);color:#fff;padding:.4rem .6rem;font-weight:600}
+td{padding:.4rem .6rem;border-bottom:1px solid var(--border)}
+tr:nth-child(even){background:#f3f4f6}
+.badge{display:inline-block;padding:2px 6px;border-radius:4px;font-size:.8rem;font-weight:600}
+.badge-ok{background:#dcfce7;color:var(--ok)}
+.badge-warn{background:#fef3c7;color:var(--warn)}
+.badge-err{background:#fee2e2;color:var(--err)}
+.badge-info{background:#dbeafe;color:var(--info)}
+form .field{margin-bottom:.75rem}
+label{display:block;font-weight:600;font-size:.9rem;margin-bottom:.2rem}
+input,select{width:100%;padding:.5rem;border:1px solid var(--border);border-radius:6px;font:inherit}
+input:focus,select:focus{outline:2px solid var(--c);border-color:var(--c)}
+.btn{display:inline-block;padding:.5rem 1.2rem;background:var(--c);color:#fff;border:none;border-radius:6px;font:inherit;cursor:pointer;font-weight:600;text-align:center}
+.btn:hover{opacity:.9;text-decoration:none}
+.btn-outline{background:transparent;color:var(--c);border:2px solid var(--c)}
+.msg{padding:.5rem .75rem;border-radius:6px;margin:.5rem 0;font-size:.9rem}
+.msg-ok{background:#dcfce7;color:#166534}
+.msg-err{background:#fee2e2;color:#991b1b}
+footer{text-align:center;padding:1rem;color:var(--mute);font-size:.8rem;border-top:1px solid var(--border);margin-top:1.5rem}
+.sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0)}
+.insights li{padding:.4rem 0;border-bottom:1px solid var(--border)}
+.insights li:last-child{border-bottom:none}
+#offline-banner{display:none;background:#fef3c7;color:#92400e;text-align:center;padding:.3rem;font-size:.85rem}
+#map-frame{width:100%;height:400px;border:1px solid var(--border);border-radius:6px}
+@media(max-width:600px){
+  .hero h1{font-size:1.2rem}
+  .kpi .v{font-size:1.4rem}
+  table{font-size:.8rem}
+  th,td{padding:.3rem}
+}
+</style>
+</head>
+<body>
+<div id="offline-banner">{{ t('offline_banner') }}</div>
+<nav aria-label="Main">
+  <span class="brand">{{ t('site_title') }}</span>
+  <a href="/lite/?lang={{ lang }}" {% if page=='dashboard' %}class="active"{% endif %}>{{ t('nav_dashboard') }}</a>
+  <a href="/lite/submit?lang={{ lang }}" {% if page=='submit' %}class="active"{% endif %}>{{ t('nav_submit') }}</a>
+  <a href="/lite/map?lang={{ lang }}" {% if page=='map' %}class="active"{% endif %}>{{ t('nav_map') }}</a>
+  <a href="?lang={{ 'pt' if lang=='en' else 'en' }}">{{ t('nav_language') }}</a>
+</nav>
+
+{% block content %}{% endblock %}
+
+<footer>{{ t('footer_text') }}</footer>
+
+<script>
+if('serviceWorker' in navigator){navigator.serviceWorker.register('/sw.js').catch(function(){})}
+window.addEventListener('online',function(){document.getElementById('offline-banner').style.display='none'});
+window.addEventListener('offline',function(){document.getElementById('offline-banner').style.display='block'});
+if(!navigator.onLine){document.getElementById('offline-banner').style.display='block'}
+</script>
+</body>
+</html>

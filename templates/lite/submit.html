@@ -1,0 +1,76 @@
+{% extends "lite/base.html" %}
+{% block content %}
+<div class="wrap">
+  <div class="hero">
+    <h1>{{ t('submit_heading') }}</h1>
+    <p>{{ t('submit_sub') }}</p>
+  </div>
+
+  {% if msg_ok %}
+  <div class="msg msg-ok" role="status">{{ msg_ok }}</div>
+  {% endif %}
+  {% if msg_err %}
+  <div class="msg msg-err" role="alert">{{ msg_err }}</div>
+  {% endif %}
+
+  <div class="card" style="max-width:480px;margin:1rem auto">
+    <noscript><p class="msg msg-ok" style="margin-bottom:.75rem">{{ t('help_speedtest') }}</p></noscript>
+
+    <button type="button" class="btn btn-outline" style="width:100%;margin-bottom:1rem" onclick="getLocation()">
+      {{ t('btn_locate') }}
+    </button>
+    <div id="geo-msg" class="msg" style="display:none" role="status"></div>
+
+    <form method="post" action="/lite/submit?lang={{ lang }}">
+      <div class="field">
+        <label for="latitude">{{ t('field_lat') }} *</label>
+        <input id="latitude" name="latitude" type="number" step="0.000001" required
+               value="{{ form.latitude|default('') }}" placeholder="-15.7801">
+      </div>
+      <div class="field">
+        <label for="longitude">{{ t('field_lon') }} *</label>
+        <input id="longitude" name="longitude" type="number" step="0.000001" required
+               value="{{ form.longitude|default('') }}" placeholder="-47.9292">
+      </div>
+      <div class="field">
+        <label for="provider">{{ t('field_provider') }} *</label>
+        <select id="provider" name="provider" required>
+          <option value="">{{ t('select_provider') }}</option>
+          {% for p in providers %}
+          <option value="{{ p }}" {% if form.provider == p %}selected{% endif %}>{{ p }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="field">
+        <label for="download">{{ t('field_download') }} *</label>
+        <input id="download" name="download" type="number" step="0.1" min="0" required
+               value="{{ form.download|default('') }}">
+      </div>
+      <div class="field">
+        <label for="upload">{{ t('field_upload') }} *</label>
+        <input id="upload" name="upload" type="number" step="0.1" min="0" required
+               value="{{ form.upload|default('') }}">
+      </div>
+      <div class="field">
+        <label for="latency">{{ t('field_latency') }} *</label>
+        <input id="latency" name="latency" type="number" step="0.1" min="0" required
+               value="{{ form.latency|default('') }}">
+      </div>
+      <button type="submit" class="btn" style="width:100%">{{ t('btn_submit') }}</button>
+    </form>
+  </div>
+</div>
+
+<script>
+function getLocation(){
+  var m=document.getElementById('geo-msg');
+  if(!navigator.geolocation){m.textContent='{{ t("msg_no_geo") }}';m.className='msg msg-err';m.style.display='block';return}
+  m.textContent='{{ t("msg_locating") }}';m.className='msg';m.style.display='block';
+  navigator.geolocation.getCurrentPosition(function(p){
+    document.getElementById('latitude').value=p.coords.latitude.toFixed(6);
+    document.getElementById('longitude').value=p.coords.longitude.toFixed(6);
+    m.style.display='none';
+  },function(){m.textContent='{{ t("msg_error") }}';m.className='msg msg-err';m.style.display='block'},{timeout:15000})
+}
+</script>
+{% endblock %}

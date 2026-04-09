@@ -1,5 +1,6 @@
 """Data pipeline orchestration for bronze/silver/gold layers."""
 
+from .audit import AuditEntry, PipelineAuditLog
 from .bronze import BronzeLayer
 from .fusion_engine import FusionEngine
 from .gold import GoldLayer
@@ -12,4 +13,6 @@ __all__ = [
     "GoldLayer",
     "PipelineOrchestrator",
     "FusionEngine",
+    "PipelineAuditLog",
+    "AuditEntry",
 ]

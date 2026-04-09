@@ -1,0 +1,128 @@
+{% extends "lite/base.html" %}
+{% block content %}
+<div class="wrap">
+  <div class="hero">
+    <h1>{{ t('hero_heading') }}</h1>
+    <p>{{ t('hero_sub') }}</p>
+  </div>
+
+  {% if msg %}
+  <div class="msg msg-ok" role="status">{{ msg }}</div>
+  {% endif %}
+
+  <!-- KPI cards -->
+  <section class="grid g2" aria-label="{{ t('stat_points') }}">
+    <div class="card kpi">
+      <div class="v">{{ stats.total_points }}</div>
+      <div class="l">{{ t('stat_points') }}</div>
+    </div>
+    <div class="card kpi">
+      <div class="v">{{ stats.avg_download }}<small> Mbps</small></div>
+      <div class="l">{{ t('stat_download') }}</div>
+    </div>
+    <div class="card kpi">
+      <div class="v">{{ stats.avg_upload }}<small> Mbps</small></div>
+      <div class="l">{{ t('stat_upload') }}</div>
+    </div>
+    <div class="card kpi">
+      <div class="v">{{ stats.avg_latency }}<small> ms</small></div>
+      <div class="l">{{ t('stat_latency') }}</div>
+    </div>
+    <div class="card kpi">
+      <div class="v">{{ stats.avg_quality_score }}</div>
+      <div class="l">{{ t('stat_quality') }}</div>
+    </div>
+  </section>
+
+  <div class="grid g3">
+    <!-- Providers -->
+    <div class="card">
+      <h2>{{ t('section_providers') }}</h2>
+      {% if stats.providers %}
+      <table>
+        <thead><tr><th>{{ t('col_provider') }}</th><th>{{ t('col_count') }}</th></tr></thead>
+        <tbody>
+        {% for name, count in stats.providers.items() %}
+          <tr><td>{{ name }}</td><td>{{ count }}</td></tr>
+        {% endfor %}
+        </tbody>
+      </table>
+      {% else %}
+      <p>{{ t('no_data') }}</p>
+      {% endif %}
+    </div>
+
+    <!-- Ratings -->
+    <div class="card">
+      <h2>{{ t('section_ratings') }}</h2>
+      {% if stats.ratings %}
+      <table>
+        <thead><tr><th>{{ t('rating') }}</th><th>{{ t('col_count') }}</th></tr></thead>
+        <tbody>
+        {% for rating, count in stats.ratings.items() %}
+          <tr>
+            <td><span class="badge {% if rating|lower == 'excellent' %}badge-ok{% elif rating|lower in ('good','bom') %}badge-info{% elif rating|lower in ('fair','razoável') %}badge-warn{% else %}badge-err{% endif %}">{{ rating }}</span></td>
+            <td>{{ count }}</td>
+          </tr>
+        {% endfor %}
+        </tbody>
+      </table>
+      {% else %}
+      <p>{{ t('no_data') }}</p>
+      {% endif %}
+    </div>
+
+    <!-- Insights -->
+    <div class="card">
+      <h2>{{ t('section_insights') }}</h2>
+      {% if insights %}
+      <ul class="insights">
+        {% for insight in insights %}
+        <li>{{ insight }}</li>
+        {% endfor %}
+      </ul>
+      {% else %}
+      <p>{{ t('no_data') }}</p>
+      {% endif %}
+    </div>
+  </div>
+
+  <!-- Recent measurements table -->
+  <div class="card" style="margin-top:.75rem">
+    <h2>{{ t('section_data') }}</h2>
+    {% if data %}
+    <div style="overflow-x:auto">
+    <table>
+      <thead>
+        <tr>
+          <th>{{ t('col_provider') }}</th>
+          <th>{{ t('col_quality') }}</th>
+          <th>{{ t('col_download') }}</th>
+          <th>{{ t('col_upload') }}</th>
+          <th>{{ t('col_latency') }}</th>
+        </tr>
+      </thead>
+      <tbody>
+      {% for p in data[:20] %}
+        <tr>
+          <td>{{ p.provider }}</td>
+          <td><span class="badge {% if p.quality_score.overall_score >= 80 %}badge-ok{% elif p.quality_score.overall_score >= 60 %}badge-info{% elif p.quality_score.overall_score >= 40 %}badge-warn{% else %}badge-err{% endif %}">{{ p.quality_score.overall_score|round(1) }}</span></td>
+          <td>{{ p.speed_test.download|round(1) }} Mbps</td>
+          <td>{{ p.speed_test.upload|round(1) }} Mbps</td>
+          <td>{{ p.speed_test.latency|round(1) }} ms</td>
+        </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+    </div>
+    {% else %}
+    <p>{{ t('no_data') }}</p>
+    {% endif %}
+  </div>
+
+  <div style="text-align:center;margin:1rem 0">
+    <a href="/lite/submit?lang={{ lang }}" class="btn">{{ t('nav_submit') }}</a>
+    <a href="/lite/map?lang={{ lang }}" class="btn btn-outline" style="margin-left:.5rem">{{ t('nav_map') }}</a>
+  </div>
+</div>
+{% endblock %}

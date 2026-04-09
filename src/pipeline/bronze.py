@@ -4,7 +4,7 @@ import json
 from datetime import datetime, timezone
 from pathlib import Path
 
-from src.schemas import MeasurementSchema
+from src.schemas import DataLineage, MeasurementSchema
 from src.sources import DataSource
 
 
@@ -24,31 +24,46 @@ class BronzeLayer:
         self.bronze_dir = Path(bronze_dir)
         self.bronze_dir.mkdir(parents=True, exist_ok=True)
 
-    def ingest(self, source: DataSource) -> Path:
+    def ingest(self, source: DataSource, *, pipeline_run_id: str | None = None) -> Path:
         """Ingest data from a source into bronze layer.
+
+        Every measurement is stamped with lineage metadata before persistence.
 
         Args:
             source: DataSource instance to fetch from
+            pipeline_run_id: Optional run ID to embed in lineage
 
         Returns:
             Path to the created bronze file
         """
         # Fetch data from source
         measurements = source.fetch()
+        now = datetime.now(timezone.utc)
+
+        # Stamp lineage on each measurement
+        for m in measurements:
+            if m.lineage is None:
+                m.lineage = DataLineage()
+            m.lineage.is_synthetic = source.is_synthetic
+            if m.lineage.ingested_at is None:
+                m.lineage.ingested_at = now
+            if pipeline_run_id:
+                m.lineage.pipeline_run_id = pipeline_run_id
 
         # Create source-specific directory
         source_dir = self.bronze_dir / source.source_name
         source_dir.mkdir(parents=True, exist_ok=True)
 
         # Create filename with timestamp
-        timestamp = datetime.now(timezone.utc).strftime("%Y%m%d_%H%M%S")
+        timestamp = now.strftime("%Y%m%d_%H%M%S")
         filename = f"{source.source_name}_{timestamp}.json"
         filepath = source_dir / filename
 
         # Convert measurements to dictionaries
         data = {
             "source": source.source_name,
-            "ingestion_timestamp": datetime.now(timezone.utc).isoformat(),
+            "ingestion_timestamp": now.isoformat(),
+            "is_synthetic": source.is_synthetic,
             "count": len(measurements),
             "measurements": [m.to_dict() for m in measurements],
         }
@@ -57,8 +72,11 @@ class BronzeLayer:
         with open(filepath, "w") as f:
             json.dump(data, f, indent=2, default=str)
 
-        print(f"✓ Ingested {len(measurements)} measurements from {source.source_name}")
+        print(f"✓ Ingested {len(measurements)} measurements from {source.source_name}" +
+              (" [synthetic]" if source.is_synthetic else ""))
         print(f"  → {filepath}")
+
+        return filepath
 
         return filepath
 

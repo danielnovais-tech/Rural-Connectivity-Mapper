@@ -1,0 +1,75 @@
+{% extends "lite/base.html" %}
+{% block content %}
+<div class="wrap">
+  <div class="hero">
+    <h1>{{ t('map_heading') }}</h1>
+    <p>{{ t('map_sub') }}</p>
+  </div>
+
+  <noscript>
+    <div class="msg msg-err">{{ t('map_nojs') }}</div>
+    {% if points|length %}
+    <div class="card">
+      <h3>{{ t('section_recent') }}</h3>
+      <div style="overflow-x:auto">
+        <table>
+          <thead><tr>
+            <th>{{ t('col_lat') }}</th><th>{{ t('col_lon') }}</th>
+            <th>{{ t('col_provider') }}</th><th>{{ t('col_download') }}</th>
+          </tr></thead>
+          <tbody>
+          {% for p in points[:20] %}
+          <tr>
+            <td>{{ "%.4f"|format(p.latitude) }}</td>
+            <td>{{ "%.4f"|format(p.longitude) }}</td>
+            <td>{{ p.provider }}</td>
+            <td>{{ "%.1f"|format(p.download_speed) }}</td>
+          </tr>
+          {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+    {% endif %}
+  </noscript>
+
+  <div id="map-container" style="display:none">
+    <div id="map" style="height:70vh;border-radius:6px;border:1px solid var(--border)"></div>
+  </div>
+
+  <div id="map-placeholder" class="card" style="text-align:center;padding:2rem">
+    <p>{{ t('map_load_prompt') }}</p>
+    <button class="btn" onclick="loadMap()">{{ t('btn_load_map') }}</button>
+    <p style="margin-top:.5rem;font-size:.85rem;color:var(--muted)">{{ t('map_size_warning') }}</p>
+  </div>
+</div>
+
+<script>
+var MAP_POINTS={{ points_json|safe }};
+function loadMap(){
+  var ph=document.getElementById('map-placeholder');ph.innerHTML='<p>{{ t("msg_loading") }}</p>';
+  var lk=document.createElement('link');lk.rel='stylesheet';
+  lk.href='https://unpkg.com/leaflet@1.9.4/dist/leaflet.css';
+  document.head.appendChild(lk);
+  var sc=document.createElement('script');
+  sc.src='https://unpkg.com/leaflet@1.9.4/dist/leaflet.js';
+  sc.onload=initMap;sc.onerror=function(){ph.innerHTML='<p class="msg msg-err">{{ t("msg_error") }}</p>'};
+  document.head.appendChild(sc);
+}
+function initMap(){
+  document.getElementById('map-placeholder').style.display='none';
+  document.getElementById('map-container').style.display='block';
+  var m=L.map('map').setView([-14.2,-51.9],4);
+  L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png',{
+    attribution:'&copy; OpenStreetMap',maxZoom:18
+  }).addTo(m);
+  MAP_POINTS.forEach(function(p){
+    var c=p.download_speed>=25?'#22c55e':p.download_speed>=10?'#f59e0b':'#ef4444';
+    L.circleMarker([p.latitude,p.longitude],{radius:6,fillColor:c,color:'#fff',weight:1,fillOpacity:.85})
+      .bindPopup('<b>'+p.provider+'</b><br>↓ '+p.download_speed.toFixed(1)+' Mbps<br>↑ '+p.upload_speed.toFixed(1)+' Mbps<br>Latency: '+p.latency.toFixed(0)+' ms')
+      .addTo(m);
+  });
+  if(MAP_POINTS.length){var b=MAP_POINTS.map(function(p){return[p.latitude,p.longitude]});m.fitBounds(b,{padding:[30,30]})}
+}
+</script>
+{% endblock %}

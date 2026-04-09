@@ -35,6 +35,7 @@ class SourceReliabilityWeights:
 SourceReliabilityWeights._register(0.95, "anatel", "ANATEL")
 SourceReliabilityWeights._register(0.90, "ibge", "IBGE")
 SourceReliabilityWeights._register(0.75, "speedtest", "SPEEDTEST")
+SourceReliabilityWeights._register(0.80, "ookla", "OOKLA")
 SourceReliabilityWeights._register(0.60, "crowdsource", "CROWDSOURCE")
 SourceReliabilityWeights._register(0.50, "manual", "MANUAL")
 SourceReliabilityWeights._register(0.40, "other", "OTHER")

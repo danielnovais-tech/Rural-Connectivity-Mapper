@@ -4,7 +4,7 @@ import random
 import uuid
 from datetime import datetime, timedelta, timezone
 
-from src.schemas import ConfidenceBreakdown, MeasurementSchema, SourceType, TechnologyType
+from src.schemas import ConfidenceBreakdown, DataLineage, MeasurementSchema, SourceType, TechnologyType
 
 from .base import DataSource
 
@@ -15,6 +15,8 @@ class MockCrowdsourceSource(DataSource):
     Generates realistic sample data that simulates crowdsourced connectivity
     measurements from various rural locations.
     """
+
+    is_synthetic = True
 
     def __init__(self, num_samples: int = 50):
         """Initialize mock crowdsource source.
@@ -138,6 +140,7 @@ class MockCrowdsourceSource(DataSource):
                 country="BR",
                 region=region,
                 h3_index=h3_index,
+                lineage=DataLineage(is_synthetic=True),
                 metadata={
                     "device_type": random.choice(["android", "ios", "web"]),
                     "app_version": "1.0.0",

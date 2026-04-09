@@ -5,12 +5,15 @@ This server provides:
 1. A mobile-friendly web form for submitting speedtest data
 2. An API endpoint for programmatic submissions
 3. A CSV upload endpoint for bulk data import
+4. Real-time persistence to the Bronze layer for pipeline ingestion
 """
 
 import csv
 import io
+import json
 import logging
-from datetime import datetime
+import uuid
+from datetime import datetime, timezone
 from pathlib import Path
 
 from flask import Flask, jsonify, make_response, render_template_string, request, send_file
@@ -24,6 +27,8 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 DATA_FILE = DATA_FILE_PATH
+CROWDSOURCE_BRONZE_DIR = Path(__file__).parent / "data" / "bronze" / "crowdsource"
+CROWDSOURCE_BRONZE_DIR.mkdir(parents=True, exist_ok=True)
 
 # Mobile-friendly HTML form template
 FORM_HTML = """
@@ -266,6 +271,53 @@ FORM_HTML = """
 """
 
 
+def _persist_to_bronze(
+    *,
+    lat: float,
+    lon: float,
+    download_mbps: float,
+    upload_mbps: float,
+    latency_ms: float,
+    provider: str,
+    point_id: str,
+) -> None:
+    """Write a crowdsource submission to the Bronze layer as a JSON file.
+
+    This makes the submission available for the next pipeline run via
+    ``CrowdsourceSource``. Each submission is an immutable JSON file.
+    """
+    now = datetime.now(timezone.utc)
+    record = {
+        "id": point_id,
+        "lat": lat,
+        "lon": lon,
+        "timestamp_utc": now.isoformat(),
+        "download_mbps": download_mbps,
+        "upload_mbps": upload_mbps,
+        "latency_ms": latency_ms,
+        "source": "crowdsource",
+        "provider": provider,
+        "country": "BR",
+        "lineage": {
+            "is_synthetic": False,
+            "ingested_at": now.isoformat(),
+            "source_file": "crowdsource_web_form",
+        },
+        "metadata": {
+            "submitted_via": "web_form",
+            "user_agent": request.headers.get("User-Agent", "unknown"),
+        },
+    }
+    filename = f"submission_{now.strftime('%Y%m%d_%H%M%S')}_{uuid.uuid4().hex[:8]}.json"
+    filepath = CROWDSOURCE_BRONZE_DIR / filename
+    try:
+        with open(filepath, "w", encoding="utf-8") as f:
+            json.dump(record, f, indent=2, ensure_ascii=False)
+        logger.info("Persisted crowdsource submission → %s", filepath)
+    except OSError as exc:
+        logger.error("Failed to persist submission to Bronze: %s", exc)
+
+
 @app.route("/")
 def index():
     """Serve the mobile-friendly submission form."""
@@ -342,6 +394,17 @@ def submit_data():
         existing_data = load_data(DATA_FILE)
         existing_data.append(point.to_dict())
         save_data(DATA_FILE, existing_data)
+
+        # Persist to Bronze layer for pipeline ingestion
+        _persist_to_bronze(
+            lat=latitude,
+            lon=longitude,
+            download_mbps=download,
+            upload_mbps=upload,
+            latency_ms=latency,
+            provider=data["provider"],
+            point_id=point.id,
+        )
 
         logger.info("New data point submitted: %s from provider %s", point.id, point.provider)
 

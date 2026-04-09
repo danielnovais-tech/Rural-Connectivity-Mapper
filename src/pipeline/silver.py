@@ -84,6 +84,8 @@ class SilverLayer:
 
             if dedup_key not in seen:
                 seen.add(dedup_key)
+                if measurement.lineage:
+                    measurement.lineage.transformations.append("silver:dedup")
                 deduplicated.append(measurement)
 
         return deduplicated
@@ -132,11 +134,15 @@ class SilverLayer:
             score, breakdown = ConfidenceCalculator.calculate(measurement)
             measurement.confidence_score = score
             measurement.confidence_breakdown = breakdown
+            if measurement.lineage:
+                measurement.lineage.transformations.append("silver:confidence")
 
             # Add H3 index for geospatial aggregation (resolution 7 ≈ 5km²)
             try:
                 h3_index = h3.latlng_to_cell(measurement.lat, measurement.lon, 7)
                 measurement.h3_index = h3_index
+                if measurement.lineage:
+                    measurement.lineage.transformations.append("silver:h3")
             except Exception:
                 # Invalid coordinates, skip H3
                 pass

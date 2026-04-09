@@ -9,7 +9,14 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
 from src.pipeline import PipelineOrchestrator
-from src.sources import AnatelParquetSource, ManualCSVSource, MockCrowdsourceSource, MockSpeedtestSource
+from src.sources import (
+    AnatelParquetSource,
+    CrowdsourceSource,
+    LiveSpeedtestSource,
+    ManualCSVSource,
+    MockCrowdsourceSource,
+    MockSpeedtestSource,
+)
 
 
 def _parse_csv_list(value: str) -> list[str]:
@@ -19,6 +26,32 @@ def _parse_csv_list(value: str) -> list[str]:
 def main():
     """Run the data pipeline with all available sources."""
     parser = argparse.ArgumentParser(description="Run the Rural Connectivity Mapper data pipeline")
+
+    # ── Mode ────────────────────────────────────────────────────────
+    parser.add_argument(
+        "--mode",
+        choices=["production", "demo"],
+        default="demo",
+        help=(
+            "Pipeline execution mode. 'production' excludes synthetic/mock "
+            "sources and only processes real data. 'demo' includes mock "
+            "sources for testing/demonstration (default: demo)."
+        ),
+    )
+
+    # ── Real-time sources ───────────────────────────────────────────
+    parser.add_argument(
+        "--include-live-speedtest",
+        action="store_true",
+        help="Run a live Ookla speed test and ingest the result",
+    )
+    parser.add_argument(
+        "--include-crowdsource",
+        action="store_true",
+        help="Ingest real crowdsource submissions from data/bronze/crowdsource/",
+    )
+
+    # ── ANATEL ──────────────────────────────────────────────────────
     parser.add_argument(
         "--include-anatel-parquet",
         action="store_true",
@@ -47,8 +80,17 @@ def main():
     )
     args = parser.parse_args()
 
-    # Initialize sources
-    sources = [ManualCSVSource()]  # Process measurement-level CSVs in data/bronze/manual/
+    is_production = args.mode == "production"
+
+    # ── Assemble sources ────────────────────────────────────────────
+    sources = [ManualCSVSource()]  # Always: process measurement-level CSVs in data/bronze/manual/
+
+    # Real data sources
+    if args.include_crowdsource or is_production:
+        sources.append(CrowdsourceSource())
+
+    if args.include_live_speedtest:
+        sources.append(LiveSpeedtestSource())
 
     if args.include_anatel_parquet:
         sources.append(
@@ -60,15 +102,17 @@ def main():
             )
         )
 
-    sources.extend(
-        [
-            MockCrowdsourceSource(num_samples=50),
-            MockSpeedtestSource(num_samples=30),
-        ]
-    )
+    # Demo/mock sources — only in demo mode
+    if not is_production:
+        sources.extend(
+            [
+                MockCrowdsourceSource(num_samples=50),
+                MockSpeedtestSource(num_samples=30),
+            ]
+        )
 
-    # Initialize and run pipeline
-    pipeline = PipelineOrchestrator()
+    # ── Run pipeline ────────────────────────────────────────────────
+    pipeline = PipelineOrchestrator(mode=args.mode)
     pipeline.run(sources)
 
     print("✅ Pipeline execution completed successfully!")
@@ -76,6 +120,7 @@ def main():
     print("  - Bronze (raw): data/bronze/")
     print("  - Silver (enriched): data/silver/")
     print("  - Gold (aggregated): data/gold/")
+    print("  - Audit log: data/audit/pipeline_runs.jsonl")
 
 
 if __name__ == "__main__":

@@ -12,6 +12,9 @@ class DataSource(ABC):
     the fetch() method to retrieve measurements from their respective sources.
     """
 
+    # Subclasses that generate synthetic/demo data should set this to True.
+    is_synthetic: bool = False
+
     def __init__(self, source_name: str):
         """Initialize data source.
 

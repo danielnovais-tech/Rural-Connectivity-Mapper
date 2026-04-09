@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Flask web application for Rural Connectivity Mapper 2026"""
 
+import json
 import logging
 import os
 import tempfile
@@ -9,7 +10,7 @@ from datetime import datetime
 from pathlib import Path
 from time import time
 
-from flask import Flask, jsonify, render_template, request, send_file
+from flask import Flask, jsonify, redirect, render_template, request, send_file, url_for
 from flask_cors import CORS  # type: ignore
 
 from src.models import ConnectivityPoint, SpeedTest
@@ -23,7 +24,14 @@ from src.utils import (
     validate_coordinates,
 )
 from src.utils.analytics import safe_geo, track_event
+from src.utils.i18n_utils import get_translation
 from src.utils.starlink_api import compare_with_competitors
+
+# Known providers for the submit form
+KNOWN_PROVIDERS = [
+    "Starlink", "Vivo", "Claro", "TIM", "Oi", "Brisanet",
+    "Hughes", "Viasat", "Other",
+]
 
 # Initialize Flask app
 app = Flask(__name__)
@@ -400,6 +408,300 @@ def get_recommendation():
             properties={"error_code": "internal_error", "error_message": str(e)},
         )
         return jsonify({"success": False, "error": "Internal server error"}), 500
+
+
+# ── ML / RL API endpoints ───────────────────────────────────────────────────
+
+
+@app.route("/api/v2/ml/analysis", methods=["GET"])
+def ml_analysis():
+    """Run combined ML + RL analysis on current connectivity data.
+
+    Returns coverage-gap forecasts and prescriptive infrastructure recommendations.
+    """
+    try:
+        from src.models.ml_engine import MLEngine
+
+        data = load_data(DATA_PATH)
+        if not data:
+            return jsonify({"success": True, "data": {"message": "No data available for analysis"}}), 200
+
+        engine = MLEngine()
+        report = engine.run(data)
+        return jsonify({"success": True, "data": report.to_dict()})
+    except Exception as e:
+        logger.error("ML analysis error: %s", e)
+        return jsonify({"success": False, "error": str(e)}), 500
+
+
+@app.route("/api/v2/ml/coverage-gaps", methods=["GET"])
+def coverage_gaps():
+    """Forecast coverage gaps — which H3 cells are at risk of quality degradation."""
+    try:
+        from src.models.coverage_gap_model import CoverageGapForecaster, snapshots_from_gold
+
+        data = load_data(DATA_PATH)
+        if not data:
+            return jsonify({"success": True, "data": {"forecasts": []}}), 200
+
+        snapshots = snapshots_from_gold(data)
+        forecaster = CoverageGapForecaster()
+        if len(snapshots) >= 5:
+            forecaster.fit(snapshots)
+        report = forecaster.predict(snapshots)
+        return jsonify({"success": True, "data": report.to_dict()})
+    except Exception as e:
+        logger.error("Coverage gap forecast error: %s", e)
+        return jsonify({"success": False, "error": str(e)}), 500
+
+
+@app.route("/api/v2/ml/recommendations", methods=["GET"])
+def prescriptive_recommendations():
+    """Get prescriptive infrastructure recommendations (RL-based)."""
+    try:
+        from src.models.prescriptive_rl import PrescriptiveAgent, cell_states_from_gold
+
+        data = load_data(DATA_PATH)
+        if not data:
+            return jsonify({"success": True, "data": {"recommendations": []}}), 200
+
+        cell_states = cell_states_from_gold(data)
+        agent = PrescriptiveAgent()
+        if cell_states:
+            agent.train(cell_states)
+        report = agent.recommend(cell_states)
+        return jsonify({"success": True, "data": report.to_dict()})
+    except Exception as e:
+        logger.error("Prescriptive recommendations error: %s", e)
+        return jsonify({"success": False, "error": str(e)}), 500
+
+
+# ── OpenAPI / Open-Data endpoints ───────────────────────────────────────────
+
+
+@app.route("/api/openapi.json", methods=["GET"])
+def openapi_spec():
+    """Serve the OpenAPI 3.1 specification."""
+    from src.api.openapi_spec import OPENAPI_SPEC
+
+    return jsonify(OPENAPI_SPEC)
+
+
+@app.route("/api/docs")
+def swagger_ui():
+    """Render Swagger UI for interactive API exploration."""
+    return render_template("swagger_ui.html")
+
+
+@app.route("/api/v2/export/geojson", methods=["GET"])
+def export_geojson():
+    """Export all connectivity data as GeoJSON (RFC 7946)."""
+    try:
+        from src.api.open_data import to_geojson
+
+        data = load_data(DATA_PATH)
+        geojson = to_geojson(data)
+        response = app.response_class(
+            json.dumps(geojson, ensure_ascii=False),
+            mimetype="application/geo+json",
+        )
+        response.headers["Content-Disposition"] = "attachment; filename=connectivity.geojson"
+        return response
+    except (ValueError, KeyError, OSError) as e:
+        logger.error("GeoJSON export error: %s", e)
+        return jsonify({"success": False, "error": str(e)}), 500
+
+
+@app.route("/api/v2/export/csv", methods=["GET"])
+def export_csv():
+    """Export all connectivity data as CSV."""
+    try:
+        from src.api.open_data import to_csv
+
+        data = load_data(DATA_PATH)
+        csv_str = to_csv(data)
+        response = app.response_class(csv_str, mimetype="text/csv")
+        response.headers["Content-Disposition"] = "attachment; filename=connectivity.csv"
+        return response
+    except (ValueError, KeyError, OSError) as e:
+        logger.error("CSV export error: %s", e)
+        return jsonify({"success": False, "error": str(e)}), 500
+
+
+@app.route("/api/v2/export/ecosystem", methods=["GET"])
+def export_ecosystem():
+    """Export ecosystem integration bundle (Hybrid Simulator + AgriX-Boost)."""
+    try:
+        from src.api.open_data import to_ecosystem_bundle
+
+        data = load_data(DATA_PATH)
+        bundle = to_ecosystem_bundle(data)
+        return jsonify({"success": True, "data": bundle})
+    except (ValueError, KeyError, OSError) as e:
+        logger.error("Ecosystem export error: %s", e)
+        return jsonify({"success": False, "error": str(e)}), 500
+
+
+@app.route("/api/v2/export/measurement-schema", methods=["GET"])
+def export_measurement_schema():
+    """Return the canonical MeasurementSchema as JSON Schema."""
+    try:
+        from src.api.open_data import measurement_json_schema
+
+        schema = measurement_json_schema()
+        response = app.response_class(
+            json.dumps(schema, ensure_ascii=False, indent=2),
+            mimetype="application/schema+json",
+        )
+        return response
+    except Exception as e:
+        logger.error("Schema export error: %s", e)
+        return jsonify({"success": False, "error": str(e)}), 500
+
+
+# ── Lite UI routes (lightweight, works on slow connections) ──────────────
+
+
+def _lite_ctx(lang: str) -> dict:
+    """Build shared template context for lite pages."""
+    return {
+        "t": lambda key, **kw: get_translation(key, language=lang, **kw),
+        "lang": lang,
+    }
+
+
+def _lang() -> str:
+    """Get language from query param, default 'pt'."""
+    raw = request.args.get("lang", "pt")
+    return raw if raw in ("en", "pt") else "pt"
+
+
+@app.route("/lite/")
+def lite_dashboard():
+    """Lightweight server-rendered dashboard."""
+    lang = _lang()
+    ctx = _lite_ctx(lang)
+
+    data = load_data(DATA_PATH)
+    total = len(data)
+
+    if total:
+        avg_dl = sum(p["speed_test"]["download"] for p in data) / total
+        avg_ul = sum(p["speed_test"]["upload"] for p in data) / total
+        avg_lat = sum(p["speed_test"]["latency"] for p in data) / total
+        avg_q = sum(p["quality_score"]["overall_score"] for p in data) / total
+    else:
+        avg_dl = avg_ul = avg_lat = avg_q = 0
+
+    providers: dict[str, dict] = {}
+    ratings: dict[str, int] = {}
+    for p in data:
+        prov = p["provider"]
+        if prov not in providers:
+            providers[prov] = {"count": 0, "quality_sum": 0}
+        providers[prov]["count"] += 1
+        providers[prov]["quality_sum"] += p["quality_score"]["overall_score"]
+        r = p["quality_score"]["rating"]
+        ratings[r] = ratings.get(r, 0) + 1
+
+    providers_list = [
+        {"name": k, "count": v["count"], "avg_quality": round(v["quality_sum"] / v["count"], 1)}
+        for k, v in providers.items()
+    ]
+
+    stats = {
+        "total": total,
+        "avg_download": round(avg_dl, 1),
+        "avg_upload": round(avg_ul, 1),
+        "avg_latency": round(avg_lat, 1),
+        "avg_quality": round(avg_q, 1),
+    }
+
+    return render_template(
+        "lite/dashboard.html",
+        **ctx,
+        stats=stats,
+        providers=providers_list,
+        ratings=ratings,
+        data=data[:20],
+    )
+
+
+@app.route("/lite/submit", methods=["GET", "POST"])
+def lite_submit():
+    """Lightweight submit form — works as plain HTML POST."""
+    lang = _lang()
+    ctx = _lite_ctx(lang)
+    form: dict = {}
+    msg_ok = msg_err = None
+
+    if request.method == "POST":
+        form = dict(request.form)
+        try:
+            lat = float(form.get("latitude", ""))
+            lon = float(form.get("longitude", ""))
+            dl = float(form.get("download", ""))
+            ul = float(form.get("upload", ""))
+            latency = float(form.get("latency", ""))
+            provider = form.get("provider", "")
+
+            if not validate_coordinates(lat, lon):
+                raise ValueError("Invalid coordinates")
+            if not provider:
+                raise ValueError("Provider is required")
+
+            speed_test = SpeedTest(
+                download=dl, upload=ul, latency=latency, jitter=0, packet_loss=0,
+            )
+            point = ConnectivityPoint(
+                latitude=lat, longitude=lon, provider=provider, speed_test=speed_test,
+            )
+
+            data = load_data(DATA_PATH)
+            data.append(point.to_dict())
+            save_data(DATA_PATH, data)
+
+            msg_ok = ctx["t"]("msg_success")
+            form = {}  # clear form on success
+        except (ValueError, TypeError, OSError) as exc:
+            logger.warning("Lite submit error: %s", exc)
+            msg_err = ctx["t"]("msg_error")
+
+    return render_template(
+        "lite/submit.html",
+        **ctx,
+        form=form,
+        providers=KNOWN_PROVIDERS,
+        msg_ok=msg_ok,
+        msg_err=msg_err,
+    )
+
+
+@app.route("/lite/map")
+def lite_map():
+    """Lightweight map page — lazy-loads Leaflet on demand."""
+    lang = _lang()
+    ctx = _lite_ctx(lang)
+
+    data = load_data(DATA_PATH)
+    points = [
+        {
+            "latitude": p["latitude"],
+            "longitude": p["longitude"],
+            "provider": p["provider"],
+            "download_speed": p["speed_test"]["download"],
+            "upload_speed": p["speed_test"]["upload"],
+            "latency": p["speed_test"]["latency"],
+        }
+        for p in data
+    ]
+
+    return render_template(
+        "lite/map.html",
+        **ctx,
+        points=points,
+        points_json=json.dumps(points),
+    )
 
 
 if __name__ == "__main__":

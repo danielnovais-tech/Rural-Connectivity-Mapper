@@ -2,6 +2,7 @@
 
 from .measurement import (
     ConfidenceBreakdown,
+    DataLineage,
     MeasurementSchema,
     SourceType,
     TechnologyType,
@@ -12,4 +13,5 @@ __all__ = [
     "SourceType",
     "TechnologyType",
     "ConfidenceBreakdown",
+    "DataLineage",
 ]

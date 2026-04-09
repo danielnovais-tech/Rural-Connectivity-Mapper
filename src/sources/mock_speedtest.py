@@ -4,7 +4,7 @@ import random
 import uuid
 from datetime import datetime, timedelta, timezone
 
-from src.schemas import ConfidenceBreakdown, MeasurementSchema, SourceType, TechnologyType
+from src.schemas import ConfidenceBreakdown, DataLineage, MeasurementSchema, SourceType, TechnologyType
 
 from .base import DataSource
 
@@ -15,6 +15,8 @@ class MockSpeedtestSource(DataSource):
     Generates realistic sample data that simulates speed test measurements
     from established testing platforms.
     """
+
+    is_synthetic = True
 
     def __init__(self, num_samples: int = 30):
         """Initialize mock speedtest source.
@@ -146,6 +148,7 @@ class MockSpeedtestSource(DataSource):
                 country="US",
                 region=region,
                 h3_index=h3_index,
+                lineage=DataLineage(is_synthetic=True),
                 metadata={
                     "server_id": f"server_{random.randint(1000, 9999)}",
                     "test_id": f"test_{uuid.uuid4().hex[:16]}",

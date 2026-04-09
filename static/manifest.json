@@ -1,0 +1,16 @@
+{
+  "name": "Rural Connectivity Mapper",
+  "short_name": "RuralMapper",
+  "description": "Map and improve rural internet connectivity",
+  "start_url": "/lite/?lang=pt",
+  "display": "standalone",
+  "background_color": "#f5f5f0",
+  "theme_color": "#1a6b3c",
+  "icons": [
+    {
+      "src": "/static/icon-192.svg",
+      "sizes": "any",
+      "type": "image/svg+xml"
+    }
+  ]
+}
