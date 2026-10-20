@@ -1,5 +1,7 @@
 # Rural Connectivity Mapper 2026
 
+> **Note:** the files under `data/` and `src/data/` are illustrative samples (synthetic values), not official measurements. Do not cite them as data about real municipalities; use the official sources (Anatel, IBGE) listed in the data pipeline docs.
+
 A comprehensive platform for mapping, analyzing, and improving rural connectivity across Latin America and beyond.
 
 ## 🚀 Quick Start

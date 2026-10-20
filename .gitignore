@@ -277,3 +277,6 @@ __marimo__/
 
 # Analytics data
 data/analytics/
+
+# Ambientes virtuais locais (o .venv312 do Windows tinha entrado por engano)
+.venv*/
